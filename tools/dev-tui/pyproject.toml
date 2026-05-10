@@ -1,0 +1,7 @@
+[project]
+name = "dev-tui"
+version = "0.1.0"
+description = "Developer TUI for Vexil, a tool for managing projects in Houdini"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = []
