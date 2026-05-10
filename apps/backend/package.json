@@ -1,0 +1,13 @@
+{
+  "name": "vexil-backend",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "scripts": {
+    "dev": "uv run manage.py runserver 0.0.0.0:8000"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
