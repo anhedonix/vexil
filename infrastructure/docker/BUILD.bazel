@@ -1,0 +1,17 @@
+load("@rules_oci//oci:defs.bzl", "oci_image")
+
+# Define the Backend Django Docker Image
+oci_image(
+    name = "backend_image",
+    base = "@python_base",
+    entrypoint = ["uv", "run", "/app/manage.py", "runserver", "0.0.0.0:8000"],
+    tars = [":backend_layer"],
+)
+
+# Define the Frontend AstroJs Docker Image
+oci_image(
+    name = "frontend_image",
+    base = "@nodejs_base",
+    entrypoint = ["bun", "run", "dev"],
+    tars = [":frontend_layer"],
+)

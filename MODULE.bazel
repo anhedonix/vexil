@@ -1,0 +1,10 @@
+module(
+    name = "vexil",
+    version = "0.0.1",
+)
+
+# Declare a direct dependency on Python rules
+bazel_dep(name = "rules_python", version = "2.0.0")
+
+# Declare a direct dependency on Node.js rules
+bazel_dep(name = "rules_nodejs", version = "6.7.4")
