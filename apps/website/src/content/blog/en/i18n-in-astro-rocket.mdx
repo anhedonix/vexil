@@ -1,0 +1,206 @@
+---
+title: "Going Multilingual: Native i18n in Astro Rocket 1.3.0"
+description: "How the new opt-in i18n system works, what it adds when you turn it on, and the exact steps to ship your site in English plus a second language."
+publishedAt: 2026-05-11
+author: "Hans Martens"
+tags: ["astro-rocket", "i18n", "internationalization", "tutorial", "v1-3-0"]
+featured: true
+locale: en
+image: "../../../assets/blog/i18n-in-astro-rocket.svg"
+svgSlug: "i18n-in-astro-rocket"
+imageAlt: "Globe icon centred on a brand-coloured background with the label 'i18n'"
+---
+
+Astro Rocket 1.3.0 ships native, opt-in internationalization. You can now run your site in two (or twenty) languages without leaving the theme — no scaffolding CLI, no plugins, no separate package. This post walks through what the feature is, what it costs (spoiler: nothing if you leave it off), and exactly how to turn it on for an English-plus-Dutch site.
+
+If you want the broader picture of how Astro Rocket is structured first, the [configuration guide](/blog/astro-rocket-configuration-guide) covers `site.config.ts`, themes, and layout switches; the [SEO post](/blog/seo-in-astro-rocket) covers everything in the `<head>` that i18n now extends with `hreflang`.
+
+## Opt-in, off by default
+
+The whole feature is gated behind a single flag in `src/config/i18n.config.ts`:
+
+```ts
+const i18nConfig: I18nConfig = {
+  enabled: false,
+  defaultLocale: 'en',
+  locales: ['en'],
+  // …
+};
+```
+
+When `enabled` is `false` — the default — the build is byte-for-byte identical to a single-locale site. No `LanguageSwitcher` renders, no `hreflang` tags emit, no extra routes are generated, no JS for locale handling ships. Existing Astro Rocket sites upgrading to 1.3.0 see zero change.
+
+Turn `enabled` on and add a second locale, and the whole machinery wakes up.
+
+## What you get when you flip it on
+
+Four things start working as soon as `i18n.enabled` is `true` and `locales` has at least two entries:
+
+1. **Locale-prefixed routes.** With `prefixDefaultLocale: false` (the default), your default locale stays at the site root. The English "About" page is still at `/about`. Additional locales live under a prefix — a Dutch "About" would be `/nl/about`. The mechanism is [Astro's native i18n routing](https://docs.astro.build/en/guides/internationalization/), wired in conditionally.
+2. **A `LanguageSwitcher` dropdown** in the header and mobile menu, automatically. It lists every configured locale and links to the matching path on the page the visitor is currently on.
+3. **`hreflang` alternates** in the `<head>` of every page, pointing at every locale's version of that URL plus an `x-default` per [Google's recommendation](https://developers.google.com/search/docs/specialty/international/localized-versions) for choosing a fallback when no language matches.
+4. **A `t()` translation helper** backed by JSON dictionaries in `src/i18n/`. English and Dutch ship out of the box; you can add more files for any [BCP 47 locale](https://en.wikipedia.org/wiki/IETF_language_tag).
+
+There is no client-side routing, no React or framework hydration, and no language-detection middleware. Locale URLs are generated at build time and the `LanguageSwitcher` is a plain `<a>` dropdown — Astro Rocket's performance posture is preserved.
+
+## Step 1 — enable the feature
+
+Open `src/config/i18n.config.ts` and switch on the flag and the locales you want. Here's the config for English plus Dutch:
+
+```ts
+const i18nConfig: I18nConfig = {
+  enabled: true,
+  defaultLocale: 'en',
+  locales: ['en', 'nl'],
+  localeNames: {
+    en: 'English',
+    nl: 'Nederlands',
+  },
+  detectBrowserLocale: false,
+};
+```
+
+Three things to know:
+
+- **`defaultLocale`** is the locale served at the site root. If you keep it at `'en'`, English visitors keep landing at `/`, `/about`, `/blog`. Set it to `'nl'` instead and Dutch becomes the root locale — English would move to `/en/...`. Most multilingual sites pick the language of their largest audience as the default.
+- **`locales`** is the master list. Order doesn't matter for routing, but it controls the order of items in the `LanguageSwitcher` dropdown.
+- **`localeNames`** are the display labels in the dropdown. Use the language's own name (`Nederlands`, not "Dutch") — that's standard practice and respectful to visitors switching from a language they can read.
+
+Save the file. The `LanguageSwitcher` will now appear in your header. But clicking "Nederlands" will give you a 404, because no Dutch pages exist yet. That's the next step.
+
+## Step 2 — create the pages in your second language
+
+[Astro is filesystem-routed](https://docs.astro.build/en/basics/astro-pages/), so a Dutch "About" page is just a new file at `src/pages/nl/about.astro`. The mapping is direct:
+
+| URL              | Source file                       |
+|------------------|-----------------------------------|
+| `/`              | `src/pages/index.astro`           |
+| `/about`         | `src/pages/about.astro`           |
+| `/contact`       | `src/pages/contact.astro`         |
+| `/nl/`           | `src/pages/nl/index.astro` *(create)* |
+| `/nl/about`      | `src/pages/nl/about.astro` *(create)* |
+| `/nl/contact`    | `src/pages/nl/contact.astro` *(create)* |
+
+You don't have to translate every page on day one. Pages that don't exist in Dutch simply aren't reachable through the Dutch URL — the `LanguageSwitcher` dropdown will still link there, but visitors will get a 404 for missing pages. For a soft launch, start with the homepage, About, and Contact in both languages; add the rest as you write them.
+
+The simplest Dutch page is a copy of the English source with the visible text translated. For a thin starting point, a `src/pages/nl/index.astro` can be as minimal as:
+
+```astro
+---
+import MarketingLayout from '@/layouts/MarketingLayout.astro';
+---
+
+<MarketingLayout
+  title="Welkom bij Astro Rocket"
+  description="Een productieklaar Astro 6 starter-thema."
+>
+  <section class="container py-24">
+    <h1 class="text-5xl font-bold">Hallo, wereld.</h1>
+    <p class="mt-4 text-lg text-foreground-muted">
+      Dit is de Nederlandse versie van de homepagina.
+    </p>
+  </section>
+</MarketingLayout>
+```
+
+That's enough to make `/nl/` a real page. From there, mirror whichever sections of the English homepage matter most.
+
+### Blog posts and content collections
+
+Astro Rocket's blog and pages collections already carry a `locale` field on their schema (`src/content.config.ts`). Translated content lives in a parallel folder structure:
+
+```
+src/content/blog/en/hello-world.mdx
+src/content/blog/nl/hallo-wereld.mdx
+```
+
+In the Dutch post's frontmatter, set `locale: nl`. The collection schema currently accepts `en`, `es`, and `fr`; add your locale to the enum if you need other codes. The base theme is ready for this — the field, folder convention, and per-post type-safety are all in place.
+
+## Step 3 — translate the built-in UI strings
+
+The `LanguageSwitcher`, "Read more" links, "Published on" labels, and other shared UI strings live in `src/i18n/<locale>.json`. The English and Dutch files ship with 1.3.0 — open them and you'll see paired keys:
+
+```json
+// src/i18n/en.json
+{
+  "common": { "readMore": "Read more" },
+  "blog":   { "readingTime": "{minutes} min read" }
+}
+```
+
+```json
+// src/i18n/nl.json
+{
+  "common": { "readMore": "Lees meer" },
+  "blog":   { "readingTime": "{minutes} min leestijd" }
+}
+```
+
+In any `.astro` file you can resolve a string with the `t()` helper:
+
+```astro
+---
+import { t, getLocaleFromPath } from '@/i18n';
+const locale = getLocaleFromPath(Astro.url.pathname);
+---
+
+<a href="/blog">{t('common.readMore', locale)}</a>
+```
+
+Missing keys fall back to the default locale's value, then to the key itself — so partial translations are visible but never break the page. The `{minutes}` syntax is interpolated via the `vars` argument: `t('blog.readingTime', locale, { minutes: 5 })` → `"5 min leestijd"`.
+
+To add a third language — say, German — create `src/i18n/de.json` mirroring the structure of `en.json`, import it in `src/i18n/index.ts`, and add `'de'` to the `locales` array in `i18n.config.ts`. That's the whole onboarding.
+
+## How URLs work
+
+With the default `prefixDefaultLocale: false` setting:
+
+- The default locale lives at the root: `/`, `/about`, `/blog/hello-world`.
+- Every other locale lives under its prefix: `/nl/`, `/nl/about`, `/nl/blog/hallo-wereld`.
+
+The `LanguageSwitcher` builds those URLs automatically. If a visitor is reading `/blog/hello-world` in English and clicks "Nederlands," they go to `/nl/blog/hello-world` — same slug, locale-prefixed. If the translated post lives at a different slug (`/nl/blog/hallo-wereld`), you have two options:
+
+1. **Keep the slug identical across locales** — easiest for routing, the `LanguageSwitcher` "just works." Translate only the title and body; keep the URL slug in English.
+2. **Use locale-specific slugs** — more natural for SEO. You'll need to add a small redirect or content mapping so the switcher can resolve `/blog/hello-world` → `/nl/blog/hallo-wereld`. That's outside the base theme; a future Astro Rocket release may build it in if there's demand.
+
+For a first multilingual launch, option 1 is the pragmatic choice.
+
+## SEO checklist
+
+When i18n is on, Astro Rocket's SEO component automatically emits the right tags. Each page's `<head>` will contain:
+
+```html
+<link rel="alternate" hreflang="en" href="https://yoursite.com/about" />
+<link rel="alternate" hreflang="nl" href="https://yoursite.com/nl/about" />
+<link rel="alternate" hreflang="x-default" href="https://yoursite.com/about" />
+```
+
+That tells Google which version of the page corresponds to which locale, and which to show when no language matches. Make sure of two things:
+
+- **Every page reachable in one locale should be reachable in every other.** Missing translations break the hreflang loop. If you launch with the homepage and About in both languages but only Blog in English, that's fine — the missing pages just won't have alternates.
+- **Your sitemap reflects the locale URLs.** The [`@astrojs/sitemap`](https://docs.astro.build/en/guides/integrations-guide/sitemap/) integration handles this automatically when i18n is configured.
+
+Run a [Lighthouse](https://developer.chrome.com/docs/lighthouse/) SEO audit after deploying. With i18n correctly configured you should score 100/100 on the SEO section without any extra work.
+
+## Turning it back off
+
+If you experiment with i18n and decide not to ship it (or you flip it on before translated pages exist and don't want to serve 404s to switcher clicks), the rollback is one line. In `src/config/i18n.config.ts`:
+
+```ts
+enabled: false,
+locales: ['en'],
+```
+
+Deploy. The `LanguageSwitcher` disappears, `hreflang` tags stop emitting, and the site returns to single-locale behavior. Your `src/pages/nl/`, `src/content/blog/nl/`, and `src/i18n/nl.json` files stay in the repo — dormant but preserved. Flip the flag back when you're ready.
+
+## What's next
+
+1.3.0 is the foundation. There's room to grow:
+
+- **Optional browser-locale detection.** The `detectBrowserLocale` flag is wired into the config; redirect-on-first-visit logic can be added without changing the API.
+- **Per-page locale-slug mapping** for sites that want truly localized URLs in addition to translated content.
+- **A pure-CSS `LanguageSwitcher`** using `<details>`, removing the small inline JS that the current implementation needs for the dropdown panel.
+
+If you build something with the i18n system and hit a rough edge, [open an issue](https://github.com/hansmartens68/Astro-Rocket/issues). The feature exists because [#207](https://github.com/hansmartens68/Astro-Rocket/issues/207) asked for it; the next iteration will come the same way.
+
+For now: flip the flag, mirror your homepage in your second language, and ship it. The complete reference is in the [Internationalization (i18n) section of the README](https://github.com/hansmartens68/Astro-Rocket#internationalization-i18n) — keep it open while you set up your second locale.

@@ -1,0 +1,103 @@
+---
+title: "Comments on Blog Posts — Giscus, Lazy-Loaded"
+description: "Astro Rocket now has optional comments on blog posts, powered by Giscus and GitHub Discussions. The script is lazy-loaded so readers who don't scroll to the bottom pay zero cost."
+publishedAt: 2026-05-09
+author: "Hans Martens"
+tags: ["astro-rocket", "features", "blog", "comments", "giscus"]
+featured: false
+locale: en
+image: "../../../assets/blog/giscus-comments.svg"
+svgSlug: "giscus-comments"
+imageAlt: "Three speech bubbles representing a comment thread, on a brand-coloured background"
+---
+
+Astro Rocket now supports comments at the bottom of blog posts. The integration uses [Giscus](https://giscus.app), which stores comments in a GitHub Discussions thread on a repo of your choice. No database, no third-party account, no ads.
+
+It's **off by default**. When disabled, no JavaScript and no network requests are added to your blog pages. When enabled, the Giscus script is **lazy-loaded** — it only downloads when the reader actually scrolls toward the comments section. Readers who never scroll that far pay zero performance cost.
+
+## Step 1 — Set up Giscus
+
+1. Go to [giscus.app](https://giscus.app).
+2. Pick the GitHub repo you want to host the discussions in. The repo must be **public** and have **Discussions** enabled (Settings → Features → Discussions).
+3. Install the [Giscus app](https://github.com/apps/giscus) on that repo.
+4. Choose the discussion category (most people use "General" or create a dedicated "Comments" category).
+5. Copy the four values shown on the page:
+   - `data-repo` (e.g. `you/your-repo`)
+   - `data-repo-id`
+   - `data-category`
+   - `data-category-id`
+
+## Step 2 — Configure Astro Rocket
+
+Open `src/config/site.config.ts` and find `articleFeatures.comments`. Flip `enabled` to `true` and paste your four values:
+
+```ts
+articleFeatures: {
+  comments: {
+    enabled: true,
+    provider: 'giscus',
+    giscus: {
+      repo: 'you/your-repo',
+      repoId: 'R_kgDOAbcdef',
+      category: 'General',
+      categoryId: 'DIC_kwDOAbcdef',
+      mapping: 'pathname',
+      reactionsEnabled: true,
+      theme: 'preferred_color_scheme',
+      lang: 'en',
+    },
+  },
+},
+```
+
+That's it. Build, deploy, and every blog post now has a comments section underneath.
+
+## Per-post override
+
+Some posts don't need comments — announcements, legal pages, or quick updates. Hide comments on a single post with frontmatter:
+
+```yaml
+---
+title: My announcement
+comments: false
+---
+```
+
+The site-wide setting stays on; just this post skips the comments block.
+
+## How the lazy-loading works
+
+If the Giscus script were loaded on every article page-load, it would add about 100–200 KB of network traffic and a third-party iframe to every blog post. That hurts Lighthouse scores and feels especially wasteful for readers who only skim the first paragraph.
+
+So the component does this instead:
+
+1. On the server, it renders an empty `<div>` with a reserved `min-height: 360px` (so there's no layout shift when the iframe later appears).
+2. On the client, an `IntersectionObserver` watches that `<div>`.
+3. When the reader scrolls within `300px` of the comments area, the script is appended to the DOM and Giscus loads.
+
+Readers who bounce or skim → 0 KB. Readers who scroll to the bottom → the comments are ready by the time they arrive.
+
+## Theming
+
+The default `theme: 'preferred_color_scheme'` makes Giscus follow the visitor's OS-level light/dark preference. If you want it to match your active site theme exactly, use one of Giscus's built-in themes (`light`, `dark`, `dark_dimmed`, etc.) or host a custom CSS file and point `theme` at its URL.
+
+## What it costs
+
+| Scenario | Cost |
+|---|---|
+| Comments disabled (default) | 0 KB, 0 requests |
+| Enabled, reader doesn't scroll to comments | ~0.5 KB inline JS |
+| Enabled, reader scrolls to comments | ~100 KB (Giscus) — async, below-the-fold, no LCP impact |
+
+The reserved `min-height` prevents CLS. The `async` load prevents render blocking. The `IntersectionObserver` prevents wasted requests.
+
+## Where it lives
+
+- Component: `src/components/blog/Comments.astro`
+- Wiring: `src/layouts/BlogLayout.astro`
+- Config: `src/config/site.config.ts` → `articleFeatures.comments`
+- Per-post override: `comments: false` in MDX frontmatter
+
+If the four Giscus IDs aren't filled in, the component renders nothing — so a half-configured `enabled: true` won't break anything; it just stays invisible until you finish setup.
+
+That's the entire feature. Three commits in your config file, and your blog has a real comment thread without a database, an account, or a performance hit.
