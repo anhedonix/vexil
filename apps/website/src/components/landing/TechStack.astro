@@ -6,7 +6,7 @@
  * edit a tool there without touching this component.
  */
 import { getCollection } from 'astro:content';
-import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+// import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import Card from '@/components/ui/data-display/Card/Card.astro';
 import Badge from '@/components/ui/data-display/Badge/Badge.astro';
 
@@ -52,7 +52,7 @@ const bgClass = background === 'primary' ? 'bg-background' : 'bg-background-seco
           <Card variant="elevated" padding="md" hover={true} href={item.data.url} target="_blank" rel="noopener noreferrer" class="h-full text-center">
             <div class="flex flex-col items-center gap-[var(--space-stack-sm)]">
               <div class="tech-icon-wrap">
-                <Icon name={item.data.icon} size="lg" />
+                {/* <Icon name={item.data.icon} size="lg" /> */}
               </div>
               <span class="font-display text-lg font-bold text-foreground">{item.data.name}</span>
             </div>

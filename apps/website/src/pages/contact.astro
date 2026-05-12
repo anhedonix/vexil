@@ -4,7 +4,7 @@
  * URL: /contact
  */
 import PageLayout from '@/layouts/PageLayout.astro';
-import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+// import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import Badge from '@/components/ui/data-display/Badge/Badge.astro';
 import Card from '@/components/ui/data-display/Card/Card.astro';
 import { Hero } from '@/components/hero';
@@ -41,7 +41,7 @@ const channels = [
 >
   <Hero layout="centered" size="sm">
     <Badge slot="badge" variant="brand" pill>
-      <Icon name="mail" size="sm" />
+      <!-- <Icon name="mail" size="sm" /> -->
       Get in touch
     </Badge>
 
@@ -85,13 +85,13 @@ const channels = [
                 <Card hover padding="sm" class="h-full">
                   <div class="flex items-center gap-3">
                     <div class="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500">
-                      <Icon name={ch.icon} size="sm" />
+                      {/* <Icon name={ch.icon} size="sm" /> */}
                     </div>
                     <div class="min-w-0 flex-1">
                       <p class="font-semibold text-sm text-foreground">{ch.label}</p>
                       <p class="text-xs text-foreground-muted truncate">{ch.value}</p>
                     </div>
-                    <Icon name="arrow-up-right" size="sm" class="text-foreground-muted group-hover:text-brand-500 transition-colors shrink-0" />
+                    {/* <Icon name="arrow-up-right" size="sm" class="text-foreground-muted group-hover:text-brand-500 transition-colors shrink-0" /> */}
                   </div>
                 </Card>
               </a>
@@ -102,7 +102,7 @@ const channels = [
           <Card hover padding="sm" class="bg-brand-500/5 border-brand-500/20">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500">
-                <Icon name="map-pin" size="sm" />
+                <!-- <Icon name="map-pin" size="sm" /> -->
               </div>
               <div>
                 <p class="font-semibold text-sm text-foreground">{siteConfig.address?.city ?? 'Your City'}</p>

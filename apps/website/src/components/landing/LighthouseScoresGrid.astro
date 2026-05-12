@@ -12,7 +12,7 @@
  * inner card stagger doesn't fight the parent's block-level reveal.
  */
 import Card from '@/components/ui/data-display/Card/Card.astro';
-import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+// import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 
 interface Props {
   /** Stagger the cards in via data-reveal-children. Default true. */
@@ -42,7 +42,7 @@ const wrapperProps = staggered ? { 'data-reveal-children': true } : {};
     <Card variant="elevated" padding="sm" hover class="h-full text-center border-t-2 border-t-brand-500/40 transition-colors duration-200 hover:border-t-brand-500">
       <div class="flex flex-col items-center gap-[var(--space-stack-sm)]">
         <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-          <Icon name={score.icon} size="md" />
+          {/* <Icon name={score.icon} size="md" /> */}
         </div>
         <span
           class="lh-number font-display text-4xl font-bold text-brand-500"

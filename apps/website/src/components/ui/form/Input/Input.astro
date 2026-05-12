@@ -34,7 +34,7 @@ const iconStyles = cn(
 );
 
 // Dynamic icon import
-import Icon from '../../primitives/Icon/Icon.astro';
+// import Icon from '../../primitives/Icon/Icon.astro';
 ---
 
 <div class={cn('space-y-1.5', className)}>
@@ -50,7 +50,7 @@ import Icon from '../../primitives/Icon/Icon.astro';
     {
       leadingIcon && (
         <div class={cn(iconStyles, 'left-0')}>
-          <Icon name={leadingIcon} size="sm" />
+          {/* <Icon name={leadingIcon} size="sm" /> */}
         </div>
       )
     }
@@ -66,7 +66,7 @@ import Icon from '../../primitives/Icon/Icon.astro';
     {
       trailingIcon && (
         <div class={cn(iconStyles, 'right-0')}>
-          <Icon name={trailingIcon} size="sm" />
+          {/* <Icon name={trailingIcon} size="sm" /> */}
         </div>
       )
     }

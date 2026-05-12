@@ -6,7 +6,7 @@
  */
 import { cn } from '@/lib/cn';
 import Card from '@/components/ui/data-display/Card/Card.astro';
-import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+// import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 
 interface Props {
   label: string;
@@ -49,14 +49,14 @@ const trendIcons = {
       <p class="text-2xl font-bold text-foreground mt-1">{value}</p>
       {trend && trendText && (
         <div class={cn('flex items-center gap-1 mt-2 text-xs font-medium', trendColors[trend])}>
-          <Icon name={trendIcons[trend]} size="xs" />
+          {/* <Icon name={trendIcons[trend]} size="xs" /> */}
           <span>{trendText}</span>
         </div>
       )}
     </div>
     {icon && (
       <div class="p-2.5 rounded-lg bg-secondary text-foreground-muted">
-        <Icon name={icon} size="md" />
+        {/* <Icon name={icon} size="md" /> */}
       </div>
     )}
   </div>

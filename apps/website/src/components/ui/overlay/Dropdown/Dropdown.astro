@@ -4,7 +4,7 @@
  * Accessible dropdown menu with keyboard navigation and optional icons
  */
 import { cn } from '@/lib/cn';
-import Icon from '../../primitives/Icon/Icon.astro';
+// import Icon from '../../primitives/Icon/Icon.astro';
 
 interface DropdownItem {
   label: string;
@@ -73,7 +73,7 @@ const iconMap: Record<string, string> = {
           aria-disabled={item.disabled}
           data-dropdown-item={index}
         >
-          {item.icon && (
+          {/* {item.icon && (
             <Icon
               name={iconMap[item.icon] || item.icon}
               size="sm"
@@ -82,7 +82,7 @@ const iconMap: Record<string, string> = {
                 item.disabled ? 'text-foreground-subtle' : 'text-foreground-muted'
               )}
             />
-          )}
+          )} */}
           <span>{item.label}</span>
         </a>
       )

@@ -30,7 +30,7 @@ import Accordion from '@/components/ui/overlay/Accordion/Accordion.astro';
 // Layout Components
 import Separator from '@/components/ui/layout/Separator/Separator.astro';
 // Primitives
-import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+// import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 // Marketing Components
 import CTA from '@/components/ui/marketing/CTA/CTA.astro';
 import SocialProof from '@/components/ui/marketing/SocialProof/SocialProof.astro';
@@ -66,10 +66,10 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
     <Fragment slot="actions">
       <Button href="#hero" class="hero-btn-brand">
         Browse Components
-        <Icon name="arrow-right" size="sm" />
+        <!-- <Icon name="arrow-right" size="sm" /> -->
       </Button>
       <Button href="https://github.com/hansmartens68/Astro-Rocket" target="_blank" class="hero-btn-learn">
-        <Icon name="github" size="sm" />
+        <!-- <Icon name="github" size="sm" /> -->
         View Source
       </Button>
     </Fragment>
@@ -84,7 +84,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
     <section id="hero" class="scroll-mt-32 flex flex-col gap-10">
       <div class="flex items-start gap-5">
         <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-brand-500/10 text-brand-500 shrink-0">
-          <Icon name="star" size="lg" />
+          <!-- <Icon name="star" size="lg" /> -->
         </div>
         <div>
           <h2 class="font-display text-2xl font-bold text-foreground">Hero</h2>
@@ -117,7 +117,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
               </Fragment>
 
               <div slot="aside" class="bg-background-secondary border border-border rounded-lg p-6 text-center">
-                <Icon name="code" size="lg" class="text-brand-500 mx-auto mb-2" />
+                <!-- <Icon name="code" size="lg" class="text-brand-500 mx-auto mb-2" /> -->
                 <p class="text-sm text-foreground-muted">Aside content slot</p>
               </div>
 
@@ -291,7 +291,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
     <section id="layout" class="scroll-mt-32 flex flex-col gap-10">
       <div class="flex items-start gap-5">
         <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-brand-500/10 text-brand-500 shrink-0">
-          <Icon name="layout" size="lg" />
+          <!-- <Icon name="layout" size="lg" /> -->
         </div>
         <div>
           <h2 class="font-display text-2xl font-bold text-foreground">Layout</h2>
@@ -697,7 +697,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
               </p>
               <Fragment slot="actions">
                 <Button>
-                  <Icon name="github" size="sm" />
+                  <!-- <Icon name="github" size="sm" /> -->
                   Clone Repository
                 </Button>
                 <Button variant="outline">Read Documentation</Button>
@@ -731,7 +731,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
     <section id="buttons" class="scroll-mt-32 flex flex-col gap-10">
       <div class="flex items-start gap-5">
         <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-brand-500/10 text-brand-500 shrink-0">
-          <Icon name="box" size="lg" />
+          <!-- <Icon name="box" size="lg" /> -->
         </div>
         <div>
           <h2 class="font-display text-2xl font-bold text-foreground">Buttons</h2>
@@ -784,7 +784,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
                 <Button>Default</Button>
                 <Button loading>Loading</Button>
                 <Button disabled>Disabled</Button>
-                <Button icon><Icon name="plus" /></Button>
+                <!-- <Button icon><Icon name="plus" /></Button> -->
               </div>
             </div>
           </div>
@@ -795,9 +795,9 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
             </div>
             <div class="showcase-content">
               <div class="flex flex-wrap items-center gap-3">
-                <Button><Icon name="mail" size="sm" /> Send</Button>
-                <Button variant="outline"><Icon name="download" size="sm" /> Export</Button>
-                <Button variant="ghost"><Icon name="star" size="sm" /> Star</Button>
+                <!-- <Button><Icon name="mail" size="sm" /> Send</Button> -->
+                <!-- <Button variant="outline"><Icon name="download" size="sm" /> Export</Button> -->
+                <!-- <Button variant="ghost"><Icon name="star" size="sm" /> Star</Button> -->
               </div>
             </div>
           </div>
@@ -809,7 +809,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
     <section id="inputs" class="scroll-mt-32 flex flex-col gap-10">
       <div class="flex items-start gap-5">
         <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-brand-500/10 text-brand-500 shrink-0">
-          <Icon name="terminal" size="lg" />
+          <!-- <Icon name="terminal" size="lg" /> -->
         </div>
         <div>
           <h2 class="font-display text-2xl font-bold text-foreground">Form Inputs</h2>
@@ -952,7 +952,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
     <section id="feedback" class="scroll-mt-32 flex flex-col gap-10">
       <div class="flex items-start gap-5">
         <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-brand-500/10 text-brand-500 shrink-0">
-          <Icon name="alert-circle" size="lg" />
+          <!-- <Icon name="alert-circle" size="lg" /> -->
         </div>
         <div>
           <h2 class="font-display text-2xl font-bold text-foreground">Feedback</h2>
@@ -971,15 +971,15 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
             <div class="flex flex-wrap items-center gap-3">
               <Badge>Default</Badge>
               <Badge variant="success">
-                <Icon name="check" size="xs" />
+                <!-- <Icon name="check" size="xs" /> -->
                 Success
               </Badge>
               <Badge variant="warning">
-                <Icon name="alert-triangle" size="xs" />
+                <!-- <Icon name="alert-triangle" size="xs" /> -->
                 Warning
               </Badge>
               <Badge variant="info">
-                <Icon name="info" size="xs" />
+                <!-- <Icon name="info" size="xs" /> -->
                 Info
               </Badge>
             </div>
@@ -1025,7 +1025,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
     <section id="overlays" class="scroll-mt-32 flex flex-col gap-10">
       <div class="flex items-start gap-5">
         <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-brand-500/10 text-brand-500 shrink-0">
-          <Icon name="layers" size="lg" />
+          <!-- <Icon name="layers" size="lg" /> -->
         </div>
         <div>
           <h2 class="font-display text-2xl font-bold text-foreground">Overlays</h2>
@@ -1042,7 +1042,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
           </div>
           <div class="showcase-content">
             <Button onclick="openDialog('demo-dialog')">
-              <Icon name="external-link" size="sm" />
+              <!-- <Icon name="external-link" size="sm" /> -->
               Open Dialog
             </Button>
 
@@ -1053,7 +1053,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
               <div class="flex justify-end gap-3 pt-6">
                 <Button variant="outline" onclick="closeDialog('demo-dialog')">Cancel</Button>
                 <Button variant="destructive" onclick="closeDialog('demo-dialog')">
-                  <Icon name="x" size="sm" />
+                  <!-- <Icon name="x" size="sm" /> -->
                   Delete Project
                 </Button>
               </div>
@@ -1080,7 +1080,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
             >
               <Button variant="outline" slot="trigger">
                 Actions
-                <Icon name="chevron-down" size="sm" />
+                <!-- <Icon name="chevron-down" size="sm" /> -->
               </Button>
             </Dropdown>
           </div>
@@ -1143,7 +1143,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
     <section id="navigation" class="scroll-mt-32 flex flex-col gap-10">
       <div class="flex items-start gap-5">
         <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-brand-500/10 text-brand-500 shrink-0">
-          <Icon name="menu" size="lg" />
+          <!-- <Icon name="menu" size="lg" /> -->
         </div>
         <div>
           <h2 class="font-display text-2xl font-bold text-foreground">Navigation</h2>
@@ -1342,7 +1342,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
     <section id="data" class="scroll-mt-32 flex flex-col gap-10">
       <div class="flex items-start gap-5">
         <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-brand-500/10 text-brand-500 shrink-0">
-          <Icon name="layout" size="lg" />
+          <!-- <Icon name="layout" size="lg" /> -->
         </div>
         <div>
           <h2 class="font-display text-2xl font-bold text-foreground">Data Display</h2>
@@ -1394,7 +1394,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
               <Card hover>
                 <div class="flex items-start gap-4">
                   <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-                    <Icon name="zap" size="md" />
+                    <!-- <Icon name="zap" size="md" /> -->
                   </div>
                   <div class="flex-1 min-w-0">
                     <h3 class="text-base font-semibold text-foreground">Performance</h3>
@@ -1409,7 +1409,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
               <Card hover>
                 <div class="flex items-start gap-4">
                   <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-                    <Icon name="shield" size="md" />
+                    <!-- <Icon name="shield" size="md" /> -->
                   </div>
                   <div class="flex-1 min-w-0">
                     <h3 class="text-base font-semibold text-foreground">Type-Safe</h3>
@@ -1424,7 +1424,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
               <Card hover>
                 <div class="flex items-start gap-4">
                   <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-                    <Icon name="globe" size="md" />
+                    <!-- <Icon name="globe" size="md" /> -->
                   </div>
                   <div class="flex-1 min-w-0">
                     <h3 class="text-base font-semibold text-foreground">i18n Ready</h3>
@@ -1485,7 +1485,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
                   <p class="text-xs font-medium text-foreground-subtle uppercase tracking-wider">Total Revenue</p>
                   <p class="text-3xl font-bold text-foreground mt-1">$45,231</p>
                   <p class="text-xs text-success mt-2 flex items-center justify-center gap-1">
-                    <Icon name="arrow-right" size="xs" class="rotate-[-45deg]" />
+                    <!-- <Icon name="arrow-right" size="xs" class="rotate-[-45deg]" /> -->
                     +12.5% from last month
                   </p>
                 </div>
@@ -1517,11 +1517,11 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
                 </div>
                 <div class="flex items-center gap-2 mt-4 pt-4 border-t border-border">
                   <Button size="sm" variant="outline" class="flex-1">
-                    <Icon name="eye" size="xs" />
+                    <!-- <Icon name="eye" size="xs" /> -->
                     View
                   </Button>
                   <Button size="sm" variant="outline" class="flex-1">
-                    <Icon name="settings" size="xs" />
+                    <!-- <Icon name="settings" size="xs" /> -->
                     Settings
                   </Button>
                 </div>
@@ -1582,7 +1582,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
               {['menu', 'x', 'chevron-down', 'arrow-right', 'search', 'plus', 'check', 'mail', 'phone', 'github', 'twitter', 'linkedin', 'sun', 'moon', 'zap', 'globe', 'shield', 'code', 'heart', 'star', 'alert-circle', 'check-circle', 'info', 'loader'].map((icon) => (
                 <Tooltip content={icon} position="top">
                   <div class="flex items-center justify-center w-10 h-10 rounded-lg border border-border bg-background hover:bg-secondary hover:border-border-strong transition-all cursor-pointer group">
-                    <Icon name={icon} size="md" class="text-foreground-muted group-hover:text-foreground transition-colors" />
+                    {/* <Icon name={icon} size="md" class="text-foreground-muted group-hover:text-foreground transition-colors" /> */}
                   </div>
                 </Tooltip>
               ))}
@@ -1717,7 +1717,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
     <section id="loading" class="scroll-mt-32 flex flex-col gap-10">
       <div class="flex items-start gap-5">
         <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-brand-500/10 text-brand-500 shrink-0">
-          <Icon name="loader" size="lg" />
+          <!-- <Icon name="loader" size="lg" /> -->
         </div>
         <div>
           <h2 class="font-display text-2xl font-bold text-foreground">Loading</h2>
@@ -1839,7 +1839,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
     <section id="toggles" class="scroll-mt-32 flex flex-col gap-10">
       <div class="flex items-start gap-5">
         <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-brand-500/10 text-brand-500 shrink-0">
-          <Icon name="toggle-left" size="lg" />
+          <!-- <Icon name="toggle-left" size="lg" /> -->
         </div>
         <div>
           <h2 class="font-display text-2xl font-bold text-foreground">Toggles</h2>
@@ -1909,7 +1909,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
     <section id="patterns" class="scroll-mt-32 flex flex-col gap-10">
       <div class="flex items-start gap-5">
         <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-brand-500/10 text-brand-500 shrink-0">
-          <Icon name="layers" size="lg" />
+          <!-- <Icon name="layers" size="lg" /> -->
         </div>
         <div>
           <h2 class="font-display text-2xl font-bold text-foreground">Patterns</h2>
@@ -2009,7 +2009,7 @@ import EmptyState from '@/components/patterns/EmptyState.astro';
     </p>
     <Fragment slot="actions">
       <Button href="https://github.com/hansmartens68/Astro-Rocket" target="_blank" class="hero-btn-brand">
-        <Icon name="github" size="sm" />
+        <!-- <Icon name="github" size="sm" /> -->
         Clone Repository
       </Button>
       <Button variant="outline" href="/blog">
