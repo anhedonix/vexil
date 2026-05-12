@@ -6,7 +6,7 @@
 import type { HTMLAttributes } from 'astro/types';
 import { cn } from '@/lib/cn';
 import { paginationItemVariants } from './pagination.variants';
-import Icon from '../../primitives/Icon/Icon.astro';
+// import Icon from '../../primitives/Icon/Icon.astro';
 
 interface Props extends HTMLAttributes<'nav'> {
   /** Current active page (1-indexed) */
@@ -87,11 +87,11 @@ const nextUrl = currentPage < totalPages ? `${baseUrl}${currentPage + 1}` : unde
       class={cn(paginationItemVariants({ variant: 'default', size }))}
       aria-label="Previous page"
     >
-      <Icon name="chevron-left" size="sm" />
+      {/* <Icon name="chevron-left" size="sm" /> */}
     </a>
   ) : (
     <span class={cn(paginationItemVariants({ variant: 'disabled', size }))} aria-disabled="true">
-      <Icon name="chevron-left" size="sm" />
+      {/* <Icon name="chevron-left" size="sm" /> */}
     </span>
   )}
 
@@ -125,11 +125,11 @@ const nextUrl = currentPage < totalPages ? `${baseUrl}${currentPage + 1}` : unde
       class={cn(paginationItemVariants({ variant: 'default', size }))}
       aria-label="Next page"
     >
-      <Icon name="chevron-right" size="sm" />
+      {/* <Icon name="chevron-right" size="sm" /> */}
     </a>
   ) : (
     <span class={cn(paginationItemVariants({ variant: 'disabled', size }))} aria-disabled="true">
-      <Icon name="chevron-right" size="sm" />
+      {/* <Icon name="chevron-right" size="sm" /> */}
     </span>
   )}
 </nav>

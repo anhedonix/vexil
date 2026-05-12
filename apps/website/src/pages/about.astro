@@ -4,7 +4,7 @@
  * URL: /about
  */
 import PageLayout from '@/layouts/PageLayout.astro';
-import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+// import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import Badge from '@/components/ui/data-display/Badge/Badge.astro';
 import Card from '@/components/ui/data-display/Card/Card.astro';
 import Button from '@/components/ui/form/Button/Button.astro';
@@ -20,7 +20,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
 >
   <Hero layout="centered" size="sm">
     <Badge slot="badge" variant="brand" pill>
-      <Icon name="user" size="sm" />
+      <!-- <Icon name="user" size="sm" /> -->
       About me
     </Badge>
     <h1 slot="title">
@@ -60,7 +60,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
           <Card variant="elevated" hover class="flex-1 flex flex-col justify-center">
             <div class="flex items-start gap-4">
               <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-                <Icon name="code-2" size="md" />
+                <!-- <Icon name="code-2" size="md" /> -->
               </div>
               <div class="flex-1 min-w-0">
                 <p class="text-xs font-bold tracking-wide casesensitive text-foreground-muted mb-1">Web Designer & Developer</p>
@@ -80,7 +80,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
             <div class="flex items-start justify-between gap-4">
               <div class="flex items-start gap-4 flex-1 min-w-0">
                 <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-                  <Icon name="sparkles" size="md" />
+                  <!-- <Icon name="sparkles" size="md" /> -->
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-xs font-bold tracking-wide casesensitive text-foreground-muted mb-1">AI Thinking Partner</p>
@@ -95,7 +95,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
                 </div>
               </div>
               </div>
-              <Icon name="arrow-up-right" size="sm" class="text-foreground-muted group-hover:text-brand-500 transition-colors shrink-0" />
+              <!-- <Icon name="arrow-up-right" size="sm" class="text-foreground-muted group-hover:text-brand-500 transition-colors shrink-0" /> -->
             </div>
           </Card>
         </div>
@@ -120,7 +120,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
         <Card hover data-reveal>
           <div class="flex items-start gap-4">
             <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="zap" size="md" />
+              <!-- <Icon name="zap" size="md" /> -->
             </div>
             <div class="flex-1 min-w-0">
               <h3 class="text-base font-semibold text-foreground">Performance First</h3>
@@ -133,7 +133,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
         <Card hover data-reveal data-reveal-delay="1">
           <div class="flex items-start gap-4">
             <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="award" size="md" />
+              <!-- <Icon name="award" size="md" /> -->
             </div>
             <div class="flex-1 min-w-0">
               <h3 class="text-base font-semibold text-foreground">Experience That Shows</h3>
@@ -146,7 +146,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
         <Card hover data-reveal data-reveal-delay="2">
           <div class="flex items-start gap-4">
             <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="rocket" size="md" />
+              <!-- <Icon name="rocket" size="md" /> -->
             </div>
             <div class="flex-1 min-w-0">
               <h3 class="text-base font-semibold text-foreground">Modern from the Ground Up</h3>
@@ -186,7 +186,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
         <Card variant="elevated" padding="lg" data-reveal data-reveal-delay="1">
           <div class="flex items-center gap-3 pb-4 border-b border-border">
             <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="rocket" size="md" />
+              <!-- <Icon name="rocket" size="md" /> -->
             </div>
             <h3 class="font-display text-base font-semibold text-foreground">About Astro</h3>
           </div>
@@ -194,7 +194,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
             <details class="border-b border-border" name="faq-astro">
               <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                 What is Astro?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+                <!-- <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" /> -->
               </summary>
               <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
                 Astro is a modern web framework built for content-driven sites. It ships zero JavaScript by default — only sending what the page actually needs. The result is fast load times, excellent Core Web Vitals scores, and lean, maintainable code.
@@ -203,7 +203,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
             <details class="border-b border-border" name="faq-astro">
               <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                 Why do you build with Astro?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+                <!-- <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" /> -->
               </summary>
               <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
                 Because it matches the way I think about the web: lean, purposeful, and built to last. Astro lets me ship fast sites without fighting the framework — minimal JavaScript, clean HTML, great SEO — so I can focus on the design and details that actually matter.
@@ -212,7 +212,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
             <details class="border-b border-border" name="faq-astro">
               <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                 Do you always build with Astro?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+                <!-- <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" /> -->
               </summary>
               <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
                 Almost always. For portfolios, business sites, marketing pages, and blogs, Astro is the right tool. If a project genuinely calls for something different, I'll be upfront about it. But Astro handles most of what clients need, and it does it exceptionally well.
@@ -221,7 +221,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
             <details class="border-b border-border" name="faq-astro">
               <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                 Do you build Astro themes?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+                <!-- <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" /> -->
               </summary>
               <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
                 Yes. I built <a href="https://astro.build/themes/details/astro-rocket/" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2 decoration-brand-500 hover:text-brand-400 transition-colors">Astro Rocket</a> — a free, production-ready theme listed on the official Astro themes directory. It includes a full component library, blog support, dark mode, SEO, and everything you need to launch a fast modern website without starting from scratch.
@@ -230,7 +230,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
             <details class="border-b border-border last:border-0" name="faq-astro">
               <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                 Do you plan to build more Astro themes?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+                <!-- <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" /> -->
               </summary>
               <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
                 Yes, that's the plan. Astro Rocket is actively maintained and I have ideas for new themes in the pipeline. Follow along on the blog or keep an eye on the official Astro themes directory for what's next.
@@ -243,7 +243,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
         <Card variant="elevated" padding="lg" data-reveal data-reveal-delay="2">
           <div class="flex items-center gap-3 pb-4 border-b border-border">
             <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="user" size="md" />
+              <!-- <Icon name="user" size="md" /> -->
             </div>
             <h3 class="font-display text-base font-semibold text-foreground">About the work</h3>
           </div>
@@ -251,7 +251,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
             <details class="border-b border-border" name="faq-work">
               <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                 Do you use AI when you build a website?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+                <!-- <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" /> -->
               </summary>
               <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
                 Yes — I work alongside Claude as a thinking partner throughout every project. Not as a shortcut, but as a second perspective that helps me think through design decisions, review code, and spot things I might otherwise miss.
@@ -260,7 +260,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
             <details class="border-b border-border" name="faq-work">
               <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                 Are you a company or agency?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+                <!-- <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" /> -->
               </summary>
               <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
                 No. I'm a designer and developer who works solo, driven by genuine enthusiasm for the craft — not by commercial targets. There's no sales team, no account manager, no handoff to a junior. You work directly with me from the first conversation to the final delivery.
@@ -269,7 +269,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
             <details class="border-b border-border" name="faq-work">
               <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                 How do you choose which projects to take on?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+                <!-- <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" /> -->
               </summary>
               <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
                 I look for projects where good design and solid execution actually matter to the client. I work best when there's a clear goal, an open line of communication, and a client who trusts the process. I'd rather take on fewer projects and do them properly than stretch across too many at once.
@@ -278,7 +278,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
             <details class="border-b border-border" name="faq-work">
               <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                 Do you offer support or maintenance after launch?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+                <!-- <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" /> -->
               </summary>
               <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
                 Yes. Whether it's small updates, content changes, or something more involved — I'm available after launch. We can agree on whatever arrangement works best for the project.
@@ -287,7 +287,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
             <details class="border-b border-border last:border-0" name="faq-work">
               <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                 Do you work with clients outside the Netherlands?
-                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+                <!-- <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" /> -->
               </summary>
               <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
                 Absolutely. I'm based in Veghel but work with clients worldwide. Most projects run entirely remote, which works well for clear briefs and good communication. Time zone differences are rarely a problem.
@@ -314,7 +314,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
           </p>
           <Button variant="outline" size="lg" href="https://hansmartens.dev/blog/hans-martens-web-designer-veghel" target="_blank" rel="noopener noreferrer" class="self-start mt-2">
             Read the full story
-            <Icon name="arrow-right" size="sm" />
+            <!-- <Icon name="arrow-right" size="sm" /> -->
           </Button>
         </div>
 
@@ -349,7 +349,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
       </p>
       <Button size="lg" href="/contact" class="cta-btn-brand">
         Start a Project
-        <Icon name="arrow-right" size="sm" />
+        <!-- <Icon name="arrow-right" size="sm" /> -->
       </Button>
     </div>
 
@@ -363,7 +363,7 @@ import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
       </p>
       <Button size="lg" href="/contact" class="hero-btn-brand">
         Start a Project
-        <Icon name="arrow-right" size="sm" />
+        <!-- <Icon name="arrow-right" size="sm" /> -->
       </Button>
     </LetterGlitchBand>
   </section>

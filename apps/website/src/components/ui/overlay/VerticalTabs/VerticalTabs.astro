@@ -16,7 +16,7 @@
  * </VerticalTabs>
  */
 import { cn } from '@/lib/cn';
-import Icon from '../../primitives/Icon/Icon.astro';
+// import Icon from '../../primitives/Icon/Icon.astro';
 
 interface Tab {
   id: string;
@@ -64,14 +64,14 @@ const defaultTab = tabs.find(t => t.id === defaultValue);
         )}
         data-vtab-trigger-mobile
       >
-        {defaultTab?.icon && (
+        <!-- {defaultTab?.icon && (
           <Icon
             name={defaultTab.icon}
             size="md"
             class="text-brand-500 shrink-0"
             data-vtab-trigger-icon
           />
-        )}
+        )} -->
         <div class="flex-1 min-w-0 text-left">
           <span class="font-semibold text-foreground block" data-vtab-trigger-label>
             {defaultTab?.label}
@@ -142,14 +142,14 @@ const defaultTab = tabs.find(t => t.id === defaultValue);
                       : 'bg-secondary group-hover:bg-secondary-hover scale-[0.97] group-hover:scale-105'
                   )}
                 >
-                  <Icon
+                  {/* <Icon
                     name={tab.icon}
                     size="md"
                     class={cn(
                       'vtab-icon transition-all duration-200',
                       isActive ? 'text-brand-600 dark:text-brand-400 scale-105' : 'text-foreground-muted group-hover:text-foreground-secondary'
                     )}
-                  />
+                  /> */}
                 </div>
               ) : (
                 <div
@@ -258,14 +258,14 @@ const defaultTab = tabs.find(t => t.id === defaultValue);
                   )}
                   data-vtab-icon-container
                 >
-                  <Icon
+                  {/* <Icon
                     name={tab.icon}
                     size="md"
                     class={cn(
                       'vtab-icon transition-all duration-200',
                       isActive ? 'text-brand-600 dark:text-brand-400 scale-105' : 'text-foreground-muted group-hover:text-foreground-secondary'
                     )}
-                  />
+                  /> */}
                 </div>
               ) : (
                 <div
@@ -363,7 +363,7 @@ const defaultTab = tabs.find(t => t.id === defaultValue);
               )}
               data-vtab-label
             >
-              {tab.icon && (
+              {/* {tab.icon && (
                 <Icon
                   name={tab.icon}
                   size="md"
@@ -374,7 +374,7 @@ const defaultTab = tabs.find(t => t.id === defaultValue);
                   )}
                   data-vtab-icon
                 />
-              )}
+              )} */}
               {tab.label}
             </span>
             {tab.description && (

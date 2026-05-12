@@ -4,7 +4,7 @@ import { Hero } from '@/components/hero';
 import Button from '@/components/ui/form/Button/Button.astro';
 import Badge from '@/components/ui/data-display/Badge/Badge.astro';
 import Card from '@/components/ui/data-display/Card/Card.astro';
-import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+// import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import BlogCard from '@/components/blog/BlogCard.astro';
 import LighthouseScores from '@/components/landing/LighthouseScores.astro';
 import LetterGlitchBand from '@/components/patterns/LetterGlitchBand.astro';
@@ -47,7 +47,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
    <Fragment slot="actions">
       <Button size="lg" href="https://github.com/anhedonix/vexil" target="_blank" rel="noopener noreferrer">
         Get it on GitHub
-        <Icon name="arrow-right" size="sm" />
+        <!-- <Icon name="arrow-right" size="sm" /> -->
       </Button>
       <!-- <Button size="lg" variant="outline" href="/blog/astro-rocket-getting-started">
         <Icon name="rocket" size="sm" />
@@ -75,7 +75,7 @@ Why VEXiL?         </h2>
         <Card hover data-reveal>
           <div class="flex items-start gap-4">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="layout" size="sm" />
+              <!-- <Icon name="layout" size="sm" /> -->
             </div>
             <div class="flex-1 min-w-0">
               <h3 class="text-base font-semibold text-foreground">Project planning & Execution</h3>
@@ -90,7 +90,7 @@ Why VEXiL?         </h2>
         <Card hover data-reveal data-reveal-delay="1">
           <div class="flex items-start gap-4">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="code" size="sm" />
+              <!-- <Icon name="code" size="sm" /> -->
             </div>
             <div class="flex-1 min-w-0">
               <h3 class="text-base font-semibold text-foreground">Seamless Houdini Integration</h3>
@@ -105,7 +105,7 @@ Why VEXiL?         </h2>
         <Card hover data-reveal data-reveal-delay="2">
           <div class="flex items-start gap-4">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-              <Icon name="zap" size="sm" />
+              <!-- <Icon name="zap" size="sm" /> -->
             </div>
             <div class="flex-1 min-w-0">
               <h3 class="text-base font-semibold text-foreground">Intuitive User Interface</h3>

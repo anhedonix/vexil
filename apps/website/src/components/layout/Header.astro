@@ -26,7 +26,7 @@ import { cn } from '@/lib/cn';
 import { getNavItems, type NavItem as NavConfigItem } from '@/config/nav.config';
 import { headerVariants, headerInnerVariants } from './header.variants';
 import Button from '@/components/ui/form/Button/Button.astro';
-import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+// import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import Logo from '@/components/ui/marketing/Logo/Logo.astro';
 import ThemeModeDropdown from '@/components/layout/ThemeModeDropdown.astro';
 import ThemeSelector from '@/components/layout/ThemeSelector.astro';
@@ -266,7 +266,7 @@ const buttonId = `${menuId}-button`;
                           : 'text-foreground-muted hover:text-foreground hover:bg-secondary/70'
                       )}
                     >
-                      <Icon name={icon} size="md" />
+                      {/* <Icon name={icon} size="md" /> */}
                     </a>
                   );
                 })}
@@ -283,7 +283,7 @@ const buttonId = `${menuId}-button`;
                 aria-label={action.label}
                 class={isFloating ? 'hdr-invert-text' : undefined}
               >
-                <Icon name={action.icon} size="sm" />
+                {/* <Icon name={action.icon} size="sm" /> */}
                 {!action.iconOnly && action.label}
               </Button>
             ))}
@@ -296,9 +296,9 @@ const buttonId = `${menuId}-button`;
                   target={ctaHref?.startsWith('http') ? '_blank' : undefined}
                   class={cn('hdr-cta-brand', isFloating ? 'hdr-invert-cta' : undefined)}
                 >
-                  {cta.icon && <Icon name={cta.icon} size="sm" />}
+                  {/* {cta.icon && <Icon name={cta.icon} size="sm" />} */}
                   {cta.label}
-                  {cta.trailingIcon && <Icon name={cta.trailingIcon} size="sm" />}
+                  {/* {cta.trailingIcon && <Icon name={cta.trailingIcon} size="sm" />} */}
                 </Button>
               </div>
             )}
@@ -323,10 +323,10 @@ const buttonId = `${menuId}-button`;
             aria-label="Toggle menu"
           >
             <span class="menu-icon">
-              <Icon name="menu" size="md" />
+              {/* <Icon name="menu" size="md" /> */}
             </span>
             <span class="close-icon hidden">
-              <Icon name="x" size="md" />
+              {/* <Icon name="x" size="md" /> */}
             </span>
           </button>
         )
@@ -406,9 +406,9 @@ const buttonId = `${menuId}-button`;
             {showCta && (
               <div class="border-border mt-3 border-t pt-3">
                 <Button fullWidth href={ctaHref} target={ctaHref?.startsWith('http') ? '_blank' : undefined}>
-                  {cta.icon && <Icon name={cta.icon} size="sm" />}
+                  {/* {cta.icon && <Icon name={cta.icon} size="sm" />} */}
                   {cta.label}
-                  {cta.trailingIcon && <Icon name={cta.trailingIcon} size="sm" />}
+                  {/* {cta.trailingIcon && <Icon name={cta.trailingIcon} size="sm" />} */}
                 </Button>
               </div>
             )}

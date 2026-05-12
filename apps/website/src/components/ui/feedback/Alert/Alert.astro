@@ -5,7 +5,7 @@
  */
 import type { HTMLAttributes } from 'astro/types';
 import { cn } from '@/lib/cn';
-import Icon from '../../primitives/Icon/Icon.astro';
+// import Icon from '../../primitives/Icon/Icon.astro';
 import { alertVariants, alertIconColors, alertAccentColors } from './alert.variants';
 
 interface Props extends HTMLAttributes<'div'> {
@@ -35,7 +35,7 @@ const icons: Record<string, 'info' | 'check-circle' | 'alert-triangle' | 'x-circ
 
   {/* Icon */}
   <div class={cn('shrink-0 mt-0.5', alertIconColors[variant])}>
-    <Icon name={icons[variant]} class="w-5 h-5" strokeWidth={2} />
+    <!-- <Icon name={icons[variant]} class="w-5 h-5" strokeWidth={2} /> -->
   </div>
 
   {/* Content */}
@@ -58,7 +58,7 @@ const icons: Record<string, 'info' | 'check-circle' | 'alert-triangle' | 'x-circ
       aria-label="Dismiss"
       data-dismiss-alert
     >
-      <Icon name="x" class="w-4 h-4" />
+      {/* <Icon name="x" class="w-4 h-4" /> */}
     </button>
   )}
 </div>

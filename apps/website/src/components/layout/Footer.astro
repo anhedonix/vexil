@@ -25,7 +25,7 @@ import {
 } from '@/config/nav.config';
 import { footerVariants, footerColumnGridVariants } from './footer.variants';
 import Logo from '@/components/ui/marketing/Logo/Logo.astro';
-import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+// import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import siteConfig from '@/config/site.config';
 
 export interface NavItem {
@@ -201,7 +201,7 @@ function getSocialIcon(platform: string): string {
                   rel="noopener noreferrer"
                   aria-label={social.label || `Follow us on ${social.platform}`}
                 >
-                  <Icon name={getSocialIcon(social.platform)} size="md" />
+                  {/* <Icon name={getSocialIcon(social.platform)} size="md" /> */}
                 </a>
               ))}
             </div>
@@ -248,7 +248,7 @@ function getSocialIcon(platform: string): string {
                       rel="noopener noreferrer"
                       aria-label={social.label || `Follow us on ${social.platform}`}
                     >
-                      <Icon name={getSocialIcon(social.platform)} size="md" />
+                      {/* <Icon name={getSocialIcon(social.platform)} size="md" /> */}
                     </a>
                   ))}
                 </div>
@@ -369,7 +369,7 @@ function getSocialIcon(platform: string): string {
                 rel="noopener noreferrer"
                 aria-label={social.label || `Follow us on ${social.platform}`}
               >
-                <Icon name={getSocialIcon(social.platform)} size="md" />
+                {/* <Icon name={getSocialIcon(social.platform)} size="md" /> */}
               </a>
             ))}
           </div>

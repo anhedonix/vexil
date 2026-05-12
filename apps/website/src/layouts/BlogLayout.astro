@@ -11,7 +11,7 @@ import RelatedPosts from '@/components/blog/RelatedPosts.astro';
 import TableOfContents from '@/components/blog/TableOfContents.astro';
 import Comments from '@/components/blog/Comments.astro';
 import CTA from '@/components/ui/marketing/CTA/CTA.astro';
-import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+// import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import { resolveSocialLinks } from '@/lib/utils';
 import { createBlogPostSchema } from '@/lib/schema';
 
@@ -234,7 +234,7 @@ const blogPostingSchema = createBlogPostSchema({
         href="/rss.xml"
         class="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-500 hover:text-brand-500"
       >
-        <Icon name="rss" size="sm" />
+        <!-- <Icon name="rss" size="sm" /> -->
         RSS Feed
       </a>
       {socialLinks.map((link) => (
@@ -244,7 +244,7 @@ const blogPostingSchema = createBlogPostSchema({
           rel="noopener noreferrer"
           class="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-500 hover:text-brand-500"
         >
-          <Icon name={link.icon} size="sm" />
+          {/* <Icon name={link.icon} size="sm" /> */}
           {link.label}
         </a>
       ))}
@@ -252,7 +252,7 @@ const blogPostingSchema = createBlogPostSchema({
         href={`mailto:${siteConfig.email}`}
         class="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-500 hover:text-brand-500"
       >
-        <Icon name="mail" size="sm" />
+        <!-- <Icon name="mail" size="sm" /> -->
         Email
       </a>
     </div>
