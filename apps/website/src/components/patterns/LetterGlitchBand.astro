@@ -1,0 +1,16 @@
+---
+import LetterGlitch from '@/components/effects/LetterGlitch';
+---
+
+<div class="hidden glitch:block mx-auto max-w-6xl px-6">
+  <div class="invert-section relative overflow-hidden rounded-3xl border border-white/10">
+    <div class="absolute inset-0" aria-hidden="true">
+      <LetterGlitch client:visible outerVignette />
+    </div>
+    <div class="relative z-10 px-6 py-16 sm:py-24" data-reveal>
+      <div class="mx-auto max-w-2xl rounded-2xl border border-white/10 bg-brand-900/85 px-6 py-10 sm:px-10 text-center shadow-xl backdrop-blur-md">
+        <slot />
+      </div>
+    </div>
+  </div>
+</div>

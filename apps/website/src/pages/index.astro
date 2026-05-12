@@ -1,0 +1,307 @@
+---
+import LandingLayout from '@/layouts/LandingLayout.astro';
+import { Hero } from '@/components/hero';
+import Button from '@/components/ui/form/Button/Button.astro';
+import Badge from '@/components/ui/data-display/Badge/Badge.astro';
+import Card from '@/components/ui/data-display/Card/Card.astro';
+import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+import BlogCard from '@/components/blog/BlogCard.astro';
+import LighthouseScores from '@/components/landing/LighthouseScores.astro';
+import LetterGlitchBand from '@/components/patterns/LetterGlitchBand.astro';
+import { getCollection } from 'astro:content';
+import siteConfig from '@/config/site.config';
+
+const projectItems = await getCollection('projects');
+const featuredProjects = projectItems
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 4);
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => {
+    if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+    return b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf();
+  })
+  .slice(0, 3);
+---
+
+<LandingLayout
+  title="VEXiL — Project Management Tool for SideFX Houdini"
+  description="VEXiL is a consolidated project management tool designed specifically for SideFX Houdini users. It provides a centralized platform to manage assets, track project progress, and facilitate collaboration among artists and teams working with Houdini. With VEXiL, users can streamline their workflow, improve communication, and enhance productivity in their Houdini projects."
+  image="/og-default.svg"
+  includePersonSchema={true}
+  includeProfessionalServiceSchema={true}
+>
+  <!-- Hero -->
+  <Hero layout="centered" size="xl" class="hero-dark-gradient" showScrollIndicator>
+    <Badge slot="badge" variant="brand" pill pulse class="dark:text-brand-200">Currently under development</Badge>
+
+    <h1 slot="title">
+      <span class="text-brand-600 dark:text-foreground [-webkit-text-fill-color:currentColor]">VEXiL</span><br />
+      <span class="text-brand-600 dark:text-foreground [-webkit-text-fill-color:currentColor]">Project Management Tool for SideFX Houdini</span>
+    </h1>
+
+    <p slot="description">
+    VEXiL is a consolidated project management tool designed specifically for SideFX Houdini users. It provides a centralized platform to manage assets, track project progress, and facilitate collaboration among artists and teams working with Houdini. With VEXiL, users can streamline their workflow, improve communication, and enhance productivity in their Houdini projects.
+    </p>
+
+   <Fragment slot="actions">
+      <Button size="lg" href="https://github.com/anhedonix/vexil" target="_blank" rel="noopener noreferrer">
+        Get it on GitHub
+        <Icon name="arrow-right" size="sm" />
+      </Button>
+      <!-- <Button size="lg" variant="outline" href="/blog/astro-rocket-getting-started">
+        <Icon name="rocket" size="sm" />
+        Get started
+        <Icon name="arrow-right" size="sm" />
+      </Button> -->
+    </Fragment>
+  </Hero>
+
+  <!-- Services Section -->
+  <section class="relative z-10 py-[var(--space-section-md)] bg-background-secondary border-t border-border">
+    <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
+      <div class="flex flex-col items-center gap-4 text-center" data-reveal>
+        <div class="flex flex-col items-center gap-6">
+          <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
+Why VEXiL?         </h2>
+        </div>
+        <p class="text-lg text-foreground-muted max-w-2xl mx-auto">
+        From planning till delivery, VEXiL is designed to support the unique needs of Houdini artists and teams, helping you stay organized, collaborate effectively, and keep your projects on track.
+        </p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <!-- Web Design -->
+        <Card hover data-reveal>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+              <Icon name="layout" size="sm" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-base font-semibold text-foreground">Project planning & Execution</h3>
+              <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
+              VEXiL helps you plan your Houdini projects with features like task management, asset organization, and timeline tracking, ensuring you stay on top of every aspect of your project from start to finish.
+              </p>
+            </div>
+          </div>
+        </Card>
+
+        <!-- Web Development -->
+        <Card hover data-reveal data-reveal-delay="1">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+              <Icon name="code" size="sm" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-base font-semibold text-foreground">Seamless Houdini Integration</h3>
+              <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
+              Automate your workflows with a simple Package installation and VEXiL will integrate directly into your Houdini environment, providing a seamless experience that allows you to manage your projects without leaving Houdini.
+              </p>
+            </div>
+          </div>
+        </Card>
+
+        <!-- Performance -->
+        <Card hover data-reveal data-reveal-delay="2">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+              <Icon name="zap" size="sm" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-base font-semibold text-foreground">Intuitive User Interface</h3>
+              <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
+              VEXiL features a clean, modern interface that's easy to use and provides a great user experience, allowing you to focus on your creative work without getting bogged down in complex workflows.
+              </p>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio -->
+  <!-- <section id="work" class="relative z-10 py-[var(--space-section-md)] bg-background border-t border-border">
+    <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
+      <div class="flex flex-col items-center gap-4 text-center" data-reveal>
+        <div class="flex flex-col items-center gap-6">
+          <Badge variant="brand" pill>Selected work</Badge>
+          <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
+            Projects I've built
+          </h2>
+        </div>
+        <p class="text-lg text-foreground-muted max-w-2xl mx-auto">
+          A selection of recent work.
+        </p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2">
+        {featuredProjects.map((project) => (
+          <Card variant="elevated" hover padding="lg" href={`/projects/${project.id.replace(/\.mdx?$/, '')}`} class="group flex flex-col" data-reveal>
+            <div class="flex flex-1 flex-col">
+              <div class="mb-3 flex items-start justify-between gap-4">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+                  <Icon name="layers" size="sm" />
+                </div>
+                <Icon name="arrow-up-right" size="sm" class="text-foreground-muted group-hover:text-brand-500 transition-colors shrink-0" />
+              </div>
+              <div class="mb-2 flex items-baseline gap-2">
+                <h3 class="font-display text-lg font-bold text-foreground">{project.data.title}</h3>
+                {project.data.year && (
+                  <span class="text-xs text-foreground-muted">{project.data.year}</span>
+                )}
+              </div>
+              <p class="text-sm text-foreground-muted leading-relaxed mb-4 flex-1">{project.data.description}</p>
+              <div class="flex flex-wrap gap-1.5">
+                {project.data.tags.map((tag) => (
+                  <Badge variant="brand">{tag}</Badge>
+                ))}
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <div class="flex justify-center">
+        <Button variant="outline" href="/projects">
+          View all projects
+          <Icon name="arrow-right" size="sm" />
+        </Button>
+      </div>
+    </div>
+  </section> -->
+
+  <!-- Testimonials -->
+  <!-- <section class="relative z-10 py-[var(--space-section-md)] bg-background-secondary border-t border-border">
+    <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
+      <div class="flex flex-col items-center gap-4 text-center" data-reveal>
+        <div class="flex flex-col items-center gap-6">
+          <Badge variant="brand" pill>Testimonials</Badge>
+          <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
+            What clients say
+          </h2>
+        </div>
+        <p class="text-lg text-foreground-muted">
+          Replace these with your own client quotes.
+        </p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2">
+        <Card variant="elevated" padding="lg" hover data-reveal>
+          <div class="flex flex-col h-full gap-4">
+            <div class="flex gap-1 text-brand-500" role="img" aria-label="5 out of 5 stars">
+              {[...Array(5)].map(() => (
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
+            <blockquote class="flex-1 text-foreground-muted leading-relaxed">
+              "The new site launched on time and hit every goal we set. Performance improved dramatically — load times dropped and the feedback from our customers has been overwhelmingly positive."
+            </blockquote>
+            <div class="flex items-center gap-3 pt-4 border-t border-border">
+              <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-500/30 to-brand-500/10 flex items-center justify-center text-brand-500 font-bold text-sm shrink-0">
+                A
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-foreground">Alex Morgan</p>
+                <p class="text-xs text-foreground-muted">Founder, Bright Studio</p>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <Card variant="elevated" padding="lg" hover data-reveal data-reveal-delay="1">
+          <div class="flex flex-col h-full gap-4">
+            <div class="flex gap-1 text-brand-500" role="img" aria-label="5 out of 5 stars">
+              {[...Array(5)].map(() => (
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
+            <blockquote class="flex-1 text-foreground-muted leading-relaxed">
+              "Straightforward from first conversation to final handover. The right questions were asked, we were kept in the loop throughout, and the end result exceeded what we imagined. Would recommend without hesitation."
+            </blockquote>
+            <div class="flex items-center gap-3 pt-4 border-t border-border">
+              <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-500/30 to-brand-500/10 flex items-center justify-center text-brand-500 font-bold text-sm shrink-0">
+                S
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-foreground">Sarah Chen</p>
+                <p class="text-xs text-foreground-muted">CEO, Luma Agency</p>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </div>
+  </section> -->
+
+
+  <!-- Blog -->
+  <!-- <section class="relative z-10 py-[var(--space-section-md)] bg-background border-t border-border">
+    <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
+      <div class="flex flex-col items-center gap-6 text-center" data-reveal>
+        <Badge variant="brand" pill>From the blog</Badge>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
+          Featured
+        </h2>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-3">
+        {posts.map((post) => (
+          <BlogCard
+            title={post.data.title}
+            description={post.data.description}
+            href={`/blog/${post.id.replace('en/', '')}`}
+            publishedAt={post.data.publishedAt}
+            tags={post.data.tags}
+            author={post.data.author}
+            image={post.data.image}
+            svgSlug={post.data.svgSlug}
+          />
+        ))}
+      </div>
+
+      <div class="flex justify-center">
+        <Button variant="outline" href="/blog">
+          View all posts
+          <Icon name="arrow-right" size="sm" />
+        </Button>
+      </div>
+    </div>
+  </section> -->
+
+<script>
+  function initCountup() {
+    const counters = document.querySelectorAll<HTMLElement>('[data-countup]:not([data-countup-init])');
+    if (counters.length === 0) return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        observer.unobserve(entry.target);
+        const el = entry.target as HTMLElement;
+        const target = parseInt(el.dataset.countup ?? '0', 10);
+        const suffix = el.dataset.suffix ?? '';
+        const duration = 1200;
+        const start = performance.now();
+        const tick = (now: number) => {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.round(eased * target) + suffix;
+          if (progress < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }, { threshold: 0.4 });
+    counters.forEach((el) => {
+      el.dataset.countupInit = 'true';
+      observer.observe(el);
+    });
+  }
+
+  initCountup();
+</script>
+
+</LandingLayout>
