@@ -1,0 +1,443 @@
+---
+import '@/styles/global.css';
+import outfitFont from '@fontsource-variable/outfit/files/outfit-latin-wght-normal.woff2?url';
+import manropeFont from '@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2?url';
+import SEO from '@/components/seo/SEO.astro';
+import JsonLd from '@/components/seo/JsonLd.astro';
+import Analytics from '@/components/layout/Analytics.astro';
+import ConsentBanner from '@/components/ui/overlay/ConsentBanner';
+import CursorTrail from '@/components/effects/CursorTrail.astro';
+import { createWebsiteSchema, createOrganizationSchema, createPersonSchema, createProfessionalServiceSchema } from '@/lib/schema';
+import type { Thing, WithContext } from 'schema-dts';
+import siteConfig from '@/config/site.config';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  article?: {
+    publishedTime?: Date;
+    modifiedTime?: Date;
+    authors?: string[];
+    tags?: string[];
+  };
+  noindex?: boolean;
+  nofollow?: boolean;
+  includeOrgSchema?: boolean;
+  includePersonSchema?: boolean;
+  includeProfessionalServiceSchema?: boolean;
+  extraSchemas?: WithContext<Thing>[];
+  eagerReveal?: boolean;
+}
+
+const {
+  title,
+  description,
+  image,
+  imageAlt,
+  article,
+  noindex = false,
+  nofollow = false,
+  includeOrgSchema = false,
+  includePersonSchema = false,
+  includeProfessionalServiceSchema = false,
+  extraSchemas = [],
+  eagerReveal = false,
+} = Astro.props;
+
+// Build JSON-LD schemas
+const schemas: WithContext<Thing>[] = [createWebsiteSchema()];
+if (includeOrgSchema) {
+  schemas.push(createOrganizationSchema());
+}
+if (includePersonSchema) {
+  schemas.push(createPersonSchema());
+}
+if (includeProfessionalServiceSchema) {
+  schemas.push(createProfessionalServiceSchema());
+}
+schemas.push(...extraSchemas);
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth dark" data-theme="blue" data-theme-mode="system">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Preload display + body fonts so they're ready for first paint -->
+    <link rel="preload" as="font" type="font/woff2" href={manropeFont} crossorigin="anonymous" />
+    <link rel="preload" as="font" type="font/woff2" href={outfitFont} crossorigin="anonymous" />
+
+    {siteConfig.articleFeatures?.comments?.enabled && (
+      <link rel="preconnect" href="https://giscus.app" crossorigin />
+    )}
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href={siteConfig.branding.favicon.svg} />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content={siteConfig.branding.colors.themeColor} />
+
+    <!-- SEO -->
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      imageAlt={imageAlt}
+      article={article}
+      noindex={noindex}
+      nofollow={nofollow}
+    />
+
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title={`${siteConfig.name} RSS Feed`} href="/rss.xml" />
+
+    <!-- JSON-LD Structured Data -->
+    <JsonLd schema={schemas} />
+
+    <!-- Analytics (loads if PUBLIC_GA_MEASUREMENT_ID or PUBLIC_GTM_ID is set) -->
+    <Analytics />
+
+    <!-- Client-side view transitions are intentionally disabled. They composed
+         poorly with the theme's CSS keyframe animations (hero slide-up,
+         data-reveal fades) and produced a visible post-fade "aftershake" on
+         mobile. Each navigation now does a normal page load, so animations
+         run cleanly from frame 0 every time. -->
+
+
+    <!-- Dynamic favicon: syncs letter (first letter of site name) and color (brand-500) with active theme -->
+    <script is:inline define:vars={{ _faviconLetter: siteConfig.name.charAt(0).toUpperCase() }}>
+      (function () {
+        const LETTER = _faviconLetter;
+
+        function updateFavicon() {
+          const color = getComputedStyle(document.documentElement).getPropertyValue('--brand-500').trim();
+          if (!color) return;
+          const svg =
+            '<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">' +
+            '<rect width="48" height="48" rx="8" fill="' + color + '"/>' +
+            '<text x="24" y="24" text-anchor="middle" dominant-baseline="central" ' +
+            'font-family="Outfit, system-ui, sans-serif" font-weight="700" font-size="34" fill="white">' +
+            LETTER +
+            '</text></svg>';
+          const link = document.querySelector('link[rel="icon"]');
+          if (link) link.setAttribute('href', 'data:image/svg+xml,' + encodeURIComponent(svg));
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', updateFavicon);
+        } else {
+          updateFavicon();
+        }
+
+        if (!window.__faviconListenerInit) {
+          window.__faviconListenerInit = true;
+
+          // Re-run whenever data-theme or dark/light class changes
+          new MutationObserver(function (mutations) {
+            for (let i = 0; i < mutations.length; i++) {
+              if (mutations[i].attributeName === 'data-theme' || mutations[i].attributeName === 'class') {
+                updateFavicon();
+                break;
+              }
+            }
+          }).observe(document.documentElement, { attributes: true });
+
+          // Re-run after Astro view transitions swap the head
+          document.addEventListener('astro:after-swap', updateFavicon);
+        }
+      })();
+    </script>
+
+    <!-- Theme bootstrap (runs before body paint; no flash of wrong theme).
+         Implements a 3-state colour-mode contract:
+           localStorage.theme ∈ {'system','light','dark'}  (default 'system')
+           <html data-theme-mode="…">                      (mirrors saved mode)
+           <html class="dark">                              (resolved appearance)
+         When mode === 'system', <html>.dark tracks prefers-color-scheme live. -->
+    <script is:inline>
+      (function () {
+        const COLOR_THEMES = ['orange', 'amber', 'lime', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'magenta'];
+        const VALID_MODES = ['system', 'light', 'dark'];
+
+        function getMode() {
+          try {
+            const stored = localStorage.getItem('theme');
+            if (VALID_MODES.indexOf(stored) !== -1) return stored;
+          } catch { /* private mode / disabled storage */ }
+          return 'system';
+        }
+
+        function applyMode(el) {
+          const mode = getMode();
+          el.setAttribute('data-theme-mode', mode);
+          const isDark =
+            mode === 'dark' ||
+            (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) el.classList.add('dark');
+          else el.classList.remove('dark');
+        }
+
+        function applyColorTheme(el) {
+          try {
+            // Color palette — sessionStorage so it resets to default on each new visit
+            const saved = sessionStorage.getItem('color-theme');
+            if (saved && COLOR_THEMES.indexOf(saved) !== -1) {
+              el.setAttribute('data-theme', saved);
+            }
+          } catch { /* ignored */ }
+        }
+
+        function applyTheme(el) {
+          applyMode(el);
+          applyColorTheme(el);
+        }
+
+        applyTheme(document.documentElement);
+
+        if (!window.__themeListenersInit) {
+          window.__themeListenersInit = true;
+
+          // Live-update when the OS flips colour scheme AND the user is on 'system'.
+          const mql = window.matchMedia('(prefers-color-scheme: dark)');
+          const onSchemeChange = function () {
+            if (getMode() === 'system') applyMode(document.documentElement);
+          };
+          if (mql.addEventListener) mql.addEventListener('change', onSchemeChange);
+          else if (mql.addListener) mql.addListener(onSchemeChange); // Safari < 14
+
+          // Re-apply across Astro view transitions (no flash on swap).
+          document.addEventListener('astro:before-swap', function (e) {
+            applyTheme(e.newDocument.documentElement);
+          });
+          document.addEventListener('astro:after-swap', function () {
+            applyTheme(document.documentElement);
+          });
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="min-h-screen bg-background text-foreground antialiased" data-eager-reveal={eagerReveal ? '' : undefined}>
+    <!-- Skip to content link -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+    >
+      Skip to content
+    </a>
+
+    <slot name="header" />
+
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+
+    <slot name="footer" />
+
+    <ConsentBanner />
+
+    <CursorTrail />
+
+    <!-- Back to top button -->
+    <button
+      id="back-to-top"
+      aria-label="Back to top"
+      class="fixed bottom-6 right-6 z-50 h-12 w-12"
+      style="opacity:0;translate:0 2rem;pointer-events:none"
+    >
+      <!-- Scroll-progress ring (rotated so arc starts at 12 o'clock) -->
+      <svg class="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
+        <!-- Faint grey track -->
+        <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" class="text-border" stroke-width="2" opacity="0.5" />
+        <!-- Brand progress arc -->
+        <circle id="back-to-top-ring" cx="24" cy="24" r="21" fill="none" stroke="currentColor" class="text-brand-500" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="131.95" stroke-dashoffset="131.95" />
+      </svg>
+      <!-- Inner face -->
+      <span class="absolute inset-[5px] flex items-center justify-center rounded-full bg-background border border-border-strong text-foreground-muted shadow-md" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
+      </span>
+    </button>
+
+    <script is:inline>
+      (function () {
+        const THRESHOLD = 400;
+        const CIRCUMFERENCE = 131.95;
+
+        // Cache `scrollHeight - innerHeight` so the per-frame scroll handler
+        // never reads layout-dependent properties. We deliberately:
+        //   * Avoid a ResizeObserver — it fires during the page load period
+        //     (image loads, reveal animations, font swap) and reading
+        //     scrollHeight in those callbacks reintroduces forced reflow.
+        //   * Avoid reading scrollHeight at script-init — this script is
+        //     `is:inline` and runs during HTML parsing, before layout is
+        //     committed. Reading scrollHeight then forces the browser to
+        //     compute layout for the partial document — Lighthouse flagged
+        //     this as ~100ms of forced reflow on mobile.
+        // We start at 0 and read for the first time on DOMContentLoaded
+        // (parser done, initial layout cheap) and again on `load` (after
+        // every resource has settled). The brief window where the cache
+        // is 0 is invisible: the back-to-top button only shows after
+        // scrollY > 400, by which point DOMContentLoaded has fired.
+        let docMaxScrollY = 0;
+        function updateDocMaxScrollY() {
+          docMaxScrollY = document.documentElement.scrollHeight - window.innerHeight;
+        }
+        window.addEventListener('resize', updateDocMaxScrollY, { passive: true });
+        window.addEventListener('load', updateDocMaxScrollY);
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', updateDocMaxScrollY, { once: true });
+        } else {
+          updateDocMaxScrollY();
+        }
+
+        function initBackToTop() {
+          const btn = document.getElementById('back-to-top');
+          if (!btn || btn.dataset.bttInit) return;
+          btn.dataset.bttInit = 'true';
+
+          const ring = document.getElementById('back-to-top-ring');
+          const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          let ticking = false;
+          let visible = false;
+
+          // Ensure initial hidden state is applied via JS (guards against any cascade override)
+          btn.style.opacity = '0';
+          btn.style.translate = '0 2rem';
+          btn.style.pointerEvents = 'none';
+
+          function show() {
+            if (reducedMotion) {
+              btn.style.transition = 'none';
+            } else {
+              btn.style.transition = 'opacity 250ms cubic-bezier(0,0,0.2,1), translate 250ms cubic-bezier(0,0,0.2,1)';
+            }
+            btn.style.opacity = '1';
+            btn.style.translate = '0 0';
+            btn.style.pointerEvents = 'auto';
+            visible = true;
+          }
+
+          function hide() {
+            if (reducedMotion) {
+              btn.style.transition = 'none';
+            } else {
+              btn.style.transition = 'opacity 300ms cubic-bezier(0.4,0,1,1), translate 300ms cubic-bezier(0.4,0,1,1)';
+            }
+            btn.style.opacity = '0';
+            btn.style.translate = '0 2rem';
+            btn.style.pointerEvents = 'none';
+            visible = false;
+          }
+
+          function updateFrame() {
+            const pct = docMaxScrollY > 0 ? Math.min(1, Math.max(0, window.scrollY / docMaxScrollY)) : 0;
+            if (ring) {
+              ring.style.strokeDashoffset = String(CIRCUMFERENCE * (1 - pct));
+            }
+            if (window.scrollY > THRESHOLD) {
+              if (!visible) show();
+            } else {
+              if (visible) hide();
+            }
+            ticking = false;
+          }
+
+          function onScroll() {
+            if (!ticking) {
+              ticking = true;
+              requestAnimationFrame(updateFrame);
+            }
+          }
+
+          window.addEventListener('scroll', onScroll, { passive: true });
+          btn.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
+          });
+
+          document.addEventListener('astro:before-swap', function () {
+            window.removeEventListener('scroll', onScroll);
+          }, { once: true });
+
+          // Run the first frame on rAF so it picks up the initial scroll
+          // position after layout has settled.
+          requestAnimationFrame(updateFrame);
+        }
+
+        document.addEventListener('astro:page-load', initBackToTop);
+        initBackToTop();
+      })();
+    </script>
+
+    <script is:inline>
+      (function () {
+        function initReveal() {
+          const els = Array.prototype.slice.call(
+            document.querySelectorAll('[data-reveal]:not(.is-visible), [data-reveal-children]:not(.is-visible)')
+          );
+
+          // Also observe each direct child of [data-reveal-content] so long
+          // article bodies (blog posts, project pages) animate block-by-block.
+          document.querySelectorAll('[data-reveal-content]').forEach(function (container) {
+            Array.prototype.forEach.call(container.children, function (child) {
+              if (!child.classList.contains('is-visible')) els.push(child);
+            });
+          });
+
+          if (!els.length) return;
+
+          // Above-the-fold = elements whose top is at least 25% inside the
+          // initial viewport. Anything just barely poking above the fold
+          // would otherwise animate while the user can't see it.
+          const fold = window.innerHeight * 0.75;
+          const aboveFold = [];
+          const belowFold = [];
+          els.forEach(function (el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < fold && rect.bottom > 0) {
+              aboveFold.push(el);
+            } else {
+              belowFold.push(el);
+            }
+          });
+
+          aboveFold.forEach(function (el, i) {
+            setTimeout(function () {
+              el.classList.add('is-visible');
+            }, 250 + i * 80);
+          });
+
+          if (!belowFold.length) return;
+          // Negative bottom rootMargin: trigger only when the element is
+          // meaningfully on screen, so the user actually sees the animation
+          // play instead of finding it already finished.
+          const eager = document.body.hasAttribute('data-eager-reveal');
+          const observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.15, rootMargin: eager ? '0px 0px -5% 0px' : '0px 0px -10% 0px' });
+          belowFold.forEach(function (el) { observer.observe(el); });
+        }
+
+        // Defer to the next frame so getBoundingClientRect reads happen
+        // after the browser has computed initial layout, turning a forced
+        // sync reflow into a cheap cached read.
+        function deferredInitReveal() {
+          requestAnimationFrame(initReveal);
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', deferredInitReveal);
+        } else {
+          deferredInitReveal();
+        }
+      })();
+    </script>
+  </body>
+</html>

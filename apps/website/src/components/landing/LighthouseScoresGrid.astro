@@ -1,0 +1,136 @@
+---
+/**
+ * LighthouseScoresGrid
+ * Just the four animated count-up cards — no badge, no h2, no section
+ * wrapper. Embeddable inside other layouts (e.g. MDX project pages)
+ * where the surrounding context already supplies its own heading.
+ *
+ * For the standalone landing-section variant, see LighthouseScores.astro.
+ *
+ * Pass `staggered={false}` when this grid sits inside another reveal
+ * context (e.g. inside a `data-reveal-content` prose container) so the
+ * inner card stagger doesn't fight the parent's block-level reveal.
+ */
+import Card from '@/components/ui/data-display/Card/Card.astro';
+import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+
+interface Props {
+  /** Stagger the cards in via data-reveal-children. Default true. */
+  staggered?: boolean;
+}
+
+const { staggered = true } = Astro.props;
+
+interface Score {
+  label: string;
+  value: number;
+  icon: string;
+}
+
+const scores: Score[] = [
+  { label: 'Performance',    value: 100, icon: 'zap' },
+  { label: 'Accessibility',  value: 100, icon: 'users' },
+  { label: 'Best Practices', value: 100, icon: 'shield-check' },
+  { label: 'SEO',            value: 100, icon: 'search' },
+];
+
+const wrapperProps = staggered ? { 'data-reveal-children': true } : {};
+---
+
+<div class="grid grid-cols-2 gap-[var(--space-content-gap)] md:grid-cols-4" {...wrapperProps}>
+  {scores.map((score, i) => (
+    <Card variant="elevated" padding="sm" hover class="h-full text-center border-t-2 border-t-brand-500/40 transition-colors duration-200 hover:border-t-brand-500">
+      <div class="flex flex-col items-center gap-[var(--space-stack-sm)]">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+          <Icon name={score.icon} size="md" />
+        </div>
+        <span
+          class="lh-number font-display text-4xl font-bold text-brand-500"
+          data-target={score.value}
+          data-stagger={i}
+          aria-label={`${score.label}: ${score.value} out of 100`}
+        >0</span>
+        <span class="text-base font-medium text-foreground-muted">{score.label}</span>
+      </div>
+    </Card>
+  ))}
+</div>
+
+<style>
+  /* Soft brand glow under the count number */
+  .lh-number {
+    text-shadow: 0 0 24px color-mix(in oklab, var(--color-brand-500) 40%, transparent);
+  }
+
+  /* Pulse when the count lands on its target */
+  @keyframes lh-land-pulse {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+  .lh-number.is-landed {
+    animation: lh-land-pulse 0.5s cubic-bezier(0.22, 1.6, 0.36, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lh-number.is-landed {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  function initLighthouseScores() {
+    const numbers = document.querySelectorAll<HTMLElement>('.lh-number:not([data-lh-init])');
+    if (!numbers.length) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const animate = (el: HTMLElement) => {
+      el.dataset.lhInit = 'true';
+      const target = parseInt(el.dataset.target ?? '0', 10);
+      const stagger = parseInt(el.dataset.stagger ?? '0', 10) * 80;
+
+      if (reduceMotion) {
+        el.textContent = String(target);
+        return;
+      }
+
+      const duration = 1500;
+      const startAt = performance.now() + stagger;
+      const tick = (now: number) => {
+        if (now < startAt) {
+          requestAnimationFrame(tick);
+          return;
+        }
+        const progress = Math.min((now - startAt) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = String(Math.round(eased * target));
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          // Landed — quick pulse, then auto-reset so it can replay if needed
+          el.classList.add('is-landed');
+          window.setTimeout(() => el.classList.remove('is-landed'), 600);
+        }
+      };
+      requestAnimationFrame(tick);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          observer.unobserve(entry.target);
+          animate(entry.target as HTMLElement);
+        });
+      },
+      { threshold: 0.4 }
+    );
+
+    numbers.forEach((el) => observer.observe(el));
+  }
+
+  initLighthouseScores();
+  document.addEventListener('astro:page-load', initLighthouseScores);
+</script>
