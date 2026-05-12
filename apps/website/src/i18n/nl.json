@@ -1,0 +1,81 @@
+{
+  "nav": {
+    "skipToContent": "Naar inhoud",
+    "openMenu": "Menu openen",
+    "closeMenu": "Menu sluiten",
+    "selectLanguage": "Selecteer taal",
+    "currentLanguage": "Huidige taal"
+  },
+  "common": {
+    "readMore": "Lees meer",
+    "loading": "Laden…",
+    "backToTop": "Terug naar boven",
+    "search": "Zoeken",
+    "submit": "Verzenden",
+    "cancel": "Annuleren",
+    "next": "Volgende",
+    "previous": "Vorige"
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "Recente artikelen en updates",
+    "readingTime": "{minutes} min leestijd",
+    "publishedOn": "Gepubliceerd op {date}",
+    "updatedOn": "Bijgewerkt op {date}",
+    "writtenBy": "Geschreven door {author}",
+    "tagsLabel": "Tags",
+    "featured": "Uitgelicht",
+    "draft": "Concept",
+    "noPostsFound": "Geen berichten gevonden.",
+    "tableOfContents": "Inhoudsopgave",
+    "shareThisPost": "Deel dit bericht"
+  },
+  "projects": {
+    "title": "Projecten",
+    "description": "Dingen die ik heb gebouwd",
+    "viewProject": "Bekijk project",
+    "viewSource": "Bekijk broncode",
+    "noProjectsFound": "Geen projecten gevonden."
+  },
+  "pagination": {
+    "page": "Pagina {current} van {total}",
+    "previousPage": "Vorige pagina",
+    "nextPage": "Volgende pagina"
+  },
+  "errors": {
+    "pageNotFound": "Pagina niet gevonden",
+    "pageNotFoundMessage": "De pagina die je zoekt bestaat niet of is verplaatst.",
+    "goHome": "Naar de homepagina"
+  },
+  "newsletter": {
+    "heading": "Abonneer op de nieuwsbrief",
+    "description": "Ontvang de nieuwste berichten in je inbox.",
+    "emailPlaceholder": "jouw@email.nl",
+    "subscribe": "Abonneren",
+    "subscribing": "Bezig met abonneren…",
+    "success": "Bedankt! Controleer je inbox om te bevestigen.",
+    "error": "Er ging iets mis. Probeer het opnieuw."
+  },
+  "contact": {
+    "heading": "Neem contact op",
+    "name": "Naam",
+    "email": "E-mail",
+    "subject": "Onderwerp",
+    "message": "Bericht",
+    "send": "Verstuur bericht",
+    "sending": "Bezig met verzenden…",
+    "success": "Bedankt! Je bericht is verstuurd.",
+    "error": "Er ging iets mis. Probeer het opnieuw."
+  },
+  "theme": {
+    "selectTheme": "Selecteer thema",
+    "lightMode": "Lichte modus",
+    "darkMode": "Donkere modus",
+    "systemMode": "Systeem",
+    "toggleTheme": "Wissel thema"
+  },
+  "footer": {
+    "copyright": "© {year} {name}. Alle rechten voorbehouden.",
+    "builtWith": "Gebouwd met Astro Rocket"
+  }
+}

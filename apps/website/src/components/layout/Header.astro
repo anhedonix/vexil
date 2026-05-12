@@ -1,0 +1,1002 @@
+---
+/**
+ * Header Component
+ * Flexible navigation header with variant-based configuration
+ *
+ * Variants:
+ * - layout: 'default' | 'centered' | 'minimal'
+ * - position: 'fixed' | 'sticky' | 'static'
+ * - size: 'sm' | 'md' | 'lg'
+ * - variant: 'default' | 'solid' | 'transparent'
+ * - colorScheme: 'default' | 'invert' (use 'invert' for dark backgrounds)
+ * - shape: 'bar' | 'floating' (use 'floating' for capsule header)
+ *
+ * Features:
+ * - Dynamic navigation from nav.config.ts (default) or custom nav prop
+ * - Optional CTA button with customization
+ * - Mobile menu with Escape key support
+ * - Theme toggle
+ * - GitHub/action buttons
+ * - Full slot support for customization
+ * - Inverted color scheme for use on dark/image backgrounds
+ * - Floating capsule shape with scroll-reactive bg + color flip
+ */
+import type { HTMLAttributes } from 'astro/types';
+import { cn } from '@/lib/cn';
+import { getNavItems, type NavItem as NavConfigItem } from '@/config/nav.config';
+import { headerVariants, headerInnerVariants } from './header.variants';
+import Button from '@/components/ui/form/Button/Button.astro';
+import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+import Logo from '@/components/ui/marketing/Logo/Logo.astro';
+import ThemeModeDropdown from '@/components/layout/ThemeModeDropdown.astro';
+import ThemeSelector from '@/components/layout/ThemeSelector.astro';
+import ThemeSelectorDropdown from '@/components/layout/ThemeSelectorDropdown.astro';
+import LanguageSwitcher from '@/components/layout/LanguageSwitcher.astro';
+import siteConfig from '@/config/site.config';
+import { isEnabled as i18nIsEnabled } from '@/i18n';
+
+export interface NavItem {
+  label: string;
+  href: string;
+}
+
+export interface HeaderAction {
+  icon: string;
+  href: string;
+  label: string;
+  iconOnly?: boolean;
+  target?: string;
+}
+
+interface Props extends HTMLAttributes<'header'> {
+  layout?: 'default' | 'centered' | 'minimal';
+  position?: 'fixed' | 'sticky' | 'static';
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'solid' | 'transparent';
+  colorScheme?: 'default' | 'invert';
+  shape?: 'bar' | 'floating';
+  nav?: NavItem[];
+  extraNav?: NavItem[];
+  showCta?: boolean;
+  cta?: { label?: string; href?: string; icon?: string; trailingIcon?: string };
+  actions?: HeaderAction[];
+  showThemeToggle?: boolean;
+  showThemeSelector?: boolean;
+  showMobileMenu?: boolean;
+  showActiveState?: boolean;
+  logoText?: string;
+  hideLogo?: boolean;
+  showLanguageSwitcher?: boolean;
+  showSocialLinks?: boolean;
+  showScrollProgress?: boolean;
+  scrollProgressPosition?: 'top' | 'bottom';
+  autoHide?: boolean;
+  invertOnReturn?: boolean;
+  /**
+   * Max width of the inner container (only applies when `shape='bar'`).
+   * Defaults to `'6xl'` (the historical width).
+   */
+  maxWidth?: '4xl' | '5xl' | '6xl' | '7xl' | 'full';
+}
+
+const {
+  layout = 'default',
+  position = 'fixed',
+  size = 'lg',
+  variant = 'solid',
+  colorScheme = 'default',
+  shape = 'bar',
+  nav,
+  extraNav = [],
+  showCta = false,
+  cta = { label: 'Start a project', href: '/contact' },
+  actions = [],
+  showThemeToggle = true,
+  showThemeSelector = true,
+  showMobileMenu = true,
+  showSocialLinks = false,
+  showLanguageSwitcher = i18nIsEnabled(),
+  showActiveState = true,
+  showScrollProgress = false,
+  scrollProgressPosition = 'bottom',
+  autoHide = true,
+  invertOnReturn = true,
+  logoText,
+  hideLogo = false,
+  maxWidth = '6xl',
+  class: className,
+  ...attrs
+} = Astro.props;
+
+const isFloating = shape === 'floating';
+const maxWidthClass = {
+  '4xl': 'max-w-4xl',
+  '5xl': 'max-w-5xl',
+  '6xl': 'max-w-6xl',
+  '7xl': 'max-w-7xl',
+  full: 'max-w-full',
+}[maxWidth];
+const effectiveShowScrollProgress = showScrollProgress || (isFloating && !autoHide);
+const isInvert = colorScheme === 'invert';
+
+const defaultNav = getNavItems().map((item: NavConfigItem) => ({
+  label: item.label,
+  href: item.href,
+}));
+const navItems: NavItem[] = nav || [...extraNav, ...defaultNav];
+
+const currentPath = Astro.url.pathname;
+const isLandingPage = currentPath === '/';
+const ctaHref = cta.href?.startsWith('#') && !isLandingPage ? `/${cta.href}` : cta.href;
+
+const hasLogoSlot = Astro.slots.has('logo');
+const hasNavSlot = Astro.slots.has('nav');
+const hasActionsSlot = Astro.slots.has('actions');
+const hasMobileMenuSlot = Astro.slots.has('mobile-menu');
+
+const headerClasses = cn(
+  headerVariants({ position, variant, shape }),
+  isInvert && !isFloating && 'invert-section',
+  className
+);
+
+const innerClasses = cn(headerInnerVariants({ size, shape }), !isFloating && maxWidthClass);
+
+function isActive(href: string): boolean {
+  if (!showActiveState) return false;
+  if (href.startsWith('#')) return false;
+  return currentPath === href || currentPath.startsWith(href + '/');
+}
+
+function getSocialIconData(url: string): { icon: string; label: string } {
+  if (url.includes('github.com'))    return { icon: 'github',    label: 'GitHub' };
+  if (url.includes('instagram.com')) return { icon: 'instagram', label: 'Instagram' };
+  if (url.includes('x.com') || url.includes('twitter.com')) return { icon: 'x-twitter', label: 'X' };
+  if (url.includes('linkedin.com'))  return { icon: 'linkedin',  label: 'LinkedIn' };
+  if (url.includes('bsky.app'))      return { icon: 'bluesky',   label: 'Bluesky' };
+  return { icon: 'link', label: 'Social' };
+}
+
+const menuId = `mobile-menu-${Math.random().toString(36).slice(2, 9)}`;
+const buttonId = `${menuId}-button`;
+---
+
+<header
+  class={headerClasses}
+  data-menu-id={menuId}
+  data-button-id={buttonId}
+  data-header-shape={shape}
+  data-header-variant={variant}
+  data-header-color-scheme={colorScheme}
+  data-header-auto-hide={autoHide ? 'true' : 'false'}
+  data-header-invert-on-return={invertOnReturn ? 'true' : 'false'}
+  {...attrs}
+>
+  <div class={cn(innerClasses, 'hdr-inner')}>
+    {
+      !hideLogo &&
+        (hasLogoSlot ? (
+          <slot name="logo" />
+        ) : (
+          <a href="/" class="flex items-center gap-2">
+            <Logo size={size === 'sm' ? 'md' : 'lg'} forceDark={isInvert} class="bg-brand-600" />
+            <span
+              class={cn(
+                'font-display text-xl font-bold tracking-tight',
+                isFloating ? 'hdr-logo-text' : (isInvert ? 'text-brand-600 dark:text-foreground md:text-on-invert' : 'text-brand-600 dark:text-foreground')
+              )}
+            >
+              {logoText || siteConfig.name}
+            </span>
+          </a>
+        ))
+    }
+
+    {
+      layout !== 'minimal' &&
+        (hasNavSlot ? (
+          <nav class="hidden items-center gap-1 md:flex" aria-label="Main navigation">
+            <slot name="nav" />
+          </nav>
+        ) : (
+          <nav class="hidden items-center gap-1 md:flex" aria-label="Main navigation">
+            {navItems.map(({ label, href }) => (
+              <a
+                href={href.startsWith('#') && !isLandingPage ? `/${href}` : href}
+                class={cn(
+                  'nav-link relative rounded-md px-3 py-2 text-sm',
+                  'transition-all duration-(--transition-fast)',
+                  isFloating && 'hdr-invert-text',
+                  isFloating
+                    ? (isActive(href)
+                        ? 'hdr-nav-active font-semibold'
+                        : 'font-medium')
+                    : (isActive(href)
+                        ? 'nav-link-active font-semibold text-foreground bg-secondary'
+                        : 'nav-link-inactive font-medium text-foreground-muted hover:text-foreground hover:bg-secondary/70')
+                )}
+                aria-current={isActive(href) ? 'page' : undefined}
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
+        ))
+    }
+
+    <div class="flex items-center gap-2 justify-self-end">
+      {
+        hasActionsSlot ? (
+          <slot name="actions" />
+        ) : (
+          <>
+            {showThemeToggle && (
+              <div class="hidden md:flex">
+                <ThemeModeDropdown class={isFloating ? 'hdr-invert-text' : undefined} />
+              </div>
+            )}
+
+            {/* {showThemeSelector && (
+              <div class="hidden md:flex">
+                <ThemeSelectorDropdown class={isFloating ? 'hdr-invert-text' : undefined} />
+              </div>
+            )} */}
+
+            {showLanguageSwitcher && (
+              <div class="hidden md:flex">
+                <LanguageSwitcher class={isFloating ? 'hdr-invert-text' : undefined} />
+              </div>
+            )}
+
+            {showSocialLinks && siteConfig.socialLinks.length > 0 && (
+              <div class="hidden md:flex items-center gap-0.5">
+                {siteConfig.socialLinks.map((url) => {
+                  const { icon, label } = getSocialIconData(url);
+                  return (
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      class={cn(
+                        'rounded-md p-2 transition-colors duration-(--transition-fast)',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                        isFloating
+                          ? 'hdr-invert-text'
+                          : 'text-foreground-muted hover:text-foreground hover:bg-secondary/70'
+                      )}
+                    >
+                      <Icon name={icon} size="md" />
+                    </a>
+                  );
+                })}
+              </div>
+            )}
+
+            {actions.map((action) => (
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={action.iconOnly}
+                href={action.href}
+                target={action.target}
+                aria-label={action.label}
+                class={isFloating ? 'hdr-invert-text' : undefined}
+              >
+                <Icon name={action.icon} size="sm" />
+                {!action.iconOnly && action.label}
+              </Button>
+            ))}
+
+            {showCta && (
+              <div class="hidden md:flex">
+                <Button
+                  size="sm"
+                  href={ctaHref}
+                  target={ctaHref?.startsWith('http') ? '_blank' : undefined}
+                  class={cn('hdr-cta-brand', isFloating ? 'hdr-invert-cta' : undefined)}
+                >
+                  {cta.icon && <Icon name={cta.icon} size="sm" />}
+                  {cta.label}
+                  {cta.trailingIcon && <Icon name={cta.trailingIcon} size="sm" />}
+                </Button>
+              </div>
+            )}
+          </>
+        )
+      }
+
+      {
+        showMobileMenu && layout !== 'minimal' && (
+          <button
+            type="button"
+            id={buttonId}
+            class={cn(
+              'hdr-hamburger inline-flex items-center justify-center rounded-md p-2 md:hidden',
+              'text-brand-600 dark:text-foreground',
+              'transition-colors',
+              'focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none',
+              isFloating ? 'hover:bg-secondary/40' : 'hover:bg-secondary'
+            )}
+            aria-expanded="false"
+            aria-controls={menuId}
+            aria-label="Toggle menu"
+          >
+            <span class="menu-icon">
+              <Icon name="menu" size="md" />
+            </span>
+            <span class="close-icon hidden">
+              <Icon name="x" size="md" />
+            </span>
+          </button>
+        )
+      }
+    </div>
+  </div>
+
+  {effectiveShowScrollProgress && (
+    isFloating ? (
+      <div
+        class={`absolute inset-x-3 h-[2px] overflow-hidden rounded-full ${scrollProgressPosition === 'top' ? 'top-[2px]' : 'bottom-[2px]'}`}
+        aria-hidden="true"
+      >
+        <div
+          id="scroll-progress-bar"
+          class="absolute left-0 top-0 h-full w-0 bg-brand-500 transition-none"
+        />
+      </div>
+    ) : (
+      <div
+        id="scroll-progress-bar"
+        class={`absolute left-0 h-[2px] w-0 bg-brand-500 transition-none ${scrollProgressPosition === 'top' ? 'top-0' : 'bottom-0'}`}
+        aria-hidden="true"
+      />
+    )
+  )}
+
+  {
+    showMobileMenu &&
+      layout !== 'minimal' &&
+      (hasMobileMenuSlot ? (
+        <div
+          id={menuId}
+          class={cn(
+            'hidden origin-top scale-y-0 opacity-0 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.12)] md:hidden',
+            isFloating
+              ? 'rounded-b-2xl bg-background/95 backdrop-blur-xl'
+              : 'border-border bg-background border-t'
+          )}
+          role="navigation"
+          aria-label="Mobile navigation"
+        >
+          <slot name="mobile-menu" />
+        </div>
+      ) : (
+        <div
+          id={menuId}
+          class={cn(
+            'hidden origin-top scale-y-0 opacity-0 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.12)] md:hidden',
+            isFloating
+              ? 'rounded-b-2xl bg-background/95 backdrop-blur-xl'
+              : 'border-border bg-background border-t'
+          )}
+          role="navigation"
+          aria-label="Mobile navigation"
+        >
+          <div class={cn(
+            'space-y-1 py-4',
+            isFloating ? 'px-4' : cn('mx-auto px-6', maxWidthClass)
+          )}>
+            {navItems.map(({ label, href }) => (
+              <a
+                href={href.startsWith('#') && !isLandingPage ? `/${href}` : href}
+                class={cn(
+                  'mobile-nav-link block rounded-md px-3 py-2 text-sm',
+                  'transition-all duration-(--transition-fast)',
+                  isActive(href)
+                    ? 'mobile-nav-link-active bg-secondary text-foreground font-semibold'
+                    : 'mobile-nav-link-inactive text-foreground-muted hover:bg-secondary/70 hover:text-foreground font-medium'
+                )}
+                aria-current={isActive(href) ? 'page' : undefined}
+              >
+                {label}
+              </a>
+            ))}
+
+            {showCta && (
+              <div class="border-border mt-3 border-t pt-3">
+                <Button fullWidth href={ctaHref} target={ctaHref?.startsWith('http') ? '_blank' : undefined}>
+                  {cta.icon && <Icon name={cta.icon} size="sm" />}
+                  {cta.label}
+                  {cta.trailingIcon && <Icon name={cta.trailingIcon} size="sm" />}
+                </Button>
+              </div>
+            )}
+
+            {showThemeToggle && (
+              <div class="border-border mt-3 border-t pt-3">
+                <div class="flex items-center justify-between px-1">
+                  <span class="text-sm text-foreground-muted">Theme mode</span>
+                  <ThemeModeDropdown />
+                </div>
+              </div>
+            )}
+
+            {showThemeSelector && (
+              <div class="border-border mt-3 border-t pt-3">
+                <div class="flex items-center justify-between px-1">
+                  <span class="text-sm text-foreground-muted">Colour theme</span>
+                  <ThemeSelector />
+                </div>
+              </div>
+            )}
+
+            {showLanguageSwitcher && (
+              <div class="border-border mt-3 border-t pt-3">
+                <div class="flex items-center justify-between px-1">
+                  <span class="text-sm text-foreground-muted">Language</span>
+                  <LanguageSwitcher />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      ))
+  }
+</header>
+
+{
+  showMobileMenu && layout !== 'minimal' && (
+    <div
+      id={`${menuId}-backdrop`}
+      class="pointer-events-none fixed inset-0 z-40 opacity-0 transition-opacity duration-200 md:hidden"
+      aria-hidden="true"
+    />
+  )
+}
+
+<script>
+  function initMobileMenu() {
+    const menuHeaders = document.querySelectorAll<HTMLElement>('header[data-menu-id]');
+    menuHeaders.forEach((header) => {
+      const menuId = header.dataset.menuId!;
+      const buttonId = header.dataset.buttonId!;
+      const isFloating = header.dataset.headerShape === 'floating';
+
+      const button = document.getElementById(buttonId);
+      const menu = document.getElementById(menuId);
+      const backdrop = document.getElementById(`${menuId}-backdrop`);
+      const menuIcon = button?.querySelector('.menu-icon');
+      const closeIcon = button?.querySelector('.close-icon');
+
+      if (!button || !menu || !menuIcon || !closeIcon) return;
+      if (button.dataset.menuInit) return;
+      button.dataset.menuInit = 'true';
+
+      let isOpen = false;
+      let isAnimating = false;
+
+      function open() {
+        if (isOpen || isAnimating) return;
+        isAnimating = true;
+        isOpen = true;
+
+        button!.setAttribute('aria-expanded', 'true');
+        menuIcon!.classList.add('hidden');
+        closeIcon!.classList.remove('hidden');
+
+        if (isFloating) {
+          header.setAttribute('data-scrolled', '');
+          header.classList.remove('rounded-2xl');
+          header.classList.add('rounded-t-2xl');
+        } else {
+          header.classList.add('!bg-background');
+        }
+
+        const mainContent = document.querySelector('main');
+        const footer = document.querySelector('footer');
+        if (mainContent) mainContent.classList.add('mobile-menu-blur');
+        if (footer) footer.classList.add('mobile-menu-blur');
+
+        menu!.classList.remove('hidden', 'animate-menu-up', 'opacity-0', 'scale-y-0');
+        menu!.classList.add('animate-menu-down');
+        if (backdrop) {
+          backdrop.classList.remove('pointer-events-none', 'animate-backdrop-out');
+          backdrop.classList.add('animate-backdrop');
+        }
+
+        isAnimating = false;
+      }
+
+      function close() {
+        if (!isOpen || isAnimating) return;
+        isAnimating = true;
+
+        button!.setAttribute('aria-expanded', 'false');
+        menuIcon!.classList.remove('hidden');
+        closeIcon!.classList.add('hidden');
+
+        menu!.classList.remove('animate-menu-down');
+        menu!.classList.add('animate-menu-up');
+        if (backdrop) {
+          backdrop.classList.remove('animate-backdrop');
+          backdrop.classList.add('animate-backdrop-out');
+        }
+
+        const mainContent = document.querySelector('main');
+        const footer = document.querySelector('footer');
+        if (mainContent) mainContent.classList.remove('mobile-menu-blur');
+        if (footer) footer.classList.remove('mobile-menu-blur');
+
+        setTimeout(() => {
+          menu!.classList.add('hidden', 'opacity-0', 'scale-y-0');
+          if (backdrop) {
+            backdrop.classList.add('pointer-events-none');
+          }
+
+          if (isFloating) {
+            header.classList.remove('rounded-t-2xl');
+            header.classList.add('rounded-2xl');
+            if (window.scrollY <= 60) {
+              header.removeAttribute('data-scrolled');
+            }
+          } else {
+            header.classList.remove('!bg-background');
+          }
+
+          isOpen = false;
+          isAnimating = false;
+        }, 200);
+      }
+
+      function toggle() {
+        if (isOpen) {
+          close();
+        } else {
+          open();
+        }
+      }
+
+      button.addEventListener('click', toggle);
+
+      if (backdrop) {
+        backdrop.addEventListener('click', close);
+      }
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && isOpen) {
+          close();
+        }
+      });
+
+      menu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', close);
+      });
+    });
+  }
+
+  initMobileMenu();
+  document.addEventListener('astro:page-load', initMobileMenu);
+  document.addEventListener('astro:after-swap', initMobileMenu);
+</script>
+
+<script>
+  // Header scroll behaviour + scroll-progress bar driven by a single rAF.
+  // All layout reads are taken before any DOM writes. `docMaxScrollY` is
+  // cached and refreshed only on resize + load — we deliberately avoid
+  // a ResizeObserver here because it fires repeatedly during the page
+  // load period (image loads, reveal animations, font swap), and reading
+  // scrollHeight in those callbacks reintroduces forced reflow even when
+  // wrapped in rAF, because other scripts queue layout writes between
+  // the observer firing and the rAF. Tiny drift while the page settles
+  // is invisible for scroll-progress UIs.
+  const SCROLL_THRESHOLD = 60;
+  const AUTO_HIDE_THRESHOLD = 150;
+  const BAR_SCROLLED_CLASSES = ['bg-background/80', 'backdrop-blur-lg', 'border-b', 'border-border/50'];
+
+  let docMaxScrollY = 0;
+  let docMetricsInited = false;
+  function updateDocMaxScrollY() {
+    docMaxScrollY = document.documentElement.scrollHeight - window.innerHeight;
+  }
+  function initDocMetrics() {
+    if (docMetricsInited) return;
+    docMetricsInited = true;
+    // Don't read scrollHeight at script-init — this script is processed
+    // by Astro and runs early enough that the document hasn't been
+    // fully parsed/laid out yet. Reading then forces a synchronous
+    // layout for the partial document, which Lighthouse flagged as a
+    // ~100ms forced-reflow source on mobile. Defer the first read to
+    // DOMContentLoaded and refresh on load + resize. Brief startup
+    // window where docMaxScrollY is 0 is invisible: the scroll watcher
+    // only consults it during the auto-hide return branch, which can't
+    // fire until the user has actually scrolled.
+    window.addEventListener('resize', updateDocMaxScrollY, { passive: true });
+    window.addEventListener('load', updateDocMaxScrollY);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', updateDocMaxScrollY, { once: true });
+    } else {
+      updateDocMaxScrollY();
+    }
+  }
+
+  function initScrollDriven() {
+    initDocMetrics();
+
+    const scrollHeaders = document.querySelectorAll<HTMLElement>(
+      'header[data-header-shape="floating"], header[data-header-shape="bar"]'
+    );
+    const progressBar = document.getElementById('scroll-progress-bar');
+
+    scrollHeaders.forEach((header) => {
+      if (header.dataset.scrollInit) return;
+      header.dataset.scrollInit = 'true';
+
+      const isBar = header.dataset.headerShape === 'bar';
+      const isFloating = header.dataset.headerShape === 'floating';
+      const isAutoHide = header.dataset.headerAutoHide !== 'false';
+      const isTransparentBar = isBar && header.dataset.headerVariant === 'transparent';
+      let ticking = false;
+      let lastScrollY = window.scrollY;
+      let lastShownAtY = 0;
+
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+
+        requestAnimationFrame(() => {
+          // ── READS (gather everything before touching the DOM) ──
+          const currentScrollY = window.scrollY;
+          const menuId = header.dataset.menuId;
+          const menu = menuId ? document.getElementById(menuId) : null;
+          const menuOpen = menu && !menu.classList.contains('hidden');
+          const wasHidden = header.hasAttribute('data-header-hidden');
+
+          // ── WRITES ──
+          if (currentScrollY > SCROLL_THRESHOLD) {
+            header.setAttribute('data-scrolled', '');
+            if (isTransparentBar) {
+              header.classList.add(...BAR_SCROLLED_CLASSES);
+              header.classList.remove('bg-transparent');
+            }
+          } else {
+            if (!menuOpen) {
+              header.removeAttribute('data-scrolled');
+              header.removeAttribute('data-header-hidden');
+              lastShownAtY = 0;
+              if (isTransparentBar) {
+                header.classList.remove(...BAR_SCROLLED_CLASSES);
+                header.classList.add('bg-transparent');
+              }
+            }
+          }
+
+          if (isFloating && isAutoHide && !menuOpen) {
+            if (currentScrollY > AUTO_HIDE_THRESHOLD) {
+              if (currentScrollY > lastScrollY) {
+                if (currentScrollY - lastShownAtY >= AUTO_HIDE_THRESHOLD) {
+                  header.setAttribute('data-header-hidden', '');
+                }
+              } else {
+                if (wasHidden) {
+                  lastShownAtY = Math.min(
+                    currentScrollY,
+                    Math.max(0, docMaxScrollY - AUTO_HIDE_THRESHOLD),
+                  );
+                  header.setAttribute('data-header-returned', '');
+                }
+                header.removeAttribute('data-header-hidden');
+              }
+            } else {
+              header.removeAttribute('data-header-hidden');
+              header.removeAttribute('data-header-returned');
+              lastShownAtY = 0;
+            }
+          }
+
+          // Drive the scroll-progress bar in the same frame, using the
+          // already-read currentScrollY and the cached docMaxScrollY.
+          if (progressBar) {
+            const pct = docMaxScrollY > 0 ? (currentScrollY / docMaxScrollY) * 100 : 0;
+            progressBar.style.width = `${pct}%`;
+          }
+
+          lastScrollY = currentScrollY;
+          ticking = false;
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    });
+
+    // Edge case: a progress bar exists without a header scroll-watcher.
+    // Drive it with its own minimal rAF so the bar still updates.
+    if (progressBar && scrollHeaders.length === 0 && !progressBar.dataset.progressInit) {
+      progressBar.dataset.progressInit = 'true';
+      let pTicking = false;
+      const updateProgress = () => {
+        const pct = docMaxScrollY > 0 ? (window.scrollY / docMaxScrollY) * 100 : 0;
+        progressBar.style.width = `${pct}%`;
+        pTicking = false;
+      };
+      window.addEventListener(
+        'scroll',
+        () => {
+          if (!pTicking) {
+            pTicking = true;
+            requestAnimationFrame(updateProgress);
+          }
+        },
+        { passive: true },
+      );
+      updateProgress();
+    }
+  }
+
+  initScrollDriven();
+  document.addEventListener('astro:page-load', initScrollDriven);
+  document.addEventListener('astro:after-swap', initScrollDriven);
+</script>
+
+<style is:global>
+  .mobile-menu-blur {
+    opacity: 0.3;
+    filter: blur(4px);
+    transition: opacity 200ms, filter 200ms;
+  }
+
+  [data-header-shape="floating"] {
+    transition-property: translate, background, border-color, box-shadow, width, max-width, border-radius, margin-top;
+    transition-duration: 300ms;
+    transition-timing-function: ease;
+  }
+
+  [data-header-shape="floating"][data-header-hidden] {
+    translate: -50% calc(-100% - 1.5rem) !important;
+  }
+
+  [data-header-shape="floating"][data-scrolled] {
+    background: color-mix(in oklch, var(--color-background) 92%, transparent);
+    backdrop-filter: blur(24px);
+    border-color: var(--color-border);
+    box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.14), 0 2px 8px -2px rgba(0, 0, 0, 0.08);
+  }
+
+  [data-header-shape="floating"] .hdr-inner {
+    max-width: 72rem;
+    margin-left: auto;
+    margin-right: auto;
+    transition: box-shadow 300ms;
+  }
+
+  [data-header-shape="floating"][data-header-color-scheme="invert"] .hdr-invert-text {
+    color: var(--color-on-invert);
+    transition: color 300ms;
+  }
+  [data-header-shape="floating"][data-header-color-scheme="invert"][data-scrolled] .hdr-invert-text {
+    color: var(--color-foreground);
+  }
+
+  [data-header-shape="floating"][data-header-color-scheme="invert"] .hdr-logo-text {
+    color: var(--color-on-invert);
+    transition: color 300ms;
+  }
+  [data-header-shape="floating"][data-header-color-scheme="invert"][data-scrolled] .hdr-logo-text {
+    color: var(--color-brand-600);
+  }
+
+  [data-header-shape="floating"][data-header-color-scheme="default"] .hdr-logo-text {
+    color: var(--color-brand-600);
+  }
+  [data-header-shape="floating"][data-header-color-scheme="default"] .hdr-invert-text {
+    color: var(--color-foreground-muted);
+    transition: color 300ms;
+  }
+  [data-header-shape="floating"][data-header-color-scheme="default"] .hdr-invert-text:hover {
+    color: var(--color-foreground);
+  }
+
+  [data-header-shape="floating"] .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    right: 50%;
+    height: 2px;
+    background: currentColor;
+    border-radius: 1px;
+    transition: left 200ms, right 200ms;
+  }
+
+  [data-header-shape="floating"] .nav-link:hover::after,
+  [data-header-shape="floating"] .nav-link.hdr-nav-active::after {
+    left: 12px;
+    right: 12px;
+  }
+
+  [data-header-shape="floating"][data-header-color-scheme="invert"] .hdr-invert-cta {
+    background: white;
+    color: #111;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    transition: background 300ms, color 300ms, border-color 300ms;
+  }
+  [data-header-shape="floating"][data-header-color-scheme="invert"] .hdr-invert-cta:hover {
+    background: rgba(255, 255, 255, 0.9);
+  }
+  [data-header-shape="floating"][data-header-color-scheme="invert"][data-scrolled] .hdr-invert-cta {
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
+  }
+  [data-header-shape="floating"][data-header-color-scheme="invert"][data-scrolled] .hdr-invert-cta:hover {
+    opacity: 0.9;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-header-shape="floating"],
+    [data-header-shape="floating"] .hdr-inner,
+    [data-header-shape="floating"] .hdr-invert-text,
+    [data-header-shape="floating"] .hdr-logo-text,
+    [data-header-shape="floating"] .hdr-invert-cta,
+    [data-header-shape="floating"] .nav-link::after {
+      transition: none !important;
+    }
+    [data-header-shape="floating"][data-header-hidden] {
+      translate: -50% calc(-100% - 1.5rem) !important;
+    }
+  }
+
+  .dark [data-header-shape="floating"] {
+    background: color-mix(in oklch, var(--color-background) 65%, transparent);
+    border-color: color-mix(in oklch, var(--color-brand-400) 35%, transparent);
+    box-shadow: none;
+  }
+  .dark [data-header-shape="floating"][data-scrolled] {
+    background: color-mix(in oklch, var(--color-background) 88%, transparent);
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 4px 32px rgba(255, 255, 255, 0.07), 0 12px 40px -8px rgba(0, 0, 0, 0.6), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Light-mode floating header at rest: dark-glass capsule, mirroring the
+     dark-mode look so it reads cleanly over the home hero's black→brand
+     gradient. A neutral 18% white hairline sits below the badge and pill
+     borders so the header reads as the quiet frame those chips live in. */
+  html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) {
+    background: color-mix(in oklch, var(--surface-invert) 70%, transparent);
+    border-color: color-mix(in oklch, var(--color-on-invert) 18%, transparent);
+    box-shadow: none;
+  }
+  html:not(.dark) [data-header-shape="floating"][data-scrolled] {
+    box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.14), 0 2px 8px -2px rgba(0, 0, 0, 0.08);
+  }
+
+  html:not(.dark) [data-header-shape="floating"][data-header-color-scheme="default"]:not([data-scrolled]) .hdr-logo-text {
+    color: oklch(91% 0.008 250);
+  }
+  html:not(.dark) [data-header-shape="floating"][data-header-color-scheme="default"]:not([data-scrolled]) .hdr-invert-text {
+    color: oklch(68% 0.01 250);
+  }
+  html:not(.dark) [data-header-shape="floating"][data-header-color-scheme="default"]:not([data-scrolled]) .hdr-invert-text:hover {
+    color: oklch(91% 0.008 250);
+  }
+
+  html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) .ttg-wrapper > .ttg-trigger,
+  html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) .theme-dropdown-wrapper > button {
+    border-color: oklch(58% 0.008 250 / 0.6);
+    color: oklch(68% 0.01 250);
+    box-shadow: none;
+  }
+  html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) .ttg-wrapper > .ttg-trigger:hover,
+  html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) .theme-dropdown-wrapper > button:hover {
+    border-color: oklch(58% 0.008 250 / 0.85);
+    background-color: rgb(255 255 255 / 0.06);
+    color: oklch(91% 0.008 250);
+  }
+
+  html:not(.dark) [data-header-shape="floating"][data-header-color-scheme="default"]:not([data-scrolled]) .hdr-hamburger,
+  html:not(.dark) [data-header-shape="floating"][data-header-color-scheme="default"]:not([data-scrolled]) .hdr-hamburger svg {
+    color: oklch(68% 0.01 250);
+  }
+  html:not(.dark) [data-header-shape="floating"][data-header-color-scheme="default"]:not([data-scrolled]) .hdr-hamburger:hover,
+  html:not(.dark) [data-header-shape="floating"][data-header-color-scheme="default"]:not([data-scrolled]) .hdr-hamburger:hover svg {
+    background-color: rgb(255 255 255 / 0.06);
+    color: oklch(91% 0.008 250);
+  }
+
+  .dark [data-header-shape="floating"] .theme-dropdown-wrapper button,
+  .dark [data-header-shape="floating"] .ttg-wrapper .ttg-trigger {
+    border-color: var(--color-foreground-subtle);
+  }
+
+  [data-header-shape="floating"][data-header-color-scheme="invert"][data-scrolled] .hdr-logo-text {
+    color: var(--color-brand-600);
+  }
+  .dark [data-header-shape="floating"][data-header-color-scheme="invert"][data-scrolled] .hdr-logo-text {
+    color: var(--color-foreground);
+  }
+  [data-header-shape="floating"][data-header-color-scheme="default"] .hdr-logo-text {
+    color: var(--color-brand-600);
+  }
+  .dark [data-header-shape="floating"][data-header-color-scheme="default"] .hdr-logo-text {
+    color: var(--color-foreground);
+  }
+
+  [data-header-shape="floating"][data-header-color-scheme="default"] .hdr-invert-text {
+    color: var(--color-foreground-muted);
+    transition: color 300ms;
+  }
+  .dark [data-header-shape="floating"][data-header-color-scheme="default"] .hdr-invert-text {
+    color: var(--color-foreground-muted);
+  }
+  [data-header-shape="floating"][data-header-color-scheme="default"] .hdr-invert-text:hover {
+    color: var(--color-foreground);
+  }
+
+  @media (max-width: 767px) {
+    html:not(.dark) [data-header-shape="floating"][data-header-color-scheme="invert"] .hdr-logo-text {
+      color: var(--color-brand-500);
+    }
+    html:not(.dark) [data-header-shape="floating"][data-header-color-scheme="invert"][data-scrolled] .hdr-logo-text {
+      color: var(--color-brand-500);
+    }
+  }
+
+  /* ===== Returned state: color flip only when header comes back after being hidden ===== */
+
+  /* Dark mode: flip to white capsule */
+  .dark [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 32px rgba(255, 255, 255, 0.12), 0 8px 24px -4px rgba(0, 0, 0, 0.25);
+  }
+  .dark [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] .hdr-invert-text {
+    color: oklch(20% 0.005 250);
+    transition: color 300ms;
+  }
+  .dark [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] .hdr-invert-text:hover {
+    color: oklch(8% 0 0);
+  }
+  .dark [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] .hdr-logo-text {
+    color: var(--color-brand-700);
+  }
+  .dark [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] .theme-dropdown-wrapper button,
+  .dark [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] .ttg-wrapper .ttg-trigger {
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+
+  /* Light mode: flip to dark capsule */
+  html:not(.dark) [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] {
+    background: oklch(12% 0.005 250 / 0.93);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.45), 0 2px 8px -2px rgba(0, 0, 0, 0.25);
+  }
+  html:not(.dark) [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] .hdr-invert-text {
+    color: rgba(255, 255, 255, 0.82);
+    transition: color 300ms;
+  }
+  html:not(.dark) [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] .hdr-invert-text:hover {
+    color: rgba(255, 255, 255, 1);
+  }
+  html:not(.dark) [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] .hdr-logo-text {
+    color: var(--color-brand-500);
+  }
+  html:not(.dark) [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] .theme-dropdown-wrapper button,
+  html:not(.dark) [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] .ttg-wrapper .ttg-trigger {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  /* ===== Returned state: fix button hover backgrounds ===== */
+  /* Dark mode: white header needs light hover, not dark-mode secondary */
+  .dark [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] button.hdr-invert-text:hover,
+  .dark [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] .theme-dropdown-wrapper > button:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+    color: oklch(8% 0 0);
+  }
+
+  /* Light mode: dark header needs dark hover, not light-mode secondary */
+  html:not(.dark) [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] button.hdr-invert-text:hover,
+  html:not(.dark) [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] .theme-dropdown-wrapper > button:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 1);
+  }
+</style>
