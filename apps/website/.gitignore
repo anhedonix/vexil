@@ -1,0 +1,26 @@
+# build output
+dist/
+.astro/
+.vercel/
+.netlify/
+
+# deps
+node_modules/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# logs
+*.log
+
+# editor / os
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# misc
+*.tsbuildinfo
