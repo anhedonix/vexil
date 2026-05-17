@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 import Layout from '../layouts/Layout.astro';
 import { Icon } from 'astro-icon/components';
 
@@ -800,58 +802,110 @@ cd tools/dev-tui         && uv sync`;
       </p>
 
       <!-- Form Card -->
-      <form class="bg-slate-900/60 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl text-left max-w-xl mx-auto space-y-5">
-        <div>
-          <label for="email" class="block text-sm font-semibold text-slate-300 mb-1.5">
-            Email Address <span class="text-cyan-400">*</span>
-          </label>
-          <input
-            type="email"
-            id="email"
-            required
-            class="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-3.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors placeholder:text-slate-600"
-            placeholder="artist@studio.com"
-          />
-        </div>
-
-        <div>
-          <label for="userType" class="block text-sm font-semibold text-slate-300 mb-1.5">
-            I am representing a... <span class="text-cyan-400">*</span>
-          </label>
-          <div class="relative">
-            <select
-              id="userType"
+      <div class="max-w-xl mx-auto">
+        <form
+          id="waitlist-form"
+          class="bg-slate-900/60 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl text-left space-y-5"
+        >
+          <div>
+            <label for="email" class="block text-sm font-semibold text-slate-300 mb-1.5">
+              Email Address <span class="text-cyan-400">*</span>
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
               required
-              class="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-3.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors appearance-none"
-            >
-              <option value="" disabled selected>Select an option</option>
-              <option value="individual">Individual Artist / Freelancer</option>
-              <option value="studio">Studio / Team</option>
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
-              <Icon name="lucide:chevron-down" class="w-4 h-4" />
+              autocomplete="email"
+              class="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-3.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors placeholder:text-slate-600"
+              placeholder="artist@studio.com"
+            />
+          </div>
+
+          <div>
+            <label for="userType" class="block text-sm font-semibold text-slate-300 mb-1.5">
+              I am representing a... <span class="text-cyan-400">*</span>
+            </label>
+            <div class="relative">
+              <select
+                id="userType"
+                name="userType"
+                required
+                class="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-3.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors appearance-none"
+              >
+                <option value="" disabled selected>Select an option</option>
+                <option value="individual">Individual Artist / Freelancer</option>
+                <option value="studio">Studio / Team</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                <Icon name="lucide:chevron-down" class="w-4 h-4" />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div>
-          <label for="comments" class="block text-sm font-semibold text-slate-300 mb-1.5">
-            Comments or Suggestions
-          </label>
-          <textarea
-            id="comments"
-            rows="3"
-            class="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-3.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors resize-none placeholder:text-slate-600"
-            placeholder="What features are you looking forward to? (Optional)"></textarea>
-        </div>
+          <div>
+            <label for="comments" class="block text-sm font-semibold text-slate-300 mb-1.5">
+              Comments or Suggestions
+            </label>
+            <textarea
+              id="comments"
+              name="comments"
+              rows="3"
+              maxlength="2000"
+              class="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-3.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors resize-none placeholder:text-slate-600"
+              placeholder="What features are you looking forward to? (Optional)"></textarea>
+          </div>
 
-        <button
-          type="submit"
-          class="w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] mt-6 hover:-translate-y-0.5"
+          <div
+            id="waitlist-error"
+            role="alert"
+            aria-live="polite"
+            class="hidden items-start gap-2 text-sm text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded-xl px-4 py-3"
+          >
+            <Icon name="lucide:alert-circle" class="w-4 h-4 mt-0.5 shrink-0" />
+            <span data-error-message></span>
+          </div>
+
+          <button
+            id="waitlist-submit"
+            type="submit"
+            class="w-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 disabled:opacity-60 disabled:cursor-not-allowed text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] mt-6 hover:-translate-y-0.5 disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+          >
+            <span data-state="idle">Submit Application</span>
+            <span data-state="loading" class="hidden items-center gap-2">
+              <svg
+                class="w-5 h-5 animate-spin"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="3"
+                ></circle>
+                <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                ></path>
+              </svg>
+              Submitting…
+            </span>
+          </button>
+        </form>
+
+        <div
+          id="waitlist-success"
+          role="status"
+          aria-live="polite"
+          class="hidden bg-slate-900/60 backdrop-blur-xl border border-emerald-500/30 p-8 rounded-3xl shadow-2xl text-center"
         >
-          Submit Application
-        </button>
-      </form>
+          <div
+            class="w-14 h-14 mx-auto mb-5 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400"
+          >
+            <Icon name="lucide:check" class="w-7 h-7" />
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">You're on the list.</h3>
+          <p class="text-slate-300 leading-relaxed">
+            Thanks for joining the VEXiL waitlist — we'll be in touch as the beta opens.
+          </p>
+        </div>
+      </div>
 
       <p class="mt-8 text-sm text-slate-400 font-medium flex items-center justify-center gap-2">
         <Icon name="lucide:sparkles" class="w-4 h-4 text-purple-400" /> Beta program opening shortly.
@@ -874,3 +928,73 @@ cd tools/dev-tui         && uv sync`;
     </div>
   </footer>
 </Layout>
+
+<script>
+  const form = document.getElementById('waitlist-form') as HTMLFormElement | null;
+  const submitBtn = document.getElementById('waitlist-submit') as HTMLButtonElement | null;
+  const successCard = document.getElementById('waitlist-success');
+  const errorBox = document.getElementById('waitlist-error');
+
+  if (form && submitBtn && successCard && errorBox) {
+    const idleEl = submitBtn.querySelector<HTMLElement>('[data-state="idle"]');
+    const loadingEl = submitBtn.querySelector<HTMLElement>('[data-state="loading"]');
+    const errorMsg = errorBox.querySelector<HTMLElement>('[data-error-message]');
+
+    const setLoading = (loading: boolean) => {
+      submitBtn.disabled = loading;
+      if (idleEl) idleEl.classList.toggle('hidden', loading);
+      if (loadingEl) {
+        loadingEl.classList.toggle('hidden', !loading);
+        loadingEl.classList.toggle('inline-flex', loading);
+      }
+    };
+
+    const showError = (message: string) => {
+      if (errorMsg) errorMsg.textContent = message;
+      errorBox.classList.remove('hidden');
+      errorBox.classList.add('flex');
+    };
+
+    const hideError = () => {
+      errorBox.classList.add('hidden');
+      errorBox.classList.remove('flex');
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      hideError();
+      setLoading(true);
+
+      const data = new FormData(form);
+      const payload = {
+        email: data.get('email'),
+        userType: data.get('userType'),
+        comments: data.get('comments'),
+      };
+
+      try {
+        const res = await fetch('/api/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const body = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
+        if (!res.ok || !body.ok) {
+          throw new Error(body.error || 'Submission failed. Please try again.');
+        }
+
+        form.classList.add('hidden');
+        successCard.classList.remove('hidden');
+        successCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (err) {
+        showError(err instanceof Error ? err.message : 'Submission failed. Please try again.');
+        setLoading(false);
+      }
+    });
+  }
+</script>
