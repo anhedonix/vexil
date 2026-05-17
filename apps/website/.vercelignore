@@ -1,0 +1,14 @@
+node_modules
+.vercel
+.astro
+dist
+.netlify
+
+.env
+.env.local
+.env.*.local
+
+.DS_Store
+.idea
+.vscode
+*.tsbuildinfo
