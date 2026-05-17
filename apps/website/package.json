@@ -1,0 +1,41 @@
+{
+  "name": "vexil_website",
+  "version": "0.0.1",
+  "description": "Website for VEXiL — A specialized project management tool for SideFX Houdini.",
+  "type": "module",
+  "author": "Anand Magaji",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anhedonix/vexil"
+  },
+  "homepage": "https://github.com/anhedonix/vexil#readme",
+  "bugs": {
+    "url": "https://github.com/anhedonix/vexil/issues"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/netlify": "^7.0.2",
+    "@astrojs/vercel": "^10.0.0",
+    "@iconify-json/lucide": "^1.2.98",
+    "@iconify-json/simple-icons": "^1.2.74",
+    "astro": "6.0.0",
+    "astro-icon": "^1.1.5",
+    "sharp": "^0.34.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.7",
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/node": "^22.10.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}
