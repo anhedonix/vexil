@@ -70,15 +70,16 @@ cd tools/dev-tui         && uv sync`;
       </div>
 
       <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
-        Project Management, <br />
+        Project Management for VFX, <br />
         <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">
-          Tailored Exclusively for Houdini.
+          Built First for Houdini.
         </span>
       </h1>
 
       <p class="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl leading-relaxed">
-        VEXiL is a consolidated project management environment designed specifically to solve the organizational
-        bottlenecks of individual artists and small teams using SideFX Houdini.
+        VEXiL is the centralized project management environment for VFX freelancers and indie studios. Today, it
+        integrates with SideFX Houdini at a depth no generic PM tool can match — and Maya, Nuke, and Blender
+        adapters are on the roadmap.
       </p>
 
       <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
@@ -140,10 +141,11 @@ cd tools/dev-tui         && uv sync`;
       <p class="text-slate-300 text-lg leading-relaxed">
         The name VEXiL is a nod to <strong class="text-white font-bold bg-white/10 px-2 py-0.5 rounded"
           >Vector Expression Language (VEX)</strong
-        >, an essential part of the Houdini ecosystem. Prevailing project management utilities often prioritize
-        top-down, executive-level features and treat Houdini workflows as disconnected file creations. VEXiL bridges
-        this gap. It is a high-performance framework dedicated strictly to your VFX pipeline, leveraging Houdini's
-        native capabilities rather than ignoring them.
+        >, the heart of the Houdini ecosystem — and a signal of where VEXiL goes deepest first. Generic project
+        management tools treat Houdini work as disconnected file creations and ignore the conventions that make a
+        VFX pipeline actually run. VEXiL starts where you start: inside the DCC. Houdini gets integration depth that
+        is only possible when the tool is purpose-built for it; <strong class="text-white font-bold">Maya, Nuke, and
+        Blender</strong> adapters follow on the roadmap — but Houdini is the proof point.
       </p>
     </div>
   </section>
@@ -165,11 +167,17 @@ cd tools/dev-tui         && uv sync`;
         >
           <Icon name="lucide:terminal" class="w-7 h-7" />
         </div>
-        <h3 class="text-xl font-bold text-white mb-3">Seamless Houdini Integration</h3>
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <h3 class="text-xl font-bold text-white">Deep Houdini Integration</h3>
+          <span
+            class="text-[9px] px-2 py-0.5 rounded-md uppercase font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 whitespace-nowrap"
+            >Houdini first</span
+          >
+        </div>
         <p class="text-slate-400 leading-relaxed">
-          Automate your workflows with a simple Houdini package installation. By leveraging OpenTimelineIO (OTIO)
-          integration, VEXiL automatically synchronizes audio, sequence scenes, reference imagery, and temporal
-          overlaps directly within Houdini.
+          A single Houdini package install wires VEXiL directly into your scenes. OpenTimelineIO (OTIO) sync
+          handles audio, sequence scenes, reference imagery, and temporal overlaps inside Houdini — depth no
+          general-purpose PM tool can reach. Maya, Nuke, and Blender adapters are on the roadmap.
         </p>
       </div>
 
@@ -184,9 +192,9 @@ cd tools/dev-tui         && uv sync`;
         </div>
         <h3 class="text-xl font-bold text-white mb-3">Intuitive Web Interface</h3>
         <p class="text-slate-400 leading-relaxed">
-          Architect folder structures, manage external assets, and configure global defaults from a dedicated browser
-          portal. This includes a custom node-network editor to visually streamline the design of your Houdini
-          workflows.
+          Architect folder structures, manage external assets, and configure global defaults from a dedicated
+          browser portal — DCC-agnostic by design. Includes a custom node-network editor for visually streamlining
+          your VFX workflows.
         </p>
       </div>
 
@@ -201,8 +209,9 @@ cd tools/dev-tui         && uv sync`;
         </div>
         <h3 class="text-xl font-bold text-white mb-3">Community Exchange "Recipes"</h3>
         <p class="text-slate-400 leading-relaxed">
-          While your projects remain private and encrypted by default, you have the option to contribute to or access
-          shared Houdini networks—known as community "Recipes" to accelerate your pipeline.
+          Projects stay private and encrypted by default, but you can opt in to contribute or pull from shared
+          community "Recipes" to accelerate your pipeline — Houdini networks today, with cross-DCC recipes planned
+          alongside the Maya, Nuke, and Blender adapters.
         </p>
       </div>
 
@@ -677,7 +686,9 @@ cd tools/dev-tui         && uv sync`;
               >
             </div>
             <h5 class="text-lg font-bold text-white mb-2 relative z-10">Scaling</h5>
-            <p class="text-sm text-slate-400 leading-relaxed relative z-10">Exclusive platform tools & networking.</p>
+            <p class="text-sm text-slate-400 leading-relaxed relative z-10">
+              Multi-DCC expansion (Maya, Nuke, Blender) & exclusive platform tools.
+            </p>
           </div>
         </div>
       </div>
