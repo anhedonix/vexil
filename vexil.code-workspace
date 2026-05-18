@@ -5,22 +5,21 @@
     { "name": "frontend-app", "path": "apps/frontend-app" },
     { "name": "website", "path": "apps/website-vexil" },
     { "name": "houdini-plugin", "path": "apps/plugins/houdini-package" },
-    { "name": "dev-tui", "path": "dev-tools/env-init" }
+    { "name": "dev-tui", "path": "dev-tools/env-init" },
   ],
   "settings": {
     "editor.formatOnSave": true,
     "files.trimTrailingWhitespace": true,
     "editor.insertSpaces": true,
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
   },
   "extensions": {
     "recommendations": [
-      "ms-python.python",
       "ms-python.pylance",
       "charliermarsh.ruff",
       "astro-build.astro-vscode",
       "bradlc.vscode-tailwindcss",
-      "ms-azuretools.vscode-docker"
-    ]
-  }
+      "ms-azuretools.vscode-docker",
+    ],
+  },
 }
