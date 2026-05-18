@@ -3,7 +3,8 @@
   "description": "Houdini centric project management system",
   "private": true,
   "tasks": {
-    "dev": "turbo run dev"
+    "dev": "turbo run dev",
+    "setup": "(cd apps/backend-api && uv sync) && (cd apps/plugins/houdini-package && uv sync) && (cd dev-tools/env-init && uv sync)"
   },
   "devDependencies": {
     "@types/bun": "latest",

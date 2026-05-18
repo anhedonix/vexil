@@ -1,17 +1,17 @@
 {
     "python-envs.pythonProjects": [
         {
-            "path": "apps/backend",
+            "path": "apps/backend-api",
             "envManager": "ms-python.python:venv",
-            "packageManager": "ms-python.python:pip"
+            "packageManager": "ms-python.python:uv"
         },
         {
-            "path": "tools/dev-tui",
+            "path": "dev-tools/env-init",
             "envManager": "ms-python.python:venv",
-            "packageManager": "ms-python.python:pip"
+            "packageManager": "ms-python.python:uv"
         },
         {
-            "path": "apps/houdini-package",
+            "path": "apps/plugins/houdini-package",
             "envManager": "ms-python.python:venv",
             "packageManager": "ms-python.python:pip"
         }
