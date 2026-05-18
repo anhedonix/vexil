@@ -1,0 +1,27 @@
+{
+  "name": "VEXiL Development",
+  "dockerFile": "Dockerfile",
+  "forwardPorts": [8000, 4321, 4322],
+  "portsAttributes": {
+    "8000": { "label": "Backend API", "onAutoForward": "notify" },
+    "4321": { "label": "Frontend App", "onAutoForward": "notify" },
+    "4322": { "label": "Website", "onAutoForward": "notify" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.pylance",
+        "charliermarsh.ruff",
+        "astro-build.astro-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "editor.formatOnSave": true
+      }
+    }
+  },
+  "postCreateCommand": "bun install && (cd apps/backend-api && uv sync) && (cd dev-tools/env-init && uv sync)",
+  "remoteUser": "vscode"
+}
