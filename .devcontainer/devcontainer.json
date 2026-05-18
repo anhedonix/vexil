@@ -23,6 +23,6 @@
       }
     }
   },
-  "postCreateCommand": "bun install && (cd apps/backend-api && uv sync) && (cd dev-tools/env-init && uv sync)",
+  "postCreateCommand": "bun install && (cd apps/backend-api && uv sync) && (cd apps/plugins/houdini-package && uv sync) && (cd dev-tools/env-init && uv sync)",
   "remoteUser": "vscode"
 }
