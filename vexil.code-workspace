@@ -3,9 +3,9 @@
     { "name": "vexil (root)", "path": "." },
     { "name": "backend-api", "path": "apps/backend-api" },
     { "name": "frontend-app", "path": "apps/frontend-app" },
-    { "name": "website", "path": "apps/website-vexil" },
-    { "name": "houdini-plugin", "path": "apps/plugins/houdini-package" },
-    { "name": "dev-tui", "path": "dev-tools/env-init" },
+    { "name": "website-vexil", "path": "apps/website-vexil" },
+    { "name": "plugin-houdini", "path": "apps/plugins/houdini-package" },
+    { "name": "env-init", "path": "dev-tools/env-init" },
   ],
   "settings": {
     "editor.formatOnSave": true,
