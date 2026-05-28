@@ -564,9 +564,17 @@ class ServiceStatusBar(Widget):
             # Update port
             self.port = port if is_running else None
             
-            # Enable/disable Open button based on running state
+            # Enable/disable buttons based on running state
             try:
+                start_btn = self.query_one(f"#start-{self.service_name}", Button)
+                stop_btn = self.query_one(f"#stop-{self.service_name}", Button)
                 open_btn = self.query_one(f"#open-{self.service_name}", Button)
+                
+                # Start button: enabled when NOT running
+                start_btn.disabled = is_running
+                # Stop button: enabled when running
+                stop_btn.disabled = not is_running
+                # Open button: enabled when running
                 open_btn.disabled = not is_running
             except Exception:
                 pass
