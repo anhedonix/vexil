@@ -452,6 +452,8 @@ class HoudiniSection(Widget):
 
 
 class ServiceStatusBar(Widget):
+    port: reactive[int | None] = reactive(None)
+    
     def __init__(self, name: str) -> None:
         super().__init__(id=f"bar-{name}")
         self.service_name = name
@@ -463,14 +465,27 @@ class ServiceStatusBar(Widget):
             classes="status-dot status-unknown",
         )
         yield Label(
-            f"[bold]{self.service_name}[/bold]  :{SERVICE_PORTS[self.service_name]}"
+            f"[bold]{self.service_name}[/bold]  :{SERVICE_PORTS[self.service_name]} [dim](default)[/dim]",
+            id=f"label-{self.service_name}",
         )
         yield Button("Start", variant="success", id=f"start-{self.service_name}")
         yield Button("Stop", variant="error", id=f"stop-{self.service_name}")
         yield Button("Open", variant="default", id=f"open-{self.service_name}")
         yield Button("Logs", variant="default", id=f"logs-{self.service_name}")
 
-    def set_state(self, state: str) -> None:
+    def watch_port(self, new_port: int | None) -> None:
+        """Update label when port changes."""
+        try:
+            label = self.query_one(f"#label-{self.service_name}", Label)
+            if new_port:
+                label.update(f"[bold]{self.service_name}[/bold]  :{new_port}")
+            else:
+                default_port = SERVICE_PORTS.get(self.service_name, "????")
+                label.update(f"[bold]{self.service_name}[/bold]  :{default_port} [dim](default)[/dim]")
+        except Exception:
+            pass
+
+    def set_state(self, state: str, port: int | None = None) -> None:
         try:
             dot = self.query_one(f"#dot-{self.service_name}", Static)
             dot.remove_class("status-running", "status-exited", "status-unknown")
@@ -483,6 +498,9 @@ class ServiceStatusBar(Widget):
                 dot.add_class("status-exited")
             else:
                 dot.add_class("status-unknown")
+            
+            # Update port
+            self.port = port if is_running else None
             
             # Enable/disable Open button based on running state
             try:
@@ -522,6 +540,7 @@ class VexilApp(App):
     CSS_PATH = "main.tcss"
 
     service_status: reactive[dict[str, str]] = reactive({})
+    service_ports: reactive[dict[str, int]] = reactive({})
 
     def compose(self) -> ComposeResult:
         yield Static(VEXIL_ASCII, id="app-header")
@@ -616,7 +635,8 @@ class VexilApp(App):
             try:
                 bar = self.query_one(f"#bar-{name}", ServiceStatusBar)
                 state = new_status.get(name, "unknown")
-                bar.set_state(state)
+                port = self.service_ports.get(name)
+                bar.set_state(state, port)
             except Exception:
                 pass
 
@@ -638,12 +658,25 @@ class VexilApp(App):
             )
             stdout, _ = await proc.communicate()
             new_status: dict[str, str] = {}
+            port_map: dict[str, int] = {}
+            
             for line in stdout.decode().strip().splitlines():
                 if not line.strip():
                     continue
                 data = json.loads(line)
-                new_status[data["Service"]] = data["State"]
+                service = data["Service"]
+                new_status[service] = data["State"]
+                
+                # Extract actual published port
+                publishers = data.get("Publishers", [])
+                if publishers:
+                    for pub in publishers:
+                        if isinstance(pub, dict) and "PublishedPort" in pub:
+                            port_map[service] = pub["PublishedPort"]
+                            break
+            
             self.service_status = new_status
+            self.service_ports = port_map
         except Exception:
             pass
 
@@ -709,17 +742,24 @@ class VexilApp(App):
             self.stream_compose("stop", svc)
         elif btn_id.startswith("open-"):
             svc = btn_id[len("open-"):]
-            if svc in SERVICE_PORTS:
-                port = SERVICE_PORTS[svc]
-                url = f"http://localhost:{port}"
-                try:
-                    import webbrowser
-                    webbrowser.open(url)
-                    log = self.query_one("#log-console", RichLog)
-                    log.write(f"[bold blue]Opening {url} in browser...[/bold blue]")
-                    self.notify(f"Opening {url}", severity="information")
-                except Exception as e:
-                    self.notify(f"Failed to open browser: {e}", severity="error")
+            try:
+                bar = self.query_one(f"#bar-{svc}", ServiceStatusBar)
+                port = bar.port or SERVICE_PORTS.get(svc)
+                
+                if port:
+                    url = f"http://localhost:{port}"
+                    try:
+                        import webbrowser
+                        webbrowser.open(url)
+                        log = self.query_one("#log-console", RichLog)
+                        log.write(f"[bold blue]Opening {url} in browser...[/bold blue]")
+                        self.notify(f"Opening {url}", severity="information")
+                    except Exception as e:
+                        self.notify(f"Failed to open browser: {e}", severity="error")
+                else:
+                    self.notify("Port not available", severity="warning")
+            except Exception as e:
+                self.notify(f"Error: {e}", severity="error")
         elif btn_id.startswith("logs-"):
             svc = btn_id[len("logs-"):]
             self.stream_compose("logs", "--follow", "--tail=100", svc)
