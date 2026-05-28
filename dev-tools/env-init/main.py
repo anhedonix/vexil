@@ -955,7 +955,16 @@ class VexilApp(App):
             await proc.wait()
             log.write("[dim]cancelled[/dim]")
             raise
+        
+        # Poll immediately after command completes
         self.call_after_refresh(self._poll_status)
+        
+        # If starting services, poll a few more times to catch port assignments
+        if "up" in args:
+            await asyncio.sleep(1)
+            self.call_after_refresh(self._poll_status)
+            await asyncio.sleep(2)
+            self.call_after_refresh(self._poll_status)
 
     @work(exclusive=True, group="docker-stream", exit_on_error=False)
     async def run_migrations(self) -> None:
