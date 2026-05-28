@@ -71,6 +71,7 @@ Screen {
 #config-scroll {
     height: 1fr;
     margin-bottom: 0;
+    border: solid $border;
 }
 
 #config-actions {
@@ -81,32 +82,12 @@ Screen {
     margin-bottom: 1;
 }
 
-#status-alert {
-    padding: 1 2;
-    height: 3;
-    content-align: center middle;
-    text-style: bold;
-    margin-bottom: 1;
-    margin-top: 1;
-    border: solid $border;
-}
-
-#status-alert.configured {
-    background: #022c22;     /* very dark emerald */
-    color: #34d399;          /* light emerald text */
-    border: solid #059669;   /* emerald border */
-}
-
-#status-alert.unconfigured {
-    background: #450a0a;     /* very dark red */
-    color: #fca5a5;          /* light red text */
-    border: solid #dc2626;   /* red border */
-}
 
 #right-scroll {
     height: auto;
     max-height: 45%;
     margin-bottom: 0;
+    border: solid $border;
 }
 
 #log-console {
@@ -181,8 +162,10 @@ HoudiniSection {
 
 .form-row Label {
     width: 25;
+    height: 3;
     color: $muted-fg;
     text-style: bold;
+    content-align: left middle;
 }
 
 .form-row Input {
@@ -281,6 +264,12 @@ Button.-primary:focus {
     background: #e4e4e7;
 }
 
+Button:disabled {
+    background: $muted-bg;
+    color: $muted-fg;
+    opacity: 0.5;
+}
+
 ServiceStatusBar Label {
     width: 1fr;
     height: 3;
@@ -320,6 +309,8 @@ ServiceStatusBar .status-unknown {
 
 #section-django .form-row Label {
     width: 15;
+    height: 3;
+    content-align: left middle;
 }
 
 #section-django .form-row Input {
@@ -332,6 +323,21 @@ ServiceStatusBar .status-unknown {
     margin-left: 0;
     margin-bottom: 1;
     margin-top: 1;
+}
+
+#section-django Button {
+    background: $secondary;
+    color: $secondary-fg;
+    border: round $border;
+}
+
+#section-django Button:hover {
+    background: #3f3f46;
+}
+
+#section-django Button:focus {
+    border: round $border-focus;
+    background: #3f3f46;
 }
 
 PathInput {
@@ -371,24 +377,33 @@ PathInput .suggestions-label {
 Checkbox {
     background: transparent;
     color: $fg;
-    border: none;
+    border: round $border;
     padding: 0 1;
     height: 3;
 }
 
 Checkbox > .toggle--button {
     color: $muted-fg;
-    background: transparent;
+    background: $muted-bg;
+    border: solid $border;
 }
 
 Checkbox.-on > .toggle--button {
-    color: $primary;
-    background: transparent;
+    color: $background;
+    background: $success;
+    border: solid $success;
     text-style: bold;
 }
 
 Checkbox:focus > .toggle--button {
-    color: $fg;
+    border: solid $border-focus;
+}
+
+Checkbox.-on:focus > .toggle--button {
+    color: $background;
+    background: $success;
+    border: solid $success;
+    text-style: bold;
 }
 
 Checkbox:focus > .toggle--label {

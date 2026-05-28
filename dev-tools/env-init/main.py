@@ -467,18 +467,29 @@ class ServiceStatusBar(Widget):
         )
         yield Button("Start", variant="success", id=f"start-{self.service_name}")
         yield Button("Stop", variant="error", id=f"stop-{self.service_name}")
+        yield Button("Open", variant="default", id=f"open-{self.service_name}")
         yield Button("Logs", variant="default", id=f"logs-{self.service_name}")
 
     def set_state(self, state: str) -> None:
         try:
             dot = self.query_one(f"#dot-{self.service_name}", Static)
             dot.remove_class("status-running", "status-exited", "status-unknown")
-            if "running" in state:
+            
+            is_running = "running" in state
+            
+            if is_running:
                 dot.add_class("status-running")
             elif "exited" in state or "stopped" in state:
                 dot.add_class("status-exited")
             else:
                 dot.add_class("status-unknown")
+            
+            # Enable/disable Open button based on running state
+            try:
+                open_btn = self.query_one(f"#open-{self.service_name}", Button)
+                open_btn.disabled = not is_running
+            except Exception:
+                pass
         except Exception:
             pass
 
@@ -528,7 +539,6 @@ class VexilApp(App):
                     yield Button("Save & Apply Configs", variant="success", id="btn-save-config")
             
             with Vertical(id="right-pane"):
-                yield Static("", id="status-alert", classes="unconfigured")
                 with VerticalScroll(id="right-scroll"):
                     yield Label("[bold accent]Service Control Dashboard[/bold accent]\n")
                     for name in DOCKER_SERVICES:
@@ -598,16 +608,8 @@ class VexilApp(App):
         self._poll_status()
 
     def update_config_status(self) -> None:
-        alert = self.query_one("#status-alert", Static)
-        configured = check_env_files_exist()
-        if configured:
-            alert.update("[OK] Environments Configured & Ready")
-            alert.remove_class("unconfigured")
-            alert.add_class("configured")
-        else:
-            alert.update("(!) Config files missing! Complete settings on the left & Save")
-            alert.remove_class("configured")
-            alert.add_class("unconfigured")
+        # Status is now shown in logs instead of a dedicated alert box
+        pass
 
     def watch_service_status(self, new_status: dict[str, str]) -> None:
         for name in DOCKER_SERVICES:
@@ -705,6 +707,19 @@ class VexilApp(App):
         elif btn_id.startswith("stop-"):
             svc = btn_id[len("stop-"):]
             self.stream_compose("stop", svc)
+        elif btn_id.startswith("open-"):
+            svc = btn_id[len("open-"):]
+            if svc in SERVICE_PORTS:
+                port = SERVICE_PORTS[svc]
+                url = f"http://localhost:{port}"
+                try:
+                    import webbrowser
+                    webbrowser.open(url)
+                    log = self.query_one("#log-console", RichLog)
+                    log.write(f"[bold blue]Opening {url} in browser...[/bold blue]")
+                    self.notify(f"Opening {url}", severity="information")
+                except Exception as e:
+                    self.notify(f"Failed to open browser: {e}", severity="error")
         elif btn_id.startswith("logs-"):
             svc = btn_id[len("logs-"):]
             self.stream_compose("logs", "--follow", "--tail=100", svc)
