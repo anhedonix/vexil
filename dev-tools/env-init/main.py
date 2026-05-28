@@ -575,17 +575,37 @@ class ServiceStatusBar(Widget):
 
 
 class HelpStatusBar(Static):
+    can_focus = True
+    
     def __init__(self) -> None:
         super().__init__(
-            " [b #fafafa]Ctrl+Q[/] [#a1a1aa]Quit[/]  [#3f3f46]|[/]  "
-            "[b #fafafa]Ctrl+S[/] [#a1a1aa]Save Configs[/]  [#3f3f46]|[/]  "
-            "[b #fafafa]Ctrl+U[/] [#a1a1aa]Start All[/]  [#3f3f46]|[/]  "
-            "[b #fafafa]Ctrl+D[/] [#a1a1aa]Stop All[/]  [#3f3f46]|[/]  "
-            "[b #fafafa]Ctrl+Y[/] [#a1a1aa]Copy Logs[/]  [#3f3f46]|[/]  "
-            "[b #fafafa]Ctrl+L[/] [#a1a1aa]Focus Logs[/]",
+            " [b #fafafa]Ctrl+Q[/] [@click=quit]Quit[/]  [#3f3f46]|[/]  "
+            "[b #fafafa]Ctrl+S[/] [@click=save_configs]Save Configs[/]  [#3f3f46]|[/]  "
+            "[b #fafafa]Ctrl+U[/] [@click=start_services]Start All[/]  [#3f3f46]|[/]  "
+            "[b #fafafa]Ctrl+D[/] [@click=stop_services]Stop All[/]  [#3f3f46]|[/]  "
+            "[b #fafafa]Ctrl+Y[/] [@click=copy_logs]Copy Logs[/]  [#3f3f46]|[/]  "
+            "[b #fafafa]Ctrl+L[/] [@click=focus_logs]Focus Logs[/]",
             id="help-status-bar",
             markup=True,
         )
+    
+    def action_quit(self) -> None:
+        self.app.exit()
+    
+    def action_save_configs(self) -> None:
+        self.app.action_save_configs()
+    
+    def action_start_services(self) -> None:
+        self.app.action_start_services()
+    
+    def action_stop_services(self) -> None:
+        self.app.action_stop_services()
+    
+    def action_copy_logs(self) -> None:
+        self.app.action_copy_logs()
+    
+    def action_focus_logs(self) -> None:
+        self.app.action_focus_logs()
 
 
 class VexilApp(App):
