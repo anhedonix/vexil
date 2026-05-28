@@ -4,4 +4,7 @@ version = "0.1.0"
 description = "Developer TUI for Vexil, a tool for managing projects in Houdini"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "textual[syntax]>=8.2.6",
+    "textual-dev>=1.8.0",
+]
