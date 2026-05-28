@@ -119,19 +119,27 @@ SERVICE_VARS: dict[str, list[dict]] = {
             "default": lambda: secrets.token_urlsafe(50),
             "password": True,
             "hidden": True,
+            "help": "Django secret key for cryptographic signing. Auto-generated secure random string.",
         },
-        {"key": "DEBUG", "label": "Debug", "default": "True"},
+        {
+            "key": "DEBUG",
+            "label": "Debug",
+            "default": "True",
+            "help": "Enable Django debug mode. Set to False in production.",
+        },
         {
             "key": "ALLOWED_HOSTS",
             "label": "Allowed Hosts",
             "default": "localhost,127.0.0.1,0.0.0.0",
             "hidden": True,
+            "help": "Comma-separated list of host/domain names that Django can serve.",
         },
         {
             "key": "DATABASE_URL",
             "label": "Database URL",
             "default": f"sqlite:///{MONOREPO_ROOT}/apps/backend-api/db.sqlite3",
             "hidden": True,
+            "help": "Database connection URL. Default uses SQLite for local development.",
         },
     ],
     "frontend-app": [
@@ -139,11 +147,13 @@ SERVICE_VARS: dict[str, list[dict]] = {
             "key": "API_URL",
             "label": "API URL (internal)",
             "default": "http://backend-api:8000",
+            "help": "Internal Docker network URL for backend API communication.",
         },
         {
             "key": "PUBLIC_API_URL",
             "label": "Public API URL",
             "default": "http://localhost:8000",
+            "help": "Public-facing URL for API access from browser/external clients.",
         },
     ],
     "website-vexil": [
@@ -153,10 +163,28 @@ SERVICE_VARS: dict[str, list[dict]] = {
             "default": "re_your_key_here",
             "password": True,
             "hidden": True,
+            "help": "API key for Resend email service. Get yours at resend.com.",
         },
-        {"key": "RESEND_FROM_EMAIL", "label": "From Email", "default": "", "hidden": True},
-        {"key": "RESEND_TO_EMAIL", "label": "To Email", "default": "", "hidden": True},
-        {"key": "SITE_URL", "label": "Site URL", "default": "https://vexil.dev"},
+        {
+            "key": "RESEND_FROM_EMAIL",
+            "label": "From Email",
+            "default": "",
+            "hidden": True,
+            "help": "Email address to send from (must be verified in Resend).",
+        },
+        {
+            "key": "RESEND_TO_EMAIL",
+            "label": "To Email",
+            "default": "",
+            "hidden": True,
+            "help": "Email address to receive waitlist notifications.",
+        },
+        {
+            "key": "SITE_URL",
+            "label": "Site URL",
+            "default": "https://vexil.tools",
+            "help": "Public URL where the website is hosted.",
+        },
     ],
 }
 
@@ -270,6 +298,7 @@ class EnvField(Widget):
         default_value: str,
         password: bool = False,
         hidden: bool = False,
+        help_text: str = "",
     ) -> None:
         super().__init__(classes="env-field" + (" advanced-field" if hidden else ""))
         self.key = key
@@ -277,9 +306,12 @@ class EnvField(Widget):
         self.default_value = default_value
         self.password = password
         self.hidden_by_spec = hidden
+        self.help_text = help_text
 
     def compose(self) -> ComposeResult:
         yield Label(self._label)
+        if self.help_text:
+            yield Label(f"[dim]{self.help_text}[/dim]", classes="help-text")
         yield Input(
             value=self.default_value,
             password=self.password,
@@ -321,6 +353,7 @@ class ServiceSection(Widget):
                     self._resolve_default(spec),
                     password=spec.get("password", False),
                     hidden=spec.get("hidden", False),
+                    help_text=spec.get("help", ""),
                 )
 
     def get_values(self) -> dict[str, str]:
@@ -350,47 +383,67 @@ class HoudiniSection(Widget):
         pythonpath_override = LOADED_ENV.get("PYTHONPATH", str(MONOREPO_ROOT / "apps" / "plugins" / "houdini-package" / "python"))
 
         with Collapsible(title="  Houdini Plugin Settings", collapsed=False, id="collapsible-houdini"):
-            with Horizontal(classes="form-row"):
+            with Vertical(classes="form-field"):
                 yield Label("Houdini Install Path")
+                yield Label("[dim]Path to Houdini installation directory (e.g., /opt/hfs20.5)[/dim]", classes="form-help")
                 yield PathInput(value=h_path, id="h-install-path")
-            with Horizontal(classes="form-row"):
+            
+            with Vertical(classes="form-field"):
                 yield Label("Projects Root Folder")
+                yield Label("[dim]Root directory where VEXiL projects are stored[/dim]", classes="form-help")
                 yield PathInput(value=p_root, id="h-projects-root")
-            with Horizontal(classes="form-row"):
+            
+            with Vertical(classes="form-field"):
                 yield Label("Online Mode")
+                yield Label("[dim]Enable to sync projects with backend API, disable for local-only mode[/dim]", classes="form-help")
                 yield Checkbox("Use Online Project Sync", value=online_val, id="h-mode-online")
             
             # Local Mode Settings
-            with Horizontal(classes="form-row", id="h-row-local-dir"):
+            with Vertical(classes="form-field", id="h-row-local-dir"):
                 yield Label("Local Config Folder")
+                yield Label("[dim]Directory for local configuration files[/dim]", classes="form-help", id="h-help-local-dir")
                 yield PathInput(value=local_dir, id="h-local-dir")
-            with Horizontal(classes="form-row", id="h-row-local-db"):
+            
+            with Vertical(classes="form-field", id="h-row-local-db"):
                 yield Label("Local Database Folder")
+                yield Label("[dim]Directory for local SQLite database[/dim]", classes="form-help", id="h-help-local-db")
                 yield PathInput(value=local_db, id="h-local-db")
-            with Horizontal(classes="form-row", id="h-row-local-data"):
+            
+            with Vertical(classes="form-field", id="h-row-local-data"):
                 yield Label("Local Data Folder")
+                yield Label("[dim]Directory for local project data and assets[/dim]", classes="form-help", id="h-help-local-data")
                 yield PathInput(value=local_data, id="h-local-data")
                 
             # Online Mode Settings
-            with Horizontal(classes="form-row advanced-field", id="h-row-online-api"):
+            with Vertical(classes="form-field advanced-field", id="h-row-online-api"):
                 yield Label("Online API URL")
+                yield Label("[dim]Backend API endpoint URL[/dim]", classes="form-help advanced-field", id="h-help-online-api")
                 yield Input(value=online_api, id="h-online-api")
-            with Horizontal(classes="form-row", id="h-row-online-user"):
+            
+            with Vertical(classes="form-field", id="h-row-online-user"):
                 yield Label("Online Username")
+                yield Label("[dim]Username for backend API authentication[/dim]", classes="form-help", id="h-help-online-user")
                 yield Input(value=user, id="h-online-user")
-            with Horizontal(classes="form-row", id="h-row-online-pass"):
+            
+            with Vertical(classes="form-field", id="h-row-online-pass"):
                 yield Label("Online Password")
+                yield Label("[dim]Password for backend API authentication[/dim]", classes="form-help", id="h-help-online-pass")
                 yield Input(value=pwd, password=True, id="h-online-pass")
 
             # Advanced environment variables
-            with Horizontal(classes="form-row advanced-field", id="h-row-path-override"):
+            with Vertical(classes="form-field advanced-field", id="h-row-path-override"):
                 yield Label("HOUDINI_PATH")
+                yield Label("[dim]Custom HOUDINI_PATH environment variable override[/dim]", classes="form-help advanced-field", id="h-help-path-override")
                 yield PathInput(value=h_path_override, id="h-path-override")
-            with Horizontal(classes="form-row advanced-field", id="h-row-pythonpath-override"):
+            
+            with Vertical(classes="form-field advanced-field", id="h-row-pythonpath-override"):
                 yield Label("PYTHONPATH")
+                yield Label("[dim]Custom PYTHONPATH environment variable override[/dim]", classes="form-help advanced-field", id="h-help-pythonpath-override")
                 yield PathInput(value=pythonpath_override, id="h-pythonpath-override")
-            with Horizontal(classes="form-row advanced-field", id="h-row-log-level"):
+            
+            with Vertical(classes="form-field advanced-field", id="h-row-log-level"):
                 yield Label("Log Level")
+                yield Label("[dim]Logging verbosity: DEBUG, INFO, WARNING, ERROR, CRITICAL[/dim]", classes="form-help advanced-field", id="h-help-log-level")
                 yield Input(value=log_level, id="h-log-level")
 
     def on_mount(self) -> None:
@@ -405,9 +458,14 @@ class HoudiniSection(Widget):
         self.query_one("#h-row-local-dir").styles.display = "none" if online_mode else "block"
         self.query_one("#h-row-local-db").styles.display = "none" if online_mode else "block"
         self.query_one("#h-row-local-data").styles.display = "none" if online_mode else "block"
+        self.query_one("#h-help-local-dir").styles.display = "none" if online_mode else "block"
+        self.query_one("#h-help-local-db").styles.display = "none" if online_mode else "block"
+        self.query_one("#h-help-local-data").styles.display = "none" if online_mode else "block"
         
         self.query_one("#h-row-online-user").styles.display = "block" if online_mode else "none"
         self.query_one("#h-row-online-pass").styles.display = "block" if online_mode else "none"
+        self.query_one("#h-help-online-user").styles.display = "block" if online_mode else "none"
+        self.query_one("#h-help-online-pass").styles.display = "block" if online_mode else "none"
         
         try:
             show_advanced = self.screen.query_one("#toggle-advanced", Checkbox).value
@@ -419,9 +477,13 @@ class HoudiniSection(Widget):
         self.query_one("#h-row-path-override").styles.display = "block" if show else "none"
         self.query_one("#h-row-pythonpath-override").styles.display = "block" if show else "none"
         self.query_one("#h-row-log-level").styles.display = "block" if show else "none"
+        self.query_one("#h-help-path-override").styles.display = "block" if show else "none"
+        self.query_one("#h-help-pythonpath-override").styles.display = "block" if show else "none"
+        self.query_one("#h-help-log-level").styles.display = "block" if show else "none"
         
         online_mode = self.query_one("#h-mode-online", Checkbox).value
         self.query_one("#h-row-online-api").styles.display = "block" if (show and online_mode) else "none"
+        self.query_one("#h-help-online-api").styles.display = "block" if (show and online_mode) else "none"
 
     def get_values(self) -> dict:
         online_mode = self.query_one("#h-mode-online", Checkbox).value
@@ -568,14 +630,14 @@ class VexilApp(App):
                             yield Button("Apply Database Migrations", variant="primary", id="btn-migrate")
                         
                         yield Label("\n[bold]Create Django Admin Superuser[/bold]")
-                        with Horizontal(classes="form-row"):
-                            yield Label("Username:")
+                        with Vertical(classes="form-field"):
+                            yield Label("Username")
                             yield Input(value="admin", id="su-username")
-                        with Horizontal(classes="form-row"):
-                            yield Label("Email:")
+                        with Vertical(classes="form-field"):
+                            yield Label("Email")
                             yield Input(value="admin@example.com", id="su-email")
-                        with Horizontal(classes="form-row"):
-                            yield Label("Password:")
+                        with Vertical(classes="form-field"):
+                            yield Label("Password")
                             yield Input(value="adminpass", password=True, id="su-password")
                         with Horizontal(classes="action-row"):
                             yield Button("Create Superuser", variant="primary", id="btn-create-su")
