@@ -3,7 +3,7 @@ services:
     build:
       context: apps/backend-api
     ports:
-      - "8000:8000"
+      - "8000-8099:8000"
     env_file:
       - path: apps/backend-api/.env
         required: false
@@ -15,7 +15,7 @@ services:
     build:
       context: apps/frontend-app
     ports:
-      - "4321:4321"
+      - "4321-4399:4321"
     env_file:
       - path: apps/frontend-app/.env
         required: false
@@ -29,7 +29,7 @@ services:
     build:
       context: apps/website-vexil
     ports:
-      - "4322:4321"
+      - "4322-4399:4321"
     env_file:
       - path: apps/website-vexil/.env
         required: false
