@@ -1,0 +1,434 @@
+/* Color Palette - Shadcn Dark Mode (Zinc) */
+$background: #09090b;     /* Zinc 950 */
+$foreground: #fafafa;     /* Zinc 50 */
+$surface: #09090b;
+$primary: #ffffff;
+$accent: #fafafa;
+$error: #ef4444;
+$success: #22c55e;
+$warning: #f59e0b;
+
+$bg: #09090b;
+$fg: #fafafa;
+$muted-fg: #71717a;       /* Zinc 500 */
+$muted-bg: #18181b;       /* Zinc 900 */
+$border: #27272a;         /* Zinc 800 */
+$border-focus: #52525b;   /* Zinc 600 */
+$primary-text: #09090b;
+$secondary: #27272a;
+$secondary-fg: #fafafa;
+$destructive: #ef4444;
+$input-bg: #09090b;
+
+Screen {
+    background: $bg;
+    color: $fg;
+    layout: vertical;
+}
+
+#app-header {
+    height: auto;
+    padding: 1 2;
+    background: $bg;
+    border-bottom: solid $border;
+    color: $fg;
+    text-style: bold;
+}
+
+#main-content {
+    layout: horizontal;
+    height: 1fr;
+}
+
+#left-pane {
+    width: 45%;
+    height: 1fr;
+    border-right: solid $border;
+    padding: 1 2;
+    background: $bg;
+}
+
+#left-pane > Label {
+    color: $fg;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+#right-pane {
+    width: 55%;
+    height: 1fr;
+    padding: 1 2;
+    layout: vertical;
+    background: $bg;
+}
+
+#right-pane > Label {
+    color: $fg;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+#config-scroll {
+    height: 1fr;
+    margin-bottom: 0;
+}
+
+#config-actions {
+    height: auto;
+    layout: horizontal;
+    align: right middle;
+    margin-top: 1;
+    margin-bottom: 1;
+}
+
+#status-alert {
+    padding: 1 2;
+    height: 3;
+    content-align: center middle;
+    text-style: bold;
+    margin-bottom: 1;
+    margin-top: 1;
+    border: solid $border;
+}
+
+#status-alert.configured {
+    background: #022c22;     /* very dark emerald */
+    color: #34d399;          /* light emerald text */
+    border: solid #059669;   /* emerald border */
+}
+
+#status-alert.unconfigured {
+    background: #450a0a;     /* very dark red */
+    color: #fca5a5;          /* light red text */
+    border: solid #dc2626;   /* red border */
+}
+
+#right-scroll {
+    height: auto;
+    max-height: 45%;
+    margin-bottom: 0;
+}
+
+#log-console {
+    height: 1fr;
+    border: solid $border;
+    background: $bg;
+    margin-top: 0;
+}
+
+#log-console:focus {
+    border: solid $border-focus;
+}
+
+#global-actions {
+    height: auto;
+    layout: horizontal;
+    align: right middle;
+    margin-top: 1;
+    margin-bottom: 1;
+}
+
+#global-actions Button {
+    margin-left: 1;
+}
+
+EnvField {
+    layout: vertical;
+    margin: 0 0 1 0;
+    height: auto;
+}
+
+EnvField.advanced-field {
+    display: none;
+}
+
+EnvField Label {
+    color: $muted-fg;
+    text-style: bold;
+    margin-bottom: 0;
+}
+
+EnvField Input {
+    width: 1fr;
+    height: 3;
+    border: round $border;
+    background: $input-bg;
+    color: $fg;
+    padding: 0 1;
+}
+
+EnvField Input:focus {
+    border: round $border-focus;
+}
+
+ServiceSection {
+    height: auto;
+    margin-bottom: 1;
+}
+
+HoudiniSection {
+    height: auto;
+    margin-bottom: 1;
+}
+
+.form-row {
+    height: auto;
+    layout: horizontal;
+    align: left middle;
+    margin-bottom: 1;
+    padding: 0 1;
+}
+
+.form-row Label {
+    width: 25;
+    color: $muted-fg;
+    text-style: bold;
+}
+
+.form-row Input {
+    width: 1fr;
+    height: 3;
+    border: round $border;
+    background: $input-bg;
+    color: $fg;
+    padding: 0 1;
+}
+
+.form-row Input:focus {
+    border: round $border-focus;
+}
+
+.form-row Checkbox {
+    width: auto;
+}
+
+.advanced-field {
+    display: none;
+}
+
+ServiceStatusBar {
+    layout: horizontal;
+    height: auto;
+    align: left middle;
+    background: $bg;
+    border-bottom: solid $border;
+    margin-bottom: 0;
+    padding: 0 2;
+}
+
+Button {
+    text-style: bold;
+    height: 3;
+    border: round $border;
+    padding: 0 2;
+    min-width: 10;
+    background: $secondary;
+    color: $secondary-fg;
+}
+
+Button:hover {
+    background: #3f3f46;
+}
+
+Button:focus {
+    border: round $border-focus;
+    background: #3f3f46;
+}
+
+Button.-success {
+    background: #14532d;
+    color: #4ade80;
+    border: round #22c55e;
+}
+
+Button.-success:hover {
+    background: #166534;
+}
+
+Button.-success:focus {
+    border: round #4ade80;
+    background: #166534;
+}
+
+Button.-error {
+    background: #450a0a;
+    color: #fca5a5;
+    border: round #ef4444;
+}
+
+Button.-error:hover {
+    background: #7f1d1d;
+}
+
+Button.-error:focus {
+    border: round #fca5a5;
+    background: #7f1d1d;
+}
+
+Button.-primary {
+    background: $primary;
+    color: $primary-text;
+    border: round $primary;
+}
+
+Button.-primary:hover {
+    background: #e4e4e7;
+    border: round #e4e4e7;
+}
+
+Button.-primary:focus {
+    border: round $border-focus;
+    background: #e4e4e7;
+}
+
+ServiceStatusBar Label {
+    width: 1fr;
+    height: 3;
+    content-align: left middle;
+    color: $fg;
+    text-style: bold;
+}
+
+ServiceStatusBar .status-dot {
+    width: 3;
+    height: 3;
+    content-align: center middle;
+    text-style: bold;
+}
+
+ServiceStatusBar .status-running {
+    color: $success;
+}
+
+ServiceStatusBar .status-exited {
+    color: $destructive;
+}
+
+ServiceStatusBar .status-unknown {
+    color: $warning;
+}
+
+#section-django {
+    height: auto;
+    margin-top: 1;
+    margin-bottom: 1;
+}
+
+#section-django .form-row {
+    margin-left: 0;
+}
+
+#section-django .form-row Label {
+    width: 15;
+}
+
+#section-django .form-row Input {
+    width: 1fr;
+}
+
+#section-django .action-row {
+    height: auto;
+    layout: horizontal;
+    margin-left: 0;
+    margin-bottom: 1;
+    margin-top: 1;
+}
+
+PathInput {
+    layout: vertical;
+    height: auto;
+}
+
+PathInput AutocompleteInput {
+    width: 1fr;
+}
+
+PathInput .suggestions-label {
+    color: $muted-fg;
+    text-style: italic;
+    margin-left: 1;
+    margin-bottom: 0;
+    height: 1;
+    display: none;
+}
+
+.form-row PathInput {
+    width: 1fr;
+}
+
+#toggle-container {
+    height: 3;
+    margin-bottom: 1;
+    layout: horizontal;
+    align: left middle;
+}
+
+#toggle-container Checkbox {
+    width: auto;
+    margin-right: 2;
+}
+
+Checkbox {
+    background: transparent;
+    color: $fg;
+    border: none;
+    padding: 0 1;
+    height: 3;
+}
+
+Checkbox > .toggle--button {
+    color: $muted-fg;
+    background: transparent;
+}
+
+Checkbox.-on > .toggle--button {
+    color: $primary;
+    background: transparent;
+    text-style: bold;
+}
+
+Checkbox:focus > .toggle--button {
+    color: $fg;
+}
+
+Checkbox:focus > .toggle--label {
+    text-style: underline;
+}
+
+Collapsible {
+    border: none;
+    background: transparent;
+    margin-bottom: 1;
+}
+
+Collapsible > .collapsible--toggle {
+    background: $muted-bg;
+    color: $fg;
+    border: round $border;
+    text-style: bold;
+    height: 3;
+    padding: 0 2;
+}
+
+Collapsible > .collapsible--toggle:focus {
+    background: $muted-bg;
+    border: round $border-focus;
+    color: $fg;
+}
+
+Collapsible > .collapsible--content {
+    background: transparent;
+    border-left: solid $border;
+    border-right: solid $border;
+    border-bottom: solid $border;
+    padding: 1 2;
+}
+
+#help-status-bar {
+    height: 3;
+    background: $muted-bg;
+    color: $muted-fg;
+    border-top: solid $border;
+    padding: 0 2;
+    align: left middle;
+}
