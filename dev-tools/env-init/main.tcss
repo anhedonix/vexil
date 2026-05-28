@@ -129,6 +129,14 @@ EnvField Label {
     margin-bottom: 0;
 }
 
+EnvField .help-text {
+    color: #71717a;
+    text-style: italic;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding-left: 0;
+}
+
 EnvField Input {
     width: 1fr;
     height: 3;
@@ -152,24 +160,21 @@ HoudiniSection {
     margin-bottom: 1;
 }
 
-.form-row {
+.form-field {
     height: auto;
-    layout: horizontal;
-    align: left middle;
+    layout: vertical;
     margin-bottom: 1;
     padding: 0 1;
 }
 
-.form-row Label {
-    width: 25;
-    height: 3;
+.form-field Label {
     color: $muted-fg;
     text-style: bold;
-    content-align: left middle;
+    margin-bottom: 0;
 }
 
-.form-row Input {
-    width: 1fr;
+.form-field Input {
+    width: 100%;
     height: 3;
     border: round $border;
     background: $input-bg;
@@ -177,12 +182,24 @@ HoudiniSection {
     padding: 0 1;
 }
 
-.form-row Input:focus {
+.form-field Input:focus {
     border: round $border-focus;
 }
 
-.form-row Checkbox {
+.form-field PathInput {
+    width: 100%;
+}
+
+.form-field Checkbox {
     width: auto;
+}
+
+.form-help {
+    color: #71717a;
+    text-style: italic;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding: 0;
 }
 
 .advanced-field {
@@ -301,20 +318,6 @@ ServiceStatusBar .status-unknown {
     height: auto;
     margin-top: 1;
     margin-bottom: 1;
-}
-
-#section-django .form-row {
-    margin-left: 0;
-}
-
-#section-django .form-row Label {
-    width: 15;
-    height: 3;
-    content-align: left middle;
-}
-
-#section-django .form-row Input {
-    width: 1fr;
 }
 
 #section-django .action-row {
