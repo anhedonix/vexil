@@ -471,3 +471,7 @@ Collapsible > .collapsible--content {
     padding: 0 2;
     align: left middle;
 }
+
+#help-status-bar:hover {
+    background: #27272a;
+}
