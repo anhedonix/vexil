@@ -1,10 +1,11 @@
-{// Folder-specific settings
-//
-// For a full list of overridable settings, and general information on folder-specific settings,//zed.dev/docs/configuring-zed#settings-files
+{
+  // Folder-specific settings
+  //
+  // For a full list of overridable settings, and general information on folder-specific settings,//zed.dev/docs/configuring-zed#settings-files
   "disable_ai": false,
   "show_edit_predictions": true,
   "completions": {
-    "lsp": true
+    "lsp": true,
   },
   "languages": {
     "Go": {
@@ -13,15 +14,15 @@
       "auto_indent_on_paste": true,
       "auto_indent": "syntax_aware",
       "hard_tabs": false,
-      "tab_size": 4
+      "tab_size": 4,
     },
     "Astro": {
       "hard_tabs": false,
-      "tab_size": 4
-    }
+      "tab_size": 4,
+    },
   },
   "prettier": {
-    "allowed": true
+    "allowed": true,
   },
   "line_ending": "prefer_lf",
   "ensure_final_newline_on_save": true,
@@ -29,9 +30,10 @@
   "format_on_save": "on",
   "indent_guides": {
     "background_coloring": "indent_aware",
-    "coloring": "indent_aware"
+    "coloring": "indent_aware",
   },
   "show_wrap_guides": true,
-  "soft_wrap": "none",
-  "auto_indent_on_paste": true
+  "soft_wrap": "bounded",
+  "auto_indent_on_paste": true,
+  "wrap_guides": [80, 120],
 }
