@@ -4,13 +4,15 @@ import tailwindcss from '@tailwindcss/vite';
 import vercel from '@astrojs/vercel';
 import netlify from '@astrojs/netlify';
 
+import favicons from 'astro-favicons';
+
 const isNetlify = process.env.DEPLOY_TARGET === 'netlify';
 
 export default defineConfig({
   output: 'server',
   adapter: isNetlify ? netlify() : vercel(),
   site: process.env.SITE_URL || 'https://vexil.dev',
-  integrations: [icon()],
+  integrations: [icon(), favicons()],
   vite: { plugins: [tailwindcss()] },
   env: {
     schema: {
