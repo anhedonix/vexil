@@ -6,8 +6,8 @@ USER vscode
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/home/vscode/.local/bin:${PATH}"
 
-# Pre-fetch both Python versions used in the repo
-RUN uv python install 3.14 3.11
+# Python version used across the repo (pinned via .python-version in each project)
+RUN uv python install 3.13
 
 # Bun for all JS/TS tooling
 RUN curl -fsSL https://bun.sh/install | bash
