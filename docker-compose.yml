@@ -2,14 +2,16 @@ services:
   backend-api:
     build:
       context: apps/backend-api
+      target: dev
     ports:
-      - "8000-8099:8000"
+      - "8080-8099:8080"
     env_file:
       - path: apps/backend-api/.env
         required: false
     volumes:
       - ./apps/backend-api:/app
-      - backend-venv:/app/.venv
+      - backend-go-mod-cache:/go/pkg/mod
+      - backend-go-build-cache:/root/.cache/go-build
 
   frontend-app:
     build:
@@ -38,6 +40,7 @@ services:
       - website-node-modules:/app/node_modules
 
 volumes:
-  backend-venv:
+  backend-go-mod-cache:
+  backend-go-build-cache:
   frontend-node-modules:
   website-node-modules:

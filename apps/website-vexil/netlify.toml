@@ -4,8 +4,6 @@
 
 [build.environment]
   DEPLOY_TARGET = "netlify"
-
-[build.environment]
   NODE_VERSION = "22"
 
 [[headers]]

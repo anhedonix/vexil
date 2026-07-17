@@ -5,7 +5,7 @@
     "@types/bun": "latest"
   },
   "scripts": {
-    "dev": "uv run manage.py runserver 0.0.0.0:8000"
+    "dev": "go run github.com/air-verse/air@v1.65.3 -c .air.toml"
   },
   "peerDependencies": {
     "typescript": "^5"
