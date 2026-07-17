@@ -6,12 +6,12 @@ import { Icon } from 'astro-icon/components';
 
 const repoTree = `<span class="text-cyan-400">vexil/</span>
 ├── <span class="text-purple-400">apps/</span>
-│   ├── <span class="text-emerald-400">website/</span>          <span class="text-slate-500">— marketing site (Astro 6 · Tailwind v4)</span>
-│   ├── <span class="text-emerald-400">frontend/</span>         <span class="text-slate-500">— product web UI (Astro 6)</span>
-│   ├── <span class="text-emerald-400">backend/</span>          <span class="text-slate-500">— core API (Django 6 · uv · Python ≥3.14)</span>
+│   ├── <span class="text-emerald-400">website/</span>          <span class="text-slate-500">— marketing site (Astro 7 · Tailwind v4)</span>
+│   ├── <span class="text-emerald-400">frontend/</span>         <span class="text-slate-500">— product web UI (Astro 7)</span>
+│   ├── <span class="text-emerald-400">backend/</span>          <span class="text-slate-500">— core API (GoLang)</span>
 │   └── <span class="text-emerald-400">houdini-package/</span>  <span class="text-slate-500">— Houdini plugin (uv · Python 3.11)</span>
 ├── <span class="text-purple-400">tools/</span>
-│   └── <span class="text-emerald-400">dev-tui/</span>          <span class="text-slate-500">— developer TUI (uv · Python ≥3.14)</span>
+│   └── <span class="text-emerald-400">dev-tui/</span>          <span class="text-slate-500">— developer TUI (GoLang)</span>
 └── <span class="text-purple-400">infrastructure/</span>     <span class="text-slate-500">— deployment & IaC (planned)</span>`;
 
 const quickstart = `<span class="text-slate-500"># 1. Clone and hydrate the JS workspaces</span>
@@ -22,10 +22,7 @@ bun install
 <span class="text-slate-500"># 2. Run every dev server in parallel (Turborepo)</span>
 bun run dev
 
-<span class="text-slate-500"># 3. Python workspaces — uv handles each one</span>
-cd apps/backend          && uv sync && uv run manage.py runserver
-cd apps/houdini-package  && uv sync
-cd tools/dev-tui         && uv sync`;
+<span class="text-slate-500"># 3. TODO (rewrite in-progress)`;
 ---
 
 <Layout>
@@ -34,7 +31,7 @@ cd tools/dev-tui         && uv sync`;
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <div
-          class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-purple-600 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(168,85,247,0.4)]"
+          class="w-8 h-8 rounded-lg bg-linear-to-br from-cyan-400 to-purple-600 flex items-center justify-center font-bold text-white shadow-[0_0_15px_rgba(168,85,247,0.4)]"
         >
           V
         </div>
@@ -114,7 +111,7 @@ cd tools/dev-tui         && uv sync`;
       <div class="mt-16 w-full grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
         <div class="bg-white/[0.02] border border-white/5 p-5 rounded-2xl backdrop-blur-sm">
           <span class="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-1">Language</span>
-          <span class="text-xl font-bold text-cyan-400">Python <span class="text-white">91.9%</span></span>
+          <span class="text-xl font-bold text-cyan-400">Python & Go</span>
         </div>
         <div class="bg-white/[0.02] border border-white/5 p-5 rounded-2xl backdrop-blur-sm">
           <span class="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-1">Architecture</span>
@@ -209,17 +206,17 @@ cd tools/dev-tui         && uv sync`;
         >
           <Icon name="lucide:share-2" class="w-7 h-7" />
         </div>
-        <h3 class="text-xl font-bold text-white mb-3">Community Exchange "Recipes"</h3>
+        <h3 class="text-xl font-bold text-white mb-3">Community Exchange "Reusable Node-Graphs"</h3>
         <p class="text-slate-400 leading-relaxed">
           Projects stay private and encrypted by default, but you can opt in to contribute or pull from shared
-          community "Recipes" to accelerate your pipeline — Houdini networks today, with cross-DCC recipes planned
+          community "Reusable Node-Graphs" to accelerate your pipeline — Houdini networks today, with cross-DCC integration planned
           alongside the Maya, Nuke, and Blender adapters.
         </p>
       </div>
 
       <!-- Feature 4 -->
       <div
-        class="bg-white/[0.02] border border-white/5 p-8 rounded-3xl hover:border-emerald-500/30 hover:bg-white/[0.04] transition-all duration-300 hover:-translate-y-1 group shadow-lg"
+        class="bg-white/2 border border-white/5 p-8 rounded-3xl hover:border-emerald-500/30 hover:bg-white/4 transition-all duration-300 hover:-translate-y-1 group shadow-lg"
       >
         <div
           class="w-14 h-14 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:-rotate-3 transition-transform shadow-[0_0_15px_rgba(52,211,153,0.4)]"
@@ -294,7 +291,7 @@ cd tools/dev-tui         && uv sync`;
       </h2>
       <p class="text-slate-300 text-lg max-w-3xl mx-auto leading-relaxed">
         VEXiL is an MIT-licensed monorepo: <strong class="text-white">Bun + Turborepo</strong> orchestrate the JS
-        workspaces, <strong class="text-white">uv</strong> manages every Python project. Five workspaces, one root
+        workspaces, <strong class="text-white">uv</strong> manages every Python and GoLang project. Five workspaces, one root
         install, one dev command.
       </p>
     </div>
@@ -342,7 +339,7 @@ cd tools/dev-tui         && uv sync`;
         </p>
         <div class="flex flex-wrap gap-1.5">
           <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20"
-            >Astro 6</span
+            >Astro 7</span
           >
           <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20"
             >Tailwind v4</span
@@ -375,7 +372,7 @@ cd tools/dev-tui         && uv sync`;
         </p>
         <div class="flex flex-wrap gap-1.5">
           <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20"
-            >Astro 6</span
+            >Astro 7</span
           >
           <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700/30 text-slate-400 border border-white/10"
             >UI library · planned</span
@@ -396,19 +393,10 @@ cd tools/dev-tui         && uv sync`;
           >
         </div>
         <h3 class="text-lg font-bold text-white mb-2">Core API</h3>
-        <p class="text-sm text-slate-400 mb-4 leading-relaxed">
-          Django project managed by uv. Currently SQLite + standard auth; GraphQL layer and Postgres (AWS RDS) arrive
-          in Phase II.
-        </p>
+        <p class="text-sm text-slate-400 mb-4 leading-relaxed">GoLang based core which is locally managed using Sqlite</p>
         <div class="flex flex-wrap gap-1.5">
           <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20"
-            >Django 6</span
-          >
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20"
-            >uv</span
-          >
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20"
-            >Python ≥3.14</span
+            >GoLang</span
           >
           <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700/30 text-slate-400 border border-white/10"
             >GraphQL · planned</span
@@ -430,7 +418,7 @@ cd tools/dev-tui         && uv sync`;
         </div>
         <h3 class="text-lg font-bold text-white mb-2">Houdini Plugin</h3>
         <p class="text-sm text-slate-400 mb-4 leading-relaxed">
-          Native Houdini package, pinned to Python 3.11 (Houdini's interpreter). PySide6 + Qt Designer UI layer ships
+          Native Houdini package supports v22+ by default, pinned to Python 3.13 (Houdini's interpreter). PySide6 + Qt Designer UI layer ships
           in the Alpha plugin release.
         </p>
         <div class="flex flex-wrap gap-1.5">
@@ -438,7 +426,7 @@ cd tools/dev-tui         && uv sync`;
             >uv</span
           >
           <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-pink-500/10 text-pink-300 border border-pink-500/20"
-            >Python 3.11</span
+            >Python 3.13</span
           >
           <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700/30 text-slate-400 border border-white/10"
             >PySide6 · planned</span
@@ -450,7 +438,7 @@ cd tools/dev-tui         && uv sync`;
       </div>
 
       <!-- tools/dev-tui -->
-      <div class="bg-white/[0.02] border border-white/5 p-6 rounded-3xl hover:border-orange-500/30 transition-colors">
+      <div class="bg-white/2 border border-white/5 p-6 rounded-3xl hover:border-orange-500/30 transition-colors">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
             <Icon name="lucide:terminal" class="w-5 h-5 text-orange-400" />
@@ -467,13 +455,10 @@ cd tools/dev-tui         && uv sync`;
         </p>
         <div class="flex flex-wrap gap-1.5">
           <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-orange-500/10 text-orange-300 border border-orange-500/20"
-            >uv</span
-          >
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-orange-500/10 text-orange-300 border border-orange-500/20"
-            >Python ≥3.14</span
+            >GoLang</span
           >
           <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700/30 text-slate-400 border border-white/10"
-            >Textual · planned</span
+            >TOML config files</span
           >
         </div>
       </div>
@@ -496,7 +481,7 @@ cd tools/dev-tui         && uv sync`;
         <p class="text-sm text-slate-300 mb-4 leading-relaxed">
           Bun handles JS workspaces and the lockfile. Turborepo fans the <code
             class="text-cyan-300 font-mono text-xs bg-slate-950/60 px-1.5 py-0.5 rounded">dev</code
-          > task out across all apps. Python apps each manage their own venv via uv.
+          > task out across all apps. Python apps each manage their own venv via uv. Compiled Go apps handle the heavy logic.
         </p>
         <div class="flex flex-wrap gap-1.5">
           <span
@@ -510,6 +495,14 @@ cd tools/dev-tui         && uv sync`;
           <span
             class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-200 border border-cyan-500/30"
             >uv</span
+          >
+          <span
+            class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-200 border border-cyan-500/30"
+            >Docker</span
+          >
+          <span
+            class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-200 border border-cyan-500/30"
+            >GoLang</span
           >
         </div>
       </div>
@@ -536,8 +529,7 @@ cd tools/dev-tui         && uv sync`;
           <Icon name="lucide:git-pull-request" class="w-5 h-5 text-purple-400" /> Contribute
         </h3>
         <p class="text-sm text-slate-300 mb-6 leading-relaxed flex-1">
-          MIT-licensed. Issues, RFCs, and pull requests welcome — especially around Houdini integration, the Django
-          API, and the plugin UI.
+          MIT-licensed. Issues, RFCs, and pull requests welcome — especially around Houdini integration, the Go backend, and the plugin UI.
         </p>
         <div class="flex flex-col gap-2">
           <a
@@ -619,7 +611,6 @@ cd tools/dev-tui         && uv sync`;
   <!-- Strategic Roadmap & Commercial -->
   <section class="py-24 relative border-y border-white/5 bg-slate-900/40 backdrop-blur-sm z-10">
     <div class="max-w-7xl mx-auto px-6">
-      <!-- Roadmap -->
       <div class="mb-24">
         <div class="text-center mb-12">
           <h2 class="text-4xl font-extrabold text-white mb-4">Strategic Roadmap</h2>
@@ -627,7 +618,7 @@ cd tools/dev-tui         && uv sync`;
             Targeting public launch in <strong class="text-cyan-400 font-bold">6-8 Months</strong>.
           </p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div class="bg-blue-900/20 border border-blue-500/50 p-6 rounded-3xl relative overflow-hidden group">
             <div class="text-6xl font-black text-white/5 absolute -right-2 -top-4 transition-transform group-hover:scale-110">
               I
@@ -644,7 +635,7 @@ cd tools/dev-tui         && uv sync`;
           </div>
 
           <div
-            class="bg-white/[0.02] border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-white/10 transition-colors"
+            class="bg-white/2 border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-white/10 transition-colors"
           >
             <div class="text-6xl font-black text-white/5 absolute -right-2 -top-4 transition-transform group-hover:scale-110">
               II
@@ -660,7 +651,7 @@ cd tools/dev-tui         && uv sync`;
           </div>
 
           <div
-            class="bg-white/[0.02] border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-white/10 transition-colors"
+            class="bg-white/2 border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-white/10 transition-colors"
           >
             <div class="text-6xl font-black text-white/5 absolute -right-2 -top-4 transition-transform group-hover:scale-110">
               III
@@ -672,10 +663,10 @@ cd tools/dev-tui         && uv sync`;
               >
             </div>
             <h5 class="text-lg font-bold text-white mb-2 relative z-10">Stabilization</h5>
-            <p class="text-sm text-slate-400 leading-relaxed relative z-10">Public release & transparent cost tracking.</p>
+            <p class="text-sm text-slate-400 leading-relaxed relative z-10">Debugging and feature planning.</p>
           </div>
 
-          <div
+          <!-- <div
             class="bg-white/[0.02] border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-white/10 transition-colors"
           >
             <div class="text-6xl font-black text-white/5 absolute -right-2 -top-4 transition-transform group-hover:scale-110">
@@ -691,13 +682,13 @@ cd tools/dev-tui         && uv sync`;
             <p class="text-sm text-slate-400 leading-relaxed relative z-10">
               Multi-DCC expansion (Maya, Nuke, Blender) & exclusive platform tools.
             </p>
-          </div>
+          </div> -->
         </div>
       </div>
 
       <!-- Commercial Model -->
       <div>
-        <div class="text-center mb-12">
+        <!-- <div class="text-center mb-12">
           <h2 class="text-4xl font-extrabold text-white mb-4">Commercial Model</h2>
           <p class="text-slate-300 text-lg">Accessible tiers ensuring viability from indie artists to enterprise studios.</p>
         </div>
@@ -784,7 +775,7 @@ cd tools/dev-tui         && uv sync`;
               </li>
             </ul>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </section>
@@ -835,6 +826,8 @@ cd tools/dev-tui         && uv sync`;
               >
                 <option value="" disabled selected>Select an option</option>
                 <option value="individual">Individual Artist / Freelancer</option>
+                <option value="developer">Interested Developer / Contributor</option>
+                <option value="feedback">Providing feedback only</option>
                 <option value="studio">Studio / Team</option>
               </select>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
