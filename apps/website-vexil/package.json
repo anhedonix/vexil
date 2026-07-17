@@ -21,17 +21,17 @@
     "check": "astro check"
   },
   "dependencies": {
-    "@astrojs/netlify": "^7.0.2",
-    "@astrojs/vercel": "^10.0.0",
+    "@astrojs/netlify": "8.1.2",
+    "@astrojs/vercel": "11.0.3",
     "@iconify-json/lucide": "^1.2.98",
     "@iconify-json/simple-icons": "^1.2.74",
-    "astro": "6.0.0",
+    "astro": "7.1.0",
     "astro-icon": "^1.1.5",
     "resend": "^6.9.3",
     "sharp": "^0.34.0"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.7",
+    "@astrojs/check": "0.9.9",
     "@tailwindcss/vite": "^4.0.0",
     "@types/node": "^22.10.0",
     "tailwindcss": "^4.0.0",
