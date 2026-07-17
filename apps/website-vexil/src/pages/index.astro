@@ -4,6 +4,25 @@ export const prerender = true;
 import Layout from '../layouts/Layout.astro';
 import { Icon } from 'astro-icon/components';
 
+const repoTree = `<span class="text-cyan-400">vexil/</span>
+├── <span class="text-purple-400">apps/</span>
+│   ├── <span class="text-emerald-400">website/</span>          <span class="text-slate-500">— marketing site (Astro 7 · Tailwind v4)</span>
+│   ├── <span class="text-emerald-400">frontend/</span>         <span class="text-slate-500">— product web UI (Astro 7)</span>
+│   ├── <span class="text-emerald-400">backend/</span>          <span class="text-slate-500">— core API (GoLang)</span>
+│   └── <span class="text-emerald-400">houdini-package/</span>  <span class="text-slate-500">— Houdini plugin (uv · Python 3.11)</span>
+├── <span class="text-purple-400">tools/</span>
+│   └── <span class="text-emerald-400">dev-tui/</span>          <span class="text-slate-500">— developer TUI (GoLang)</span>
+└── <span class="text-purple-400">infrastructure/</span>     <span class="text-slate-500">— deployment & IaC (planned)</span>`;
+
+const quickstart = `<span class="text-slate-500"># 1. Clone and hydrate the JS workspaces</span>
+git clone https://github.com/anhedonix/vexil
+cd vexil
+bun install
+
+<span class="text-slate-500"># 2. Run every dev server in parallel (Turborepo)</span>
+bun run dev
+
+<span class="text-slate-500"># 3. TODO (rewrite in-progress)`;
 ---
 
 <Layout>
@@ -295,17 +314,8 @@ import { Icon } from 'astro-icon/components';
       </div>
       <pre
         class="text-xs md:text-sm leading-relaxed font-mono m-0"
-      >
-      <span class="text-emerald-400">vexil/</span>
-      ├── <span class="text-purple-400">apps/</span>
-      │   ├── <span class="text-emerald-400">website/</span>          <span class="text-slate-500">— Marketing site (Astro 7)</span>
-      │   ├── <span class="text-emerald-400">frontend/</span>         <span class="text-slate-500">— Product web UI (Astro 7)</span>
-      │   ├── <span class="text-emerald-400">backend/</span>          <span class="text-slate-500">— Core API (GoLang)</span>
-      │   └── <span class="text-emerald-400">houdini-package/</span>  <span class="text-slate-500">— Houdini plugin (uv · Python 3.13)</span>
-      ├── <span class="text-purple-400">tools/</span>
-      │   └── <span class="text-emerald-400">dev-tui/</span>          <span class="text-slate-500">— Developer TUI (GoLang)</span>
-      └── <span class="text-gray-600">infrastructure/</span>       <span class="text-slate-700">— Deployment & IaC (planned)</span>
-      </pre>
+        set:html={repoTree}
+      />
     </div>
 
     <!-- Workspace grid -->
@@ -508,17 +518,7 @@ import { Icon } from 'astro-icon/components';
         <pre
           class="text-xs md:text-sm leading-relaxed font-mono m-0 text-slate-300"
           set:html={quickstart}
-        >
-        <span class="text-slate-500"># 1. Clone and hydrate the JS workspaces</span>
-        git clone https://github.com/anhedonix/vexil
-        cd vexil
-        bun install
-
-        <span class="text-slate-500"># 2. Run every dev server in parallel (Turborepo)</span>
-        bun run dev
-
-        <span class="text-slate-500"># 3. TODO (rewrite in-progress)</span>
-        </pre>
+        />
       </div>
 
       <div
