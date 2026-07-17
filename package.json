@@ -4,11 +4,11 @@
   "private": true,
   "tasks": {
     "dev": "turbo run dev",
-    "setup": "(cd apps/backend-api && uv sync) && (cd apps/plugins/houdini-package && uv sync) && (cd dev-tools/env-init && uv sync)"
+    "setup": "(cd apps/plugins/houdini-package && uv sync) && (cd dev-tools/env-init && uv sync) && (cd apps/backend-api && go mod download)"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "turbo": "^2.9.12"
+    "turbo": "^2.10.5"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -18,5 +18,5 @@
     "apps/*",
     "dev-tools/*",
     "apps/plugins/*"
-  ] 
+  ]
 }
