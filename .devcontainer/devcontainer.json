@@ -1,16 +1,18 @@
 {
   "name": "VEXiL Development",
-  "dockerFile": "Dockerfile",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "features": {
     "ghcr.io/devcontainers/features/go:1": {
-      "version": "1.26",
-    },
+      "version": "1.26"
+    }
   },
   "forwardPorts": [8080, 4321, 4322],
   "portsAttributes": {
     "8080": { "label": "Backend API (Go GraphQL)", "onAutoForward": "notify" },
     "4321": { "label": "Frontend App", "onAutoForward": "notify" },
-    "4322": { "label": "Website", "onAutoForward": "notify" },
+    "4322": { "label": "Website", "onAutoForward": "notify" }
   },
   "mounts": [
     "source=vexil-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
@@ -19,7 +21,7 @@
     "source=vexil-uv-cache,target=/home/vscode/.cache/uv,type=volume",
     "source=vexil-bun-cache,target=/home/vscode/.bun/install/cache,type=volume",
     "source=vexil-go-mod-cache,target=/home/vscode/go/pkg/mod,type=volume",
-    "source=vexil-go-build-cache,target=/home/vscode/.cache/go-build,type=volume",
+    "source=vexil-go-build-cache,target=/home/vscode/.cache/go-build,type=volume"
   ],
   "customizations": {
     "vscode": {
@@ -32,17 +34,17 @@
         "astro-build.astro-vscode",
         "bradlc.vscode-tailwindcss",
         "ms-azuretools.vscode-docker",
-        "ms-azuretools.vscode-containers",
+        "ms-azuretools.vscode-containers"
       ],
       "settings": {
         "editor.formatOnSave": true,
         "go.toolsManagement.autoUpdate": true,
         "gopls": {
-          "build.directoryFilters": ["-**/node_modules", "-**/.venv"],
-        },
-      },
-    },
+          "build.directoryFilters": ["-**/node_modules", "-**/.venv"]
+        }
+      }
+    }
   },
   "postCreateCommand": "bash .devcontainer/post-create.sh",
-  "remoteUser": "vscode",
+  "remoteUser": "vscode"
 }
