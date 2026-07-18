@@ -2,16 +2,31 @@
 
 All notable changes to VEXiL are documented in this file.
 
-## [Unreleased] - 2026-07-17
+## [Unreleased] - 2026-07-18
 
 ### ✨ New Features
+
 - **Refreshed logo in the navigation bar** — the marketing site now displays the VEXiL logo image instead of a plain text wordmark.
 - **Favicon added** — VEXiL now shows a proper browser tab icon and app icon across devices.
+- **New GraphQL backend API** — the backend service has been rewritten in Go with a GraphQL server (via gqlgen), replacing the previous Python/Django implementation.
 
 ### 🔧 Improvements
+
 - **Upgraded to Astro 7** — the marketing website now runs on the latest version of Astro, along with updated dependencies for better performance and security.
 - **Refined visual design** — polished the styling of the technical/infrastructure section of the site for a cleaner, more consistent look.
 - **Better mobile browser theming** — added a theme-color meta tag so the browser UI (address bar, etc.) matches the site's branding on mobile devices.
+- **Faster backend development loop** — added live-reloading (via Air) for the new Go backend, so code changes are picked up instantly during development.
+- **Updated local dev environment for Go** — refreshed the dev container and Docker Compose setup (ports, caching, editor extensions) to support the new Go-based backend.
+- **Faster local dev servers** — Astro dev servers now bind to all network interfaces, making it easier to preview the site from other devices on your network.
+- **Faster monorepo builds** — upgraded Turborepo to the latest version (2.10.5).
+
+### 📝 Documentation
+
+- **Contributing guidelines** — added a pull request template and contributing guidelines to help new contributors get started.
+
+### 🐛 Fixes
+
+- Removed a duplicate build-environment section from the Netlify configuration that could cause confusing deploy behavior.
 
 ---
 
@@ -20,6 +35,7 @@ All notable changes to VEXiL are documented in this file.
 Initial foundation release: the VEXiL monorepo, core apps, and local developer tooling.
 
 ### ✨ New Features
+
 - **Marketing website launched** — introduced the public VEXiL website with waitlist signup, email notifications (via Resend), and Vercel deployment support.
 - **Backend API scaffold** — added the initial Django-based backend service.
 - **Houdini plugin scaffold** — added the initial Houdini integration package.
@@ -28,12 +44,14 @@ Initial foundation release: the VEXiL monorepo, core apps, and local developer t
 - **Developer TUI for environment setup** — added an interactive terminal tool that lets contributors configure environment variables, view help text, and start/stop/monitor local Docker services (including automatic port detection) without manually editing `.env` files.
 
 ### 📝 Documentation
+
 - Published a Code of Conduct and a Security Policy for the project (Alpha stage reporting guidelines).
 - Updated the README with clearer project details and setup instructions.
 
 ### 🐛 Fixes
+
 - Resolved a website build/deployment issue that broke the live site.
 
 ---
 
-*This is the first generated changelog for the VEXiL project — entries were reconstructed from the full git history since the initial commit (2026-05-10). Internal-only changes (dependency lockfiles, editor/workspace configuration, CI scaffolding, code reorganization) have been omitted as they don't affect end users.*
+_This is the first generated changelog for the VEXiL project — entries were reconstructed from the full git history since the initial commit (2026-05-10). Internal-only changes (dependency lockfiles, editor/workspace configuration, CI scaffolding, code reorganization) have been omitted as they don't affect end users._
