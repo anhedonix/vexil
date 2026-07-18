@@ -20,6 +20,12 @@
       "hard_tabs": false,
       "tab_size": 4,
     },
+    "JSON": {
+      "format_on_save": "off",
+    },
+    "JSONC": {
+      "format_on_save": "off",
+    },
   },
   "prettier": {
     "allowed": true,
