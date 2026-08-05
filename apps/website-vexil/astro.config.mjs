@@ -14,7 +14,7 @@ export default defineConfig({
   // tags and glues words (e.g. "toVector", "aPython"). Use HTML-aware compression.
   compressHTML: true,
   adapter: isNetlify ? netlify() : vercel(),
-  site: process.env.SITE_URL || 'https://vexil.dev',
+  site: process.env.SITE_URL || 'https://vexil.tools',
   integrations: [icon(), favicons()],
   vite: { plugins: [tailwindcss()] },
   env: {
