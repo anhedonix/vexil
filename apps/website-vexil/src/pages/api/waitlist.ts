@@ -42,11 +42,16 @@ export const POST: APIRoute = async ({ request }) => {
   if (!EMAIL_RE.test(email)) {
     return json({ ok: false, error: 'Please provide a valid email address.' }, 400);
   }
-  if (userType !== 'individual' && userType !== 'studio') {
+  if (userType !== 'individual' && userType !== 'studio' && userType !== 'hobbyist') {
     return json({ ok: false, error: 'Please select who you are representing.' }, 400);
   }
 
-  const userTypeLabel = userType === 'individual' ? 'Individual Artist / Freelancer' : 'Studio / Team';
+  const userTypeLabel =
+    userType === 'individual'
+      ? 'Individual Artist / Freelancer'
+      : userType === 'studio'
+        ? 'Studio / Team'
+        : 'Hobbyist / Interested';
 
   const text = [
     'New VEXiL waitlist application',
@@ -73,7 +78,7 @@ export const POST: APIRoute = async ({ request }) => {
     from: RESEND_FROM_EMAIL,
     to: RESEND_TO_EMAIL,
     replyTo: email,
-    subject: `New VEXiL waitlist signup — ${email}`,
+    subject: `New VEXiL waitlist signup - ${email}`,
     text,
     html,
   });
