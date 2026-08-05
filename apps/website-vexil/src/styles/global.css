@@ -218,4 +218,23 @@
   [data-theme="dark"] .theme-icon-moon {
     display: none;
   }
+
+  /* Subtle interactive card hover (outline + shadow) */
+  .card-hover {
+    transition:
+      border-color 150ms ease-in-out,
+      box-shadow 150ms ease-in-out;
+  }
+  .card-hover:hover {
+    border-color: color-mix(in srgb, var(--color-brand-cyan) 70%, var(--border)) !important;
+    box-shadow:
+      0 12px 32px color-mix(in srgb, #000 40%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--color-brand-cyan) 40%, transparent);
+  }
+  [data-theme="light"] .card-hover:hover {
+    border-color: color-mix(in srgb, var(--color-brand-cyan) 65%, var(--border)) !important;
+    box-shadow:
+      0 12px 32px color-mix(in srgb, #000 10%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--color-brand-cyan) 35%, transparent);
+  }
 }
