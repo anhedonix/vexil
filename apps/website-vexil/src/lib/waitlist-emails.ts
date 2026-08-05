@@ -105,9 +105,7 @@ export function buildInternalWaitlistEmail({
                   <td style="padding:8px 16px 8px 0;width:88px;vertical-align:top;font-family:${FONT_SANS};font-size:12px;font-weight:400;line-height:1.5;color:#6b7280;border-top:1px solid #efeff0;">
                     Comments
                   </td>
-                  <td style="padding:8px 0;vertical-align:top;font-family:${FONT_SANS};font-size:14px;font-weight:400;line-height:1.5;color:#252526;border-top:1px solid #efeff0;white-space:pre-wrap;">
-                    ${safeComments}
-                  </td>
+                  <td style="padding:8px 0;vertical-align:top;font-family:${FONT_SANS};font-size:14px;font-weight:400;line-height:1.5;color:#252526;border-top:1px solid #efeff0;white-space:pre-wrap;">${safeComments}</td>
                 </tr>
               </table>
             </td>
