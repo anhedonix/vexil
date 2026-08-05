@@ -10,6 +10,9 @@ const isNetlify = process.env.DEPLOY_TARGET === 'netlify';
 
 export default defineConfig({
   output: 'server',
+  // Astro 7 defaults to compressHTML: 'jsx', which strips newlines around inline
+  // tags and glues words (e.g. "toVector", "aPython"). Use HTML-aware compression.
+  compressHTML: true,
   adapter: isNetlify ? netlify() : vercel(),
   site: process.env.SITE_URL || 'https://vexil.dev',
   integrations: [icon(), favicons()],
