@@ -7,37 +7,61 @@ interface Props {
 }
 
 const {
-  title = 'VEXiL — VFX Project Management',
-  description = 'VEXiL is a centralized project management environment for VFX freelancers and indie studios, with deep-rooted Houdini integration today and Maya, Nuke, and Blender support on the roadmap.',
+  title = 'VEXiL - Pipeline-Aware Project Management for Houdini',
+  description =
+    'VEXiL is a Houdini-first project management environment for VFX freelancers, indie studios, and TDs - pipeline-aware depth for sequences, frame ranges, and dependency graphs.',
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" data-theme="dark" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#f26722"/>
+    <meta name="theme-color" content="#00B4FF" />
     <title>{title}</title>
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('vexil-theme');
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (_) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
   </head>
-  <body class="bg-slate-950 text-slate-200 font-sans selection:bg-purple-500/30 overflow-x-hidden">
-    <!-- Ambient Background Gradients -->
-    <div class="fixed inset-0 z-0 pointer-events-none opacity-40">
-      <div
-        class="absolute top-[-10%] left-[-10%] w-125 h-125 bg-purple-600/30 rounded-full blur-[100px] animate-float"
-      >
-      </div>
-      <div
-        class="absolute top-[20%] right-[-5%] w-150 h-150 bg-cyan-500/20 rounded-full blur-[120px] animate-float-delayed"
-      >
-      </div>
-      <div
-        class="absolute bottom-[-10%] left-[20%] w-175 h-175 bg-fuchsia-500/20 rounded-full blur-[150px] animate-float"
-      >
-      </div>
+  <body id="top" class="bg-base text-primary font-sans overflow-x-hidden grain">
+    <!-- Ambient radial wash (mood-board depth; lighter tint in light theme) -->
+    <div class="fixed inset-0 z-0 pointer-events-none ambient-wash" aria-hidden="true">
+      <div class="absolute inset-0 ambient-wash-gradient"></div>
     </div>
+    <style is:global>
+      .ambient-wash-gradient {
+        background: radial-gradient(
+          ellipse 80% 50% at 50% -10%,
+          color-mix(in srgb, #00b4ff 12%, transparent),
+          transparent 60%
+        );
+      }
+      [data-theme='light'] .ambient-wash-gradient {
+        background: radial-gradient(
+          ellipse 80% 50% at 50% -10%,
+          color-mix(in srgb, #00b4ff 15%, transparent),
+          transparent 60%
+        );
+      }
+    </style>
 
-    <slot />
+    <div class="relative z-10">
+      <slot />
+    </div>
   </body>
 </html>
