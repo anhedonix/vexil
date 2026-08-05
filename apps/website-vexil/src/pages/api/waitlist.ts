@@ -5,13 +5,11 @@ import {
   RESEND_FROM_EMAIL,
   RESEND_TO_EMAIL,
 } from 'astro:env/server';
+import { buildInternalWaitlistEmail } from '../../lib/waitlist-emails';
 
 export const prerender = false;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const escapeHtml = (s: string) =>
-  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -53,32 +51,18 @@ export const POST: APIRoute = async ({ request }) => {
         ? 'Studio / Team'
         : 'Hobbyist / Interested';
 
-  const text = [
-    'New VEXiL waitlist application',
-    '',
-    `Email: ${email}`,
-    `Type:  ${userTypeLabel}`,
-    '',
-    'Comments:',
-    comments || '(none)',
-  ].join('\n');
-
-  const html = `
-    <h2 style="margin:0 0 16px;font-family:system-ui,sans-serif">New VEXiL waitlist application</h2>
-    <table style="font-family:system-ui,sans-serif;font-size:14px;border-collapse:collapse">
-      <tr><td style="padding:4px 12px 4px 0;color:#666"><strong>Email</strong></td><td>${escapeHtml(email)}</td></tr>
-      <tr><td style="padding:4px 12px 4px 0;color:#666"><strong>Type</strong></td><td>${escapeHtml(userTypeLabel)}</td></tr>
-    </table>
-    <p style="font-family:system-ui,sans-serif;font-size:14px;color:#666;margin:16px 0 4px"><strong>Comments</strong></p>
-    <pre style="white-space:pre-wrap;font-family:system-ui,sans-serif;font-size:14px;margin:0">${escapeHtml(comments || '(none)')}</pre>
-  `;
+  const { subject, text, html } = buildInternalWaitlistEmail({
+    email,
+    userTypeLabel,
+    comments,
+  });
 
   const resend = new Resend(RESEND_API_KEY);
   const { error } = await resend.emails.send({
     from: RESEND_FROM_EMAIL,
     to: RESEND_TO_EMAIL,
     replyTo: email,
-    subject: `New VEXiL waitlist signup - ${email}`,
+    subject,
     text,
     html,
   });
