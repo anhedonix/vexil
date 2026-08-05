@@ -814,6 +814,10 @@ const langChip =
             <Icon name="lucide:check" class="w-6 h-6" />
           </div>
           <h3 class="text-lg font-semibold text-primary mb-2">You're on the list.</h3>
+          <p
+            id="waitlist-success-email"
+            class="text-[var(--success)] font-medium font-mono text-sm mb-3 break-all"
+          ></p>
           <p class="text-secondary leading-relaxed text-sm">
             Thanks for joining the VEXiL waitlist - we'll be in touch when the beta opens.
           </p>
@@ -885,6 +889,7 @@ const langChip =
   const form = document.getElementById('waitlist-form') as HTMLFormElement | null;
   const submitBtn = document.getElementById('waitlist-submit') as HTMLButtonElement | null;
   const successCard = document.getElementById('waitlist-success');
+  const successEmail = document.getElementById('waitlist-success-email');
   const errorBox = document.getElementById('waitlist-error');
 
   if (form && submitBtn && successCard && errorBox) {
@@ -939,6 +944,10 @@ const langChip =
         if (!res.ok || !body.ok) {
           throw new Error(body.error || 'Submission failed. Please try again.');
         }
+
+        const submittedEmail =
+          typeof payload.email === 'string' ? payload.email.trim() : '';
+        if (successEmail) successEmail.textContent = submittedEmail;
 
         form.classList.add('hidden');
         successCard.classList.remove('hidden');
