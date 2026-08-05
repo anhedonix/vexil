@@ -4,802 +4,731 @@ export const prerender = true;
 import Layout from '../layouts/Layout.astro';
 import { Icon } from 'astro-icon/components';
 
-const repoTree = `<span class="text-cyan-400">vexil/</span>
-├── <span class="text-purple-400">apps/</span>
-│   ├── <span class="text-emerald-400">website/</span>          <span class="text-slate-500">— marketing site (Astro 7 · Tailwind v4)</span>
-│   ├── <span class="text-emerald-400">frontend/</span>         <span class="text-slate-500">— product web UI (Astro 7)</span>
-│   ├── <span class="text-emerald-400">backend/</span>          <span class="text-slate-500">— core API (GoLang)</span>
-│   └── <span class="text-emerald-400">houdini-package/</span>  <span class="text-slate-500">— Houdini plugin (uv · Python 3.11)</span>
-├── <span class="text-purple-400">tools/</span>
-│   └── <span class="text-emerald-400">dev-tui/</span>          <span class="text-slate-500">— developer TUI (GoLang)</span>
-└── <span class="text-gray-600">infrastructure/</span>       <span class="text-slate-600">— deployment & IaC (planned)</span>`;
+const repoTree = `<span class="text-brand-cyan">vexil/</span>
+├── <span class="text-secondary">apps/</span>
+│   ├── <span class="text-[var(--success)]">website-vexil/</span>              <span class="text-secondary">- website (Astro 7 · Tailwind v4)</span>
+│   ├── <span class="text-[var(--success)]">frontend-app/</span>               <span class="text-secondary">- product web UI (Astro 7)</span>
+│   ├── <span class="text-[var(--success)]">backend-api/</span>                <span class="text-secondary">- core API (<span class="lang-name">Go</span> · RestAPI)</span>
+│   └── <span class="text-secondary">plugins/</span>
+│       └── <span class="text-[var(--success)]">houdini-package/</span>      <span class="text-secondary">- Houdini plugin (uv · <span class="lang-name">Python 3.13</span>)</span>
+└── <span class="text-secondary">dev-tools/</span>
+    └── <span class="text-[var(--success)]">env-init/</span>                  <span class="text-secondary">- environment setup using specific tools for developers</span>`;
 
-const quickstart = `<span class="text-slate-500"># 1. Clone and hydrate the JS workspaces</span>
+const quickstart = `<span class="text-secondary"># 1. Clone and hydrate the JS workspaces</span>
 git clone https://github.com/anhedonix/vexil
 cd vexil
 bun install
 
-<span class="text-slate-500"># 2. Run every dev server in parallel (Turborepo)</span>
+<span class="text-secondary"># 2. Run every dev server in parallel (Turborepo)</span>
 bun run dev
 
-<span class="text-slate-500"># 3. TODO (rewrite in-progress)`;
+<span class="text-secondary"># 3. Sync Python workspaces and download Go modules</span>
+bun run setup`;
+
+const chip =
+  'text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-[2px] bg-surface-2 text-secondary border border-theme font-mono';
+const langChip =
+  'text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-[2px] bg-surface-2 border border-theme font-mono lang-name';
 ---
 
 <Layout>
   <!-- Navigation -->
-  <nav class="border-b border-cyan-500/20 bg-black/50 backdrop-blur-xl sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <div
-          class="w-32 h-8 rounded-lg  flex items-center justify-center font-bold text-white"
+  <nav class="border-b border-theme bg-base/90 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <a href="#top" id="nav-logo" class="flex items-center shrink-0" aria-label="Back to top">
+        <img
+          src="/vexil-mark.png"
+          alt="VEXiL"
+          class="h-14 w-14 object-contain"
+          width="56"
+          height="56"
+        />
+      </a>
+      <div class="flex items-center gap-3 sm:gap-5 text-sm font-medium">
+        <a href="#features" class="text-secondary hover:text-primary transition-colors duration-150 hidden sm:block"
+          >Features</a
         >
-            <img src="/vexil_logo.svg" alt="Vexil Logo">
-        </div>
-      </div>
-      <div class="flex items-center gap-6 text-sm font-medium">
-        <a href="#features" class="hover:text-cyan-400 transition-colors hidden sm:block">Features</a>
-        <a href="#deployment" class="hover:text-cyan-400 transition-colors hidden sm:block">Deployment</a>
+        <a href="#deployment" class="text-secondary hover:text-primary transition-colors duration-150 hidden sm:block"
+          >Deployment</a
+        >
+        <a href="#waitlist" class="text-secondary hover:text-primary transition-colors duration-150 hidden md:block"
+          >Waitlist</a
+        >
+        <button
+          type="button"
+          id="theme-toggle"
+          class="inline-flex items-center justify-center size-9 rounded-[4px] border border-theme bg-surface-1 text-secondary hover:text-primary hover:bg-surface-2 transition-colors duration-150"
+          aria-label="Toggle color theme"
+        >
+          <Icon name="lucide:sun" class="theme-icon-sun w-4 h-4" />
+          <Icon name="lucide:moon" class="theme-icon-moon w-4 h-4" />
+        </button>
         <a
           href="https://github.com/anhedonix/vexil"
           target="_blank"
           rel="noreferrer"
-          class="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white px-4 py-2 rounded-lg transition-all shadow-sm"
+          class="flex items-center gap-2 bg-surface-1 hover:bg-surface-2 border border-theme text-primary px-3 py-2 rounded-[4px] transition-colors duration-150 text-sm"
         >
-          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
             ><path
               d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
             ></path></svg
           >
-          <span>GitHub</span>
+          <span class="hidden sm:inline">GitHub</span>
         </a>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <section class="relative pt-24 pb-32 px-6">
-    <div class="max-w-4xl mx-auto text-center relative z-10 flex flex-col items-center">
-      <!-- Beta Badge -->
-      <div
-        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-linear-to-r from-cyan-500/10 to-purple-500/10 border border-purple-500/20 text-purple-300 text-sm font-medium mb-8 shadow-[0_0_10px_rgba(168,85,247,0.2)]"
-      >
-        <Icon name="lucide:sparkles" class="w-4 h-4 text-cyan-400" />
-        <span>Currently under development. Public beta testing coming soon.</span>
-      </div>
+  <!-- Hero -->
+  <section class="relative pt-20 pb-24 px-4 sm:px-6 overflow-hidden">
+    <div class="hero-wash pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div class="max-w-3xl mx-auto text-center relative z-10 flex flex-col items-center">
+      <img
+        src="/vexil-wordmark.png"
+        alt="VEXiL"
+        class="h-32 w-auto mb-8 object-contain"
+        width="384"
+        height="128"
+      />
 
-      <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
-        Project Management for VFX, <br />
-        <span class="text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-blue-500 to-purple-500">
-          Built First for Houdini.
-        </span>
-      </h1>
-
-      <p class="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl leading-relaxed">
-        VEXiL is the centralized project management environment for VFX freelancers and indie studios. Today, it
-        integrates with SideFX Houdini at a depth no generic PM tool can match — and Maya, Nuke, and Blender
-        adapters are on the roadmap.
+      <p class="text-xs font-medium uppercase tracking-widest text-secondary mb-4 font-mono">
+        Public beta · coming soon
       </p>
 
-      <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+      <h1 class="text-4xl md:text-[2rem] lg:text-[2.5rem] font-semibold tracking-tight text-primary mb-4 leading-tight">
+        Pipeline-aware project management<br class="hidden sm:block" />
+        <span class="text-brand-gradient">built for Houdini.</span>
+      </h1>
+
+      <p class="text-base md:text-lg text-secondary mb-10 max-w-xl leading-relaxed">
+        VEXiL is a SideFX Houdini-first project management environment for freelancers, indie studios, and TDs - with
+        pipeline depth for sequences, frame ranges, and dependency graphs. Other DCC integrations (Maya, Nuke, Blender)
+        may follow later.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
         <a
           href="#waitlist"
-          class="group flex items-center justify-center gap-2 bg-linear-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] hover:-translate-y-0.5"
+          class="group flex items-center justify-center gap-2 bg-brand-gradient hover:brightness-110 active:brightness-90 text-white px-6 py-3 rounded-[4px] font-semibold transition-[filter] duration-150"
         >
           Join the Waitlist
-          <Icon name="lucide:chevron-down" class="w-4.5 h-4.5 group-hover:translate-y-1 transition-transform" />
+          <Icon name="lucide:chevron-down" class="w-4 h-4" />
         </a>
         <a
           href="https://github.com/anhedonix/vexil"
           target="_blank"
           rel="noreferrer"
-          class="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white px-8 py-3.5 rounded-xl font-bold transition-all hover:-translate-y-0.5"
+          class="flex items-center justify-center gap-2 bg-surface-1 hover:bg-surface-2 border border-theme text-primary px-6 py-3 rounded-[4px] font-semibold transition-colors duration-150"
         >
-          <svg
-            class="w-4.5 h-4.5 fill-current"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
             ><path
               d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
             ></path></svg
           >
-          View Source on GitHub
+          View Source
         </a>
       </div>
 
-      <!-- Quick Stats -->
-      <div class="mt-16 w-full grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-        <div class="bg-white/2 border border-white/5 p-5 rounded-2xl backdrop-blur-sm">
-          <span class="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-1">Language</span>
-          <span class="text-xl font-bold text-cyan-400">Python & Go</span>
-        </div>
-        <div class="bg-white/2 border border-white/5 p-5 rounded-2xl backdrop-blur-sm">
-          <span class="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-1">Architecture</span>
-          <span class="text-xl font-bold text-emerald-400">Monorepo</span>
-        </div>
-        <div class="bg-white/2 border border-white/5 p-5 rounded-2xl backdrop-blur-sm">
-          <span class="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-1">Security</span>
-          <span class="text-xl font-bold text-purple-400">Shift-Left</span>
-        </div>
-        <div class="bg-white/2 border border-white/5 p-5 rounded-2xl backdrop-blur-sm">
-          <span class="text-[10px] text-slate-500 uppercase tracking-widest font-bold block mb-1">License</span>
-          <span class="text-xl font-bold text-orange-400">MIT</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- About Section -->
-  <section class="py-24 relative z-10 border-y border-white/5 bg-slate-900/40 backdrop-blur-sm">
-    <div class="max-w-4xl mx-auto px-6 text-center">
-      <h2
-        class="text-3xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-cyan-300 mb-6"
-      >
-        Why VEXiL?
-      </h2>
-      <p class="text-slate-300 text-lg leading-relaxed">
-        The name VEXiL is a nod to <strong class="text-white font-bold bg-white/10 px-2 py-0.5 rounded"
-          >Vector Expression Language (VEX)</strong
-        >, the heart of the Houdini ecosystem — and a signal of where VEXiL goes deepest first. Generic project
-        management tools treat Houdini work as disconnected file creations and ignore the conventions that make a
-        VFX pipeline actually run. VEXiL starts where you start: inside the DCC. Houdini gets integration depth that
-        is only possible when the tool is purpose-built for it; <strong class="text-white font-bold">Maya, Nuke, and
-        Blender</strong> adapters follow on the roadmap — but Houdini is the proof point.
+      <p class="mt-12 text-xs text-secondary font-mono">
+        <span class="lang-name">Python</span> &amp; <span class="lang-name">Go</span> · MIT · Shift-Left security
       </p>
     </div>
   </section>
 
-  <!-- Features Grid -->
-  <section id="features" class="py-24 px-6 max-w-7xl mx-auto relative z-10">
-    <div class="text-center mb-16">
-      <h2 class="text-4xl font-extrabold text-white mb-4">Core Capabilities</h2>
-      <p class="text-slate-300 text-lg">Quality-of-life features built for the VFX professional.</p>
+  <!-- Why VEXiL -->
+  <section class="py-16 sm:py-24 relative z-10 border-y border-theme bg-surface-1 bg-brand-wash">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+      <h2 class="text-lg font-medium text-primary mb-4">Why VEXiL?</h2>
+      <p class="text-secondary text-base leading-relaxed">
+        The name is a direct homage to
+        <strong class="text-primary font-semibold">Vector Expression Language (VEX)</strong>
+        - the high-performance language at the heart of
+        <strong class="text-primary font-semibold">SideFX Houdini</strong>.
+        Generic project-management tools treat VFX work as disconnected file creations.
+        <strong class="text-primary font-semibold">VEXiL</strong>
+        starts inside Houdini, with pipeline-aware depth for sequences, frame ranges, and dependency graphs.
+        Other DCCs (Maya, Nuke, Blender) may follow later.
+      </p>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="py-16 sm:py-24 px-4 sm:px-6 max-w-7xl mx-auto relative z-10 scroll-mt-20">
+    <div class="text-center mb-12">
+      <h2 class="text-2xl font-semibold text-primary tracking-tight">Core Capabilities</h2>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-      <!-- Feature 1 -->
-      <div
-        class="bg-white/2 border border-white/5 p-8 rounded-3xl hover:border-cyan-500/30 hover:bg-white/4 transition-all duration-300 hover:-translate-y-1 group shadow-lg"
-      >
-        <div
-          class="w-14 h-14 bg-linear-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-[0_0_15px_rgba(34,211,238,0.4)]"
-        >
-          <Icon name="lucide:terminal" class="w-7 h-7" />
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+      <div class="bg-surface-1 border border-theme p-6 rounded-[4px] bg-brand-wash hover:bg-surface-2 transition-colors duration-150">
+        <div class="icon-tile icon-tile--lg mb-4">
+          <Icon name="lucide:terminal" class="w-5 h-5" />
         </div>
-        <div class="flex items-center justify-between gap-2 mb-3">
-          <h3 class="text-xl font-bold text-white">Deep Houdini Integration</h3>
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <h3 class="text-base font-semibold text-primary">Deep Houdini Integration</h3>
           <span
-            class="text-[9px] px-2 py-0.5 rounded-md uppercase font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 whitespace-nowrap"
+            class="text-[10px] px-2 py-0.5 rounded-[2px] uppercase font-medium font-mono bg-surface-2 text-brand-cyan border border-theme whitespace-nowrap"
             >Houdini first</span
           >
         </div>
-        <p class="text-slate-400 leading-relaxed">
-          A single Houdini package install wires VEXiL directly into your scenes. OpenTimelineIO (OTIO) sync
-          handles audio, sequence scenes, reference imagery, and temporal overlaps inside Houdini — depth no
-          general-purpose PM tool can reach. Maya, Nuke, and Blender adapters are on the roadmap.
+        <p class="text-secondary text-sm leading-relaxed">
+          A single Houdini package install wires VEXiL into your scenes.
+          <strong class="text-primary font-semibold">VEXiL-UI</strong>
+          (<span class="lang-name">PySide6</span>) sits beside HOM with a
+          <span class="lang-name">Python</span>
+          bridge - scene structure, versions, and pipeline depth no general-purpose PM tool can reach.
         </p>
       </div>
 
-      <!-- Feature 2 -->
-      <div
-        class="bg-white/2 border border-white/5 p-8 rounded-3xl hover:border-purple-500/30 hover:bg-white/4 transition-all duration-300 hover:-translate-y-1 group shadow-lg"
-      >
-        <div
-          class="w-14 h-14 bg-linear-to-br from-purple-400 to-fuchsia-600 rounded-xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:-rotate-3 transition-transform shadow-[0_0_15px_rgba(192,38,211,0.4)]"
-        >
-          <Icon name="lucide:layers" class="w-7 h-7" />
+      <div class="bg-surface-1 border border-theme p-6 rounded-[4px] bg-brand-wash hover:bg-surface-2 transition-colors duration-150">
+        <div class="icon-tile icon-tile--lg mb-4">
+          <Icon name="lucide:layers" class="w-5 h-5" />
         </div>
-        <h3 class="text-xl font-bold text-white mb-3">Intuitive Web Interface</h3>
-        <p class="text-slate-400 leading-relaxed">
-          Architect folder structures, manage external assets, and configure global defaults from a dedicated
-          browser portal — DCC-agnostic by design. Includes a custom node-network editor for visually streamlining
-          your VFX workflows.
+        <h3 class="text-base font-semibold text-primary mb-2">Web Interface &amp; Node Networks</h3>
+        <p class="text-secondary text-sm leading-relaxed">
+          Architect folder structures, manage external assets, and configure defaults from a browser portal.
+          Includes a custom
+          <strong class="text-primary font-semibold">node-network editor</strong>
+          for visual workflows and
+          <strong class="text-primary font-semibold">reusable node-graph</strong>
+          exchange.
         </p>
       </div>
 
-      <!-- Feature 3 -->
-      <div
-        class="bg-white/2 border border-white/5 p-8 rounded-3xl hover:border-pink-500/30 hover:bg-white/4 transition-all duration-300 hover:-translate-y-1 group shadow-lg"
-      >
-        <div
-          class="w-14 h-14 bg-linear-to-br from-pink-400 to-orange-500 rounded-xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-[0_0_15px_rgba(244,63,94,0.4)]"
-        >
-          <Icon name="lucide:share-2" class="w-7 h-7" />
+      <div class="bg-surface-1 border border-theme p-6 rounded-[4px] bg-brand-wash hover:bg-surface-2 transition-colors duration-150">
+        <div class="icon-tile icon-tile--lg mb-4">
+          <Icon name="lucide:share-2" class="w-5 h-5" />
         </div>
-        <h3 class="text-xl font-bold text-white mb-3">Community Exchange "Reusable Node-Graphs"</h3>
-        <p class="text-slate-400 leading-relaxed">
-          Projects stay private and encrypted by default, but you can opt in to contribute or pull from shared
-          community "Reusable Node-Graphs" to accelerate your pipeline — Houdini networks today, with cross-DCC integration planned
-          alongside the Maya, Nuke, and Blender adapters.
+        <h3 class="text-base font-semibold text-primary mb-2">Community Reusable Node-Graphs</h3>
+        <p class="text-secondary text-sm leading-relaxed">
+          Projects stay private and encrypted by default. Opt in to contribute or pull shared
+          <strong class="text-primary font-semibold">community node-graphs</strong>
+          to accelerate your
+          <strong class="text-primary font-semibold">Houdini</strong>
+          pipeline.
         </p>
       </div>
 
-      <!-- Feature 4 -->
-      <div
-        class="bg-white/2 border border-white/5 p-8 rounded-3xl hover:border-emerald-500/30 hover:bg-white/4 transition-all duration-300 hover:-translate-y-1 group shadow-lg"
-      >
-        <div
-          class="w-14 h-14 bg-linear-to-br from-emerald-400 to-teal-600 rounded-xl flex items-center justify-center text-white mb-6 group-hover:scale-110 group-hover:-rotate-3 transition-transform shadow-[0_0_15px_rgba(52,211,153,0.4)]"
-        >
-          <Icon name="lucide:shield-check" class="w-7 h-7" />
+      <div class="bg-surface-1 border border-theme p-6 rounded-[4px] bg-brand-wash hover:bg-surface-2 transition-colors duration-150">
+        <div class="icon-tile icon-tile--lg mb-4">
+          <Icon name="lucide:shield-check" class="w-5 h-5" />
         </div>
-        <h3 class="text-xl font-bold text-white mb-3">Secure Client Collaboration</h3>
-        <p class="text-slate-400 leading-relaxed">
-          Security is embedded by design. Safely share assets for client review and feedback via custom-branded
-          project windows, ensuring restricted access to sensitive project files.
+        <h3 class="text-base font-semibold text-primary mb-2">Secure Client Collaboration</h3>
+        <p class="text-secondary text-sm leading-relaxed">
+          Share for review via
+          <strong class="text-primary font-semibold">branded project windows</strong>
+          with restricted access - or keep it local with
+          <strong class="text-primary font-semibold">watermarked PDF</strong>
+          packages.
+          <strong class="text-primary font-semibold">Encrypted metadata</strong>
+          and
+          <strong class="text-primary font-semibold">Shift-Left</strong>
+          security are built into the protocol.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- Deployment Section -->
-  <section id="deployment" class="py-24 relative border-y border-white/5 bg-slate-900/40 backdrop-blur-sm z-10">
-    <div class="max-w-5xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-extrabold text-white mb-4">Built for Flexibility. Rooted in Open Source.</h2>
-      <p class="text-slate-300 mb-16 max-w-2xl mx-auto text-lg">
-        We believe in an accessible VFX ecosystem, which is why the primary VEXiL codebase is distributed under the
-        MIT License.
+  <!-- Deployment -->
+  <section id="deployment" class="py-16 sm:py-24 relative border-y border-theme bg-surface-1 bg-brand-wash z-10 scroll-mt-20">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+      <h2 class="text-2xl font-semibold text-primary mb-2 tracking-tight">Flexible Deployment. Open Source Core.</h2>
+      <p class="text-secondary mb-12 max-w-2xl mx-auto text-base">
+        The primary VEXiL codebase is distributed under the MIT License.
       </p>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div
-          class="bg-slate-950/80 border border-white/5 p-8 rounded-3xl text-left shadow-xl hover:border-white/10 transition-colors"
-        >
-          <div class="flex items-center gap-4 mb-4">
-            <div class="p-3 bg-blue-500/10 rounded-lg text-blue-400">
-              <Icon name="lucide:hard-drive" class="w-7 h-7" />
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+        <div class="bg-base border border-theme p-6 rounded-[4px]">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="icon-tile">
+              <Icon name="lucide:monitor" class="w-5 h-5" />
             </div>
-            <h3 class="text-xl font-bold text-white">Self-Hosted (Docker)</h3>
+            <h3 class="text-base font-semibold text-primary">Local (Docker)</h3>
           </div>
-          <p class="text-slate-400">
-            Retain complete oversight of your infrastructure and meet stringent data residency needs with easy
-            deployment via Docker Compose.
+          <p class="text-secondary text-sm leading-relaxed">
+            For solo artists on a single machine - run everything locally with Docker and manage projects without
+            paying for extra services.
           </p>
         </div>
 
-        <div
-          class="bg-slate-950/80 border border-white/5 p-8 rounded-3xl text-left shadow-xl hover:border-white/10 transition-colors"
-        >
-          <div class="flex items-center gap-4 mb-4">
-            <div class="p-3 bg-cyan-500/10 rounded-lg text-cyan-400">
-              <Icon name="lucide:cloud" class="w-7 h-7" />
+        <div class="bg-base border border-theme p-6 rounded-[4px]">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="icon-tile">
+              <Icon name="lucide:hard-drive" class="w-5 h-5" />
             </div>
-            <h3 class="text-xl font-bold text-white">Managed Cloud Platform</h3>
+            <h3 class="text-base font-semibold text-primary">Self-Hosted (Studio)</h3>
           </div>
-          <p class="text-slate-400">
-            Prefer not to manage servers? Our managed platform serves as your online endpoint, unlocking long-term
-            archiving via Amazon Glacier and seamless tracking of project progress.
+          <p class="text-secondary text-sm leading-relaxed">
+            For a local team on a LAN: host the API on a small machine - even a Raspberry Pi - so every seat stays in
+            sync from one place.
+          </p>
+        </div>
+
+        <div class="bg-base border border-theme p-6 rounded-[4px]">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="icon-tile">
+              <Icon name="lucide:cloud" class="w-5 h-5" />
+            </div>
+            <h3 class="text-base font-semibold text-primary">Managed Cloud</h3>
+          </div>
+          <p class="text-secondary text-sm leading-relaxed">
+            We host VEXiL for our own pipelines. For a small fee, we can run the infrastructure for you - install the
+            plugin and start working, with no technical setup.
           </p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Technical Stack & Orchestration (for contributors) -->
-  <section
-    id="contribute"
-    class="py-24 px-6 max-w-7xl mx-auto relative z-10 scroll-mt-20"
-  >
-    <div class="text-center mb-16">
+  <!-- Technical Stack -->
+  <section id="contribute" class="py-16 sm:py-24 px-4 sm:px-6 max-w-7xl mx-auto relative z-10 scroll-mt-20">
+    <div class="text-center mb-12">
       <span
-        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs uppercase tracking-widest font-bold mb-4"
+        class="inline-flex items-center gap-2 px-2.5 py-1 rounded-[2px] bg-surface-1 border border-theme text-secondary text-[10px] uppercase tracking-widest font-medium font-mono mb-4"
       >
-        <Icon name="lucide:code" class="w-3.5 h-3.5" /> For contributors
+        <Icon name="lucide:code" class="w-3.5 h-3.5 text-brand-cyan" /> For developers
       </span>
-      <h2 class="text-4xl font-extrabold text-white mb-4 flex items-center justify-center gap-3">
-        <Icon name="lucide:cpu" class="text-cyan-400 w-8 h-8" /> Technical Stack & Orchestration
-      </h2>
-      <p class="text-slate-300 text-lg max-w-3xl mx-auto leading-relaxed">
-        VEXiL is an MIT-licensed monorepo: <strong class="text-white">Bun + Turborepo</strong> orchestrate the JS
-        workspaces, <strong class="text-white">uv</strong> manages every Python and GoLang project. Five workspaces, one root
-        install, one dev command.
+      <h2 class="text-2xl font-semibold text-primary mb-3 tracking-tight">Technical Stack &amp; Orchestration</h2>
+      <p class="text-secondary text-base max-w-3xl mx-auto leading-relaxed">
+        For developers and anyone interested in contributing - a quick bird's-eye view of how this project is set up.
       </p>
     </div>
 
-    <!-- Repo tree -->
-    <div
-      class="bg-slate-950/80 border border-cyan-500/20 rounded-3xl p-6 md:p-8 mb-12 shadow-[0_0_40px_rgba(34,211,238,0.08)] overflow-x-auto"
-    >
+    <div class="bg-surface-1 border border-theme rounded-[4px] p-4 sm:p-6 mb-8 overflow-x-auto bg-brand-wash">
       <div class="flex items-center justify-between mb-4">
-        <span class="text-xs text-slate-500 uppercase tracking-widest font-bold flex items-center gap-2">
-          <Icon name="lucide:folder-tree" class="w-4 h-4" /> Repository Layout
+        <span class="text-[10px] text-secondary uppercase tracking-widest font-medium font-mono flex items-center gap-2">
+          <span class="icon-tile !p-1.5"><Icon name="lucide:folder-tree" class="w-3.5 h-3.5" /></span> Repository Layout
         </span>
         <a
           href="https://github.com/anhedonix/vexil"
           target="_blank"
           rel="noreferrer"
-          class="text-xs text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1"
+          class="text-xs text-brand-cyan hover:text-brand-blue transition-colors duration-150 flex items-center gap-1 font-mono"
         >
           anhedonix/vexil <Icon name="lucide:arrow-up-right" class="w-3.5 h-3.5" />
         </a>
       </div>
-      <pre
-        class="text-xs md:text-sm leading-relaxed font-mono m-0"
-        set:html={repoTree}
-      />
+      <pre class="text-xs md:text-sm leading-[1rem] font-mono m-0 text-primary" set:html={repoTree} />
     </div>
 
-    <!-- Workspace grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-      <!-- apps/website -->
-      <div class="bg-white/2 border border-white/5 p-6 rounded-3xl hover:border-cyan-500/30 transition-colors">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div class="bg-surface-1 border border-theme p-5 rounded-[4px]">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <Icon name="lucide:globe" class="w-5 h-5 text-cyan-400" />
-            <span class="text-xs text-slate-500 uppercase tracking-wider font-mono">apps/website</span>
+            <div class="icon-tile !p-1.5"><Icon name="lucide:globe" class="w-4 h-4" /></div>
+            <span class="text-xs text-secondary uppercase tracking-wider font-mono">apps/website-vexil</span>
           </div>
           <span
-            class="text-[9px] px-2 py-0.5 rounded-md uppercase font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+            class="text-[10px] px-2 py-0.5 rounded-[2px] uppercase font-medium font-mono bg-surface-2 text-[var(--success)] border border-theme"
             >Built</span
           >
         </div>
-        <h3 class="text-lg font-bold text-white mb-2">Marketing Site</h3>
-        <p class="text-sm text-slate-400 mb-4 leading-relaxed">
-          Static landing page (this site). Generated at build time, deployable to Vercel, Netlify, or Cloudflare Pages.
+        <h3 class="text-base font-semibold text-primary mb-2">Website-VEXiL</h3>
+        <p class="text-sm text-secondary mb-4 leading-relaxed">
+          Built with
+          <strong class="text-primary font-semibold">Astro</strong>
+          - the public site for product introduction today; documentation will live here as the project matures.
+          Deployable to Vercel, Netlify, or Cloudflare Pages.
         </p>
         <div class="flex flex-wrap gap-1.5">
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20"
-            >Astro 7</span
-          >
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20"
-            >Tailwind v4</span
-          >
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20"
-            >astro-icon</span
-          >
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20"
-            >TypeScript</span
-          >
+          <span class={chip}>Astro</span>
         </div>
       </div>
 
-      <!-- apps/frontend -->
-      <div class="bg-white/2 border border-white/5 p-6 rounded-3xl hover:border-purple-500/30 transition-colors">
+      <div class="bg-surface-1 border border-theme p-5 rounded-[4px]">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <Icon name="lucide:layout" class="w-5 h-5 text-purple-400" />
-            <span class="text-xs text-slate-500 uppercase tracking-wider font-mono">apps/frontend</span>
+            <div class="icon-tile !p-1.5"><Icon name="lucide:server" class="w-4 h-4" /></div>
+            <span class="text-xs text-secondary uppercase tracking-wider font-mono">apps/backend-api</span>
           </div>
           <span
-            class="text-[9px] px-2 py-0.5 rounded-md uppercase font-bold bg-blue-500/15 text-blue-400 border border-blue-500/30"
+            class="text-[10px] px-2 py-0.5 rounded-[2px] uppercase font-medium font-mono bg-surface-2 text-brand-cyan border border-theme"
             >Scaffold</span
           >
         </div>
-        <h3 class="text-lg font-bold text-white mb-2">Product Web UI</h3>
-        <p class="text-sm text-slate-400 mb-4 leading-relaxed">
-          The authenticated browser portal — folder layouts, asset management, node-network editor. Skeleton
-          committed; feature work open for contributions.
+        <h3 class="text-base font-semibold text-primary mb-2">Core API</h3>
+        <p class="text-sm text-secondary mb-4 leading-relaxed">
+          <span class="lang-name">Go</span>'s speed and build velocity power a full
+          <strong class="text-primary font-semibold">RestAPI</strong>
+          on
+          <strong class="text-primary font-semibold">Gin</strong>
+          - robust, easy to manage, and dedicated to system
+          <strong class="text-primary font-semibold">I/O</strong>.
+          VEXiL inside Houdini talks to this listener for file and OS work.
+          One binary compiles for
+          <strong class="text-primary font-semibold">Linux</strong>
+          (our primary target),
+          <strong class="text-primary font-semibold">macOS</strong>, and
+          <strong class="text-primary font-semibold">Windows</strong>,
+          so the same Houdini package runs across platforms.
         </p>
         <div class="flex flex-wrap gap-1.5">
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20"
-            >Astro 7</span
-          >
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700/30 text-slate-400 border border-white/10"
-            >UI library · planned</span
-          >
+          <span class={langChip}>Go</span>
+          <span class={chip}>Gin</span>
+          <span class={chip}>RestAPI</span>
         </div>
       </div>
 
-      <!-- apps/backend -->
-      <div class="bg-white/2 border border-white/5 p-6 rounded-3xl hover:border-emerald-500/30 transition-colors">
+      <div class="bg-surface-1 border border-theme p-5 rounded-[4px]">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <Icon name="lucide:server" class="w-5 h-5 text-emerald-400" />
-            <span class="text-xs text-slate-500 uppercase tracking-wider font-mono">apps/backend</span>
+            <div class="icon-tile !p-1.5"><Icon name="lucide:box" class="w-4 h-4" /></div>
+            <span class="text-xs text-secondary uppercase tracking-wider font-mono">apps/plugins/houdini-package</span>
           </div>
           <span
-            class="text-[9px] px-2 py-0.5 rounded-md uppercase font-bold bg-blue-500/15 text-blue-400 border border-blue-500/30"
+            class="text-[10px] px-2 py-0.5 rounded-[2px] uppercase font-medium font-mono bg-surface-2 text-brand-cyan border border-theme"
             >Scaffold</span
           >
         </div>
-        <h3 class="text-lg font-bold text-white mb-2">Core API</h3>
-        <p class="text-sm text-slate-400 mb-4 leading-relaxed">GoLang based core which is locally managed using Sqlite</p>
+        <h3 class="text-base font-semibold text-primary mb-2">Houdini Plugin</h3>
+        <p class="text-sm text-secondary mb-4 leading-relaxed">
+          The Houdini package is mainly
+          <span class="lang-name">Python</span>
+          3.13 and targets
+          <strong class="text-primary font-semibold">Houdini 22+</strong>
+          only. Scene work goes through
+          <span class="lang-name">Python</span>
+          talking directly to the
+          <code class="font-mono text-xs text-brand-cyan bg-base px-1 py-0.5 rounded-[2px]">hou</code>
+          module (HOM).
+        </p>
         <div class="flex flex-wrap gap-1.5">
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20"
-            >GoLang</span
-          >
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700/30 text-slate-400 border border-white/10"
-            >GraphQL · planned</span
-          >
+          <span class={langChip}>Python 3.13</span>
+          <span class={chip}>Houdini 22+</span>
+          <span class={chip}>hou</span>
         </div>
       </div>
 
-      <!-- apps/houdini-package -->
-      <div class="bg-white/2 border border-white/5 p-6 rounded-3xl hover:border-pink-500/30 transition-colors">
+      <div class="bg-surface-1 border border-theme p-5 rounded-[4px]">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <Icon name="lucide:box" class="w-5 h-5 text-pink-400" />
-            <span class="text-xs text-slate-500 uppercase tracking-wider font-mono">apps/houdini-package</span>
+            <div class="icon-tile !p-1.5"><Icon name="lucide:terminal" class="w-4 h-4" /></div>
+            <span class="text-xs text-secondary uppercase tracking-wider font-mono">dev-tools/env-init</span>
           </div>
           <span
-            class="text-[9px] px-2 py-0.5 rounded-md uppercase font-bold bg-blue-500/15 text-blue-400 border border-blue-500/30"
+            class="text-[10px] px-2 py-0.5 rounded-[2px] uppercase font-medium font-mono bg-surface-2 text-brand-cyan border border-theme"
             >Scaffold</span
           >
         </div>
-        <h3 class="text-lg font-bold text-white mb-2">Houdini Plugin</h3>
-        <p class="text-sm text-slate-400 mb-4 leading-relaxed">
-          Native Houdini package supports v22+ by default, pinned to Python 3.13 (Houdini's interpreter). PySide6 + Qt Designer UI layer ships
-          in the Alpha plugin release.
+        <h3 class="text-base font-semibold text-primary mb-2">Developer UI</h3>
+        <p class="text-sm text-secondary mb-4 leading-relaxed">
+          Custom
+          <strong class="text-primary font-semibold">TUIs</strong>
+          and
+          <strong class="text-primary font-semibold">GUIs</strong>
+          help developers set up the environment and get productive quickly.
+          Documentation will follow as time allows.
         </p>
         <div class="flex flex-wrap gap-1.5">
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-pink-500/10 text-pink-300 border border-pink-500/20"
-            >uv</span
-          >
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-pink-500/10 text-pink-300 border border-pink-500/20"
-            >Python 3.13</span
-          >
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700/30 text-slate-400 border border-white/10"
-            >PySide6 · planned</span
-          >
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700/30 text-slate-400 border border-white/10"
-            >Qt Designer · planned</span
-          >
+          <span class={chip}>TUI</span>
+          <span class={chip}>GUI</span>
         </div>
       </div>
 
-      <!-- tools/dev-tui -->
-      <div class="bg-white/2 border border-white/5 p-6 rounded-3xl hover:border-orange-500/30 transition-colors">
+      <div class="bg-surface-1 border border-theme border-brand-cyan/40 p-5 rounded-[4px]">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <Icon name="lucide:terminal" class="w-5 h-5 text-orange-400" />
-            <span class="text-xs text-slate-500 uppercase tracking-wider font-mono">tools/dev-tui</span>
+            <div class="icon-tile !p-1.5"><Icon name="lucide:git-branch" class="w-4 h-4" /></div>
+            <span class="text-xs text-secondary uppercase tracking-wider font-mono">root</span>
           </div>
           <span
-            class="text-[9px] px-2 py-0.5 rounded-md uppercase font-bold bg-blue-500/15 text-blue-400 border border-blue-500/30"
-            >Scaffold</span
-          >
-        </div>
-        <h3 class="text-lg font-bold text-white mb-2">Developer TUI</h3>
-        <p class="text-sm text-slate-400 mb-4 leading-relaxed">
-          In-terminal control surface for contributors — drives local services, runs migrations, tails logs.
-        </p>
-        <div class="flex flex-wrap gap-1.5">
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-orange-500/10 text-orange-300 border border-orange-500/20"
-            >GoLang</span
-          >
-          <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700/30 text-slate-400 border border-white/10"
-            >TOML config files</span
-          >
-        </div>
-      </div>
-
-      <!-- Orchestration (highlighted) -->
-      <div
-        class="bg-linear-to-br from-cyan-500/10 to-purple-500/10 border border-cyan-500/30 p-6 rounded-3xl shadow-[0_0_20px_rgba(34,211,238,0.15)]"
-      >
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-2">
-            <Icon name="lucide:git-branch" class="w-5 h-5 text-cyan-400" />
-            <span class="text-xs text-slate-500 uppercase tracking-wider font-mono">root</span>
-          </div>
-          <span
-            class="text-[9px] px-2 py-0.5 rounded-md uppercase font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+            class="text-[10px] px-2 py-0.5 rounded-[2px] uppercase font-medium font-mono bg-surface-2 text-[var(--success)] border border-theme"
             >Built</span
           >
         </div>
-        <h3 class="text-lg font-bold text-white mb-2">Orchestration</h3>
-        <p class="text-sm text-slate-300 mb-4 leading-relaxed">
-          Bun handles JS workspaces and the lockfile. Turborepo fans the <code
-            class="text-cyan-300 font-mono text-xs bg-slate-950/60 px-1.5 py-0.5 rounded">dev</code
-          > task out across all apps. Python apps each manage their own venv via uv. Compiled Go apps handle the heavy logic.
+        <h3 class="text-base font-semibold text-primary mb-2">Orchestration</h3>
+        <p class="text-sm text-secondary mb-4 leading-relaxed">
+          This repo is a
+          <strong class="text-primary font-semibold">monorepo</strong>.
+          After trying a few tools,
+          <strong class="text-primary font-semibold">Turborepo</strong>
+          fit the workflow, with
+          <strong class="text-primary font-semibold">Bun</strong>
+          for package management.
+          Neither is part of the Houdini package - they orchestrate the frontend and JS workspaces only - so the
+          choice stays independent of the plugin.
         </p>
         <div class="flex flex-wrap gap-1.5">
+          <span class={chip}>Monorepo</span>
+          <span class={chip}>Turborepo</span>
+          <span class={chip}>Bun</span>
+        </div>
+      </div>
+
+      <div class="bg-surface-1 border border-theme p-5 rounded-[4px]">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <div class="icon-tile !p-1.5"><Icon name="lucide:layout" class="w-4 h-4" /></div>
+            <span class="text-xs text-secondary uppercase tracking-wider font-mono">apps/frontend-app</span>
+          </div>
           <span
-            class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-200 border border-cyan-500/30"
-            >Bun 1.3</span
-          >
-          <span
-            class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-200 border border-cyan-500/30"
-            >Turborepo</span
-          >
-          <span
-            class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-200 border border-cyan-500/30"
-            >uv</span
-          >
-          <span
-            class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-200 border border-cyan-500/30"
-            >Docker</span
-          >
-          <span
-            class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-200 border border-cyan-500/30"
-            >GoLang</span
+            class="text-[10px] px-2 py-0.5 rounded-[2px] uppercase font-medium font-mono bg-surface-2 text-brand-cyan border border-theme"
+            >Scaffold</span
           >
         </div>
+        <h3 class="text-base font-semibold text-primary mb-2">Product Web UI</h3>
+        <p class="text-sm text-secondary leading-relaxed">
+          Authenticated portal - folders, assets, node-network editor. Skeleton committed; feature work open.
+        </p>
       </div>
     </div>
 
-    <!-- Quickstart + Contribute -->
-    <div class="grid lg:grid-cols-3 gap-6">
-      <div
-        class="lg:col-span-2 bg-slate-950/80 border border-white/10 rounded-3xl p-6 md:p-8 shadow-xl overflow-x-auto"
-      >
-        <h3 class="text-white font-bold mb-4 flex items-center gap-2">
-          <Icon name="lucide:terminal" class="w-5 h-5 text-cyan-400" /> Quickstart
-        </h3>
-        <pre
-          class="text-xs md:text-sm leading-relaxed font-mono m-0 text-slate-300"
-          set:html={quickstart}
-        />
-      </div>
+    <!-- Quickstart (commented for now)
+    <div class="lg:col-span-2 bg-surface-1 border border-theme rounded-[4px] p-5 sm:p-6 overflow-x-auto">
+      <h3 class="text-primary font-semibold mb-4 flex items-center gap-2 text-base">
+        <span class="icon-tile !p-1.5"><Icon name="lucide:terminal" class="w-4 h-4" /></span> Quickstart
+      </h3>
+      <pre class="text-xs md:text-sm leading-relaxed font-mono m-0 text-primary" set:html={quickstart} />
+    </div>
+    -->
 
-      <div
-        class="bg-linear-to-br from-purple-500/10 to-cyan-500/10 border border-purple-500/30 rounded-3xl p-6 md:p-8 shadow-xl flex flex-col"
-      >
-        <h3 class="text-white font-bold mb-3 flex items-center gap-2">
-          <Icon name="lucide:git-pull-request" class="w-5 h-5 text-purple-400" /> Contribute
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="bg-surface-1 border border-theme rounded-[4px] p-5 sm:p-6 flex flex-col">
+        <h3 class="text-primary font-semibold mb-3 flex items-center gap-2 text-base">
+          <span class="icon-tile !p-1.5"><Icon name="lucide:git-pull-request" class="w-4 h-4" /></span> Contribute
         </h3>
-        <p class="text-sm text-slate-300 mb-6 leading-relaxed flex-1">
-          MIT-licensed. Issues, RFCs, and pull requests welcome — especially around Houdini integration, the Go backend, and the plugin UI.
+        <p class="text-sm text-secondary mb-6 leading-relaxed flex-1">
+          Issues, RFCs, and PRs welcome - especially Houdini integration, the <span class="lang-name">Go</span> backend,
+          and VEXiL-UI.
         </p>
         <div class="flex flex-col gap-2">
-          <a
-            href="https://github.com/anhedonix/vexil"
-            target="_blank"
-            rel="noreferrer"
-            class="text-sm flex items-center justify-between gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-lg transition-all"
-          >
-            <span>GitHub repo</span>
-            <Icon name="lucide:arrow-up-right" class="w-4 h-4" />
-          </a>
-          <a
-            href="https://github.com/anhedonix/vexil/issues"
-            target="_blank"
-            rel="noreferrer"
-            class="text-sm flex items-center justify-between gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-lg transition-all"
-          >
-            <span>Open issues</span>
-            <Icon name="lucide:arrow-up-right" class="w-4 h-4" />
-          </a>
-          <a
-            href="https://github.com/anhedonix/vexil/blob/dev/SECURITY.md"
-            target="_blank"
-            rel="noreferrer"
-            class="text-sm flex items-center justify-between gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white px-4 py-2.5 rounded-lg transition-all"
-          >
-            <span>Security policy</span>
-            <Icon name="lucide:arrow-up-right" class="w-4 h-4" />
-          </a>
+          {
+            [
+              { href: 'https://github.com/anhedonix/vexil', label: 'GitHub repo' },
+              { href: 'https://github.com/anhedonix/vexil/issues', label: 'Open issues' },
+              {
+                href: 'https://github.com/anhedonix/vexil/blob/dev/SECURITY.md',
+                label: 'Security policy',
+              },
+            ].map((link) => (
+              <a
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+                class="text-sm flex items-center justify-between gap-2 bg-base hover:bg-surface-2 border border-theme text-primary px-3 py-2.5 rounded-[4px] transition-colors duration-150"
+              >
+                <span>{link.label}</span>
+                <Icon name="lucide:arrow-up-right" class="w-4 h-4 text-secondary" />
+              </a>
+            ))
+          }
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- Cybersecurity Protocol (rehoused, content unchanged) -->
-  <section class="py-24 px-6 max-w-7xl mx-auto relative z-10">
-    <div class="bg-white/2 border border-white/5 p-8 rounded-3xl shadow-xl">
-      <h2 class="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-        <Icon name="lucide:shield-check" class="text-emerald-400 w-6 h-6" /> Cybersecurity Protocol
-      </h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="flex gap-4 items-start">
-          <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mt-1 shrink-0">
-            <Icon name="lucide:lock" class="w-5 h-5" />
+      <div class="bg-surface-1 border border-theme rounded-[4px] p-5 sm:p-6 bg-brand-wash">
+        <h3 class="text-primary font-semibold mb-4 flex items-center gap-2 text-base">
+          <span class="icon-tile !p-1.5"><Icon name="lucide:shield-check" class="w-4 h-4" /></span> Cybersecurity Protocol
+        </h3>
+        <div class="space-y-4">
+          <div class="flex gap-3 items-start">
+            <div class="icon-tile mt-0.5 !p-1.5"><Icon name="lucide:lock" class="w-4 h-4" /></div>
+            <div>
+              <h4 class="text-sm font-semibold text-primary">Shift-Left Strategy</h4>
+              <p class="text-sm text-secondary mt-0.5 leading-relaxed">Pre-commit security from day one.</p>
+            </div>
           </div>
-          <div>
-            <h4 class="text-lg font-bold text-white">Shift-Left Strategy</h4>
-            <p class="text-sm text-slate-400 mt-1 leading-relaxed">
-              Security embedded directly from dev-start, incorporating rigorous pre-commit testing.
-            </p>
+          <div class="flex gap-3 items-start">
+            <div class="icon-tile mt-0.5 !p-1.5"><Icon name="lucide:database" class="w-4 h-4" /></div>
+            <div>
+              <h4 class="text-sm font-semibold text-primary">Encrypted Metadata</h4>
+              <p class="text-sm text-secondary mt-0.5 leading-relaxed">Org-keyed encryption for project data.</p>
+            </div>
           </div>
-        </div>
-        <div class="flex gap-4 items-start">
-          <div class="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 mt-1 shrink-0">
-            <Icon name="lucide:database" class="w-5 h-5" />
-          </div>
-          <div>
-            <h4 class="text-lg font-bold text-white">Encrypted Metadata</h4>
-            <p class="text-sm text-slate-400 mt-1 leading-relaxed">
-              All management settings and project data are securely encrypted with organization-unique keys.
-            </p>
-          </div>
-        </div>
-        <div class="flex gap-4 items-start">
-          <div class="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 mt-1 shrink-0">
-            <Icon name="lucide:box" class="w-5 h-5" />
-          </div>
-          <div>
-            <h4 class="text-lg font-bold text-white">Hython Validation</h4>
-            <p class="text-sm text-slate-400 mt-1 leading-relaxed">
-              Automated plugin validation utilizing the native Houdini Python interpreter (Hython) environment.
-            </p>
+          <div class="flex gap-3 items-start">
+            <div class="icon-tile mt-0.5 !p-1.5"><Icon name="lucide:box" class="w-4 h-4" /></div>
+            <div>
+              <h4 class="text-sm font-semibold text-primary">Hython Validation</h4>
+              <p class="text-sm text-secondary mt-0.5 leading-relaxed">
+                Validates in native Houdini <span class="lang-name">Python</span> (Hython).
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Strategic Roadmap & Commercial -->
-  <section class="py-24 relative border-y border-white/5 bg-slate-900/40 backdrop-blur-sm z-10">
-    <div class="max-w-7xl mx-auto px-6">
-      <div class="mb-24">
-        <div class="text-center mb-12">
-          <h2 class="text-4xl font-extrabold text-white mb-4">Strategic Roadmap</h2>
-          <p class="text-slate-300 text-lg">
-            Targeting public launch in <strong class="text-cyan-400 font-bold">6-8 Months</strong>.
+  <!-- Roadmap -->
+  <section class="py-16 sm:py-24 relative border-y border-theme bg-surface-1 z-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="mb-16">
+        <div class="text-center mb-10">
+          <h2 class="text-2xl font-semibold text-primary mb-2 tracking-tight">Strategic Roadmap</h2>
+          <p class="text-secondary text-base">
+            Targeting public launch in <strong class="text-brand-cyan font-semibold font-mono">6-8 months</strong>.
           </p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div class="bg-blue-900/20 border border-blue-500/50 p-6 rounded-3xl relative overflow-hidden group">
-            <div class="text-6xl font-black text-white/5 absolute -right-2 -top-4 transition-transform group-hover:scale-110">
-              I
-            </div>
-            <div class="flex justify-between items-start mb-4 relative z-10">
-              <h4 class="font-bold text-white">Phase I</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="bg-base border border-brand-cyan/50 p-5 rounded-[4px] relative overflow-hidden bg-brand-wash">
+            <div class="text-5xl font-medium text-primary opacity-20 absolute -right-1 -top-2 font-mono">I</div>
+            <div class="flex justify-between items-start mb-3 relative z-10">
+              <h4 class="font-semibold text-primary text-sm">Phase I</h4>
               <span
-                class="text-[10px] px-2 py-1 rounded-md uppercase font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                class="text-[10px] px-2 py-0.5 rounded-[2px] uppercase font-medium font-mono bg-surface-2 text-brand-cyan border border-theme"
                 >In Progress</span
               >
             </div>
-            <h5 class="text-lg font-bold text-cyan-400 mb-2 relative z-10">Foundation</h5>
-            <p class="text-sm text-slate-300 leading-relaxed relative z-10">Core engineering & Alpha plugin release.</p>
+            <h5 class="text-base font-semibold text-brand-cyan mb-1 relative z-10">Foundation</h5>
+            <p class="text-sm text-secondary leading-relaxed relative z-10">Core engineering &amp; Alpha plugin release.</p>
           </div>
 
-          <div
-            class="bg-white/2 border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-white/10 transition-colors"
-          >
-            <div class="text-6xl font-black text-white/5 absolute -right-2 -top-4 transition-transform group-hover:scale-110">
-              II
-            </div>
-            <div class="flex justify-between items-start mb-4 relative z-10">
-              <h4 class="font-bold text-white">Phase II</h4>
-              <span class="text-[10px] px-2 py-1 rounded-md uppercase font-bold bg-slate-800 text-slate-400 border border-white/5"
+          <div class="bg-base border border-theme p-5 rounded-[4px] relative overflow-hidden">
+            <div class="text-5xl font-medium text-primary opacity-20 absolute -right-1 -top-2 font-mono">II</div>
+            <div class="flex justify-between items-start mb-3 relative z-10">
+              <h4 class="font-semibold text-primary text-sm">Phase II</h4>
+              <span
+                class="text-[10px] px-2 py-0.5 rounded-[2px] uppercase font-medium font-mono bg-surface-2 text-secondary border border-theme"
                 >Planned</span
               >
             </div>
-            <h5 class="text-lg font-bold text-white mb-2 relative z-10">Growth</h5>
-            <p class="text-sm text-slate-400 leading-relaxed relative z-10">Repo publication & community contributions.</p>
+            <h5 class="text-base font-semibold text-primary mb-1 relative z-10">Growth</h5>
+            <p class="text-sm text-secondary leading-relaxed relative z-10">Repo publication &amp; community contributions.</p>
           </div>
 
-          <div
-            class="bg-white/2 border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-white/10 transition-colors"
-          >
-            <div class="text-6xl font-black text-white/5 absolute -right-2 -top-4 transition-transform group-hover:scale-110">
-              III
-            </div>
-            <div class="flex justify-between items-start mb-4 relative z-10">
-              <h4 class="font-bold text-white">Phase III</h4>
-              <span class="text-[10px] px-2 py-1 rounded-md uppercase font-bold bg-slate-800 text-slate-400 border border-white/5"
+          <div class="bg-base border border-theme p-5 rounded-[4px] relative overflow-hidden">
+            <div class="text-5xl font-medium text-primary opacity-20 absolute -right-1 -top-2 font-mono">III</div>
+            <div class="flex justify-between items-start mb-3 relative z-10">
+              <h4 class="font-semibold text-primary text-sm">Phase III</h4>
+              <span
+                class="text-[10px] px-2 py-0.5 rounded-[2px] uppercase font-medium font-mono bg-surface-2 text-secondary border border-theme"
                 >Planned</span
               >
             </div>
-            <h5 class="text-lg font-bold text-white mb-2 relative z-10">Stabilization</h5>
-            <p class="text-sm text-slate-400 leading-relaxed relative z-10">Debugging and feature planning.</p>
+            <h5 class="text-base font-semibold text-primary mb-1 relative z-10">Stabilization</h5>
+            <p class="text-sm text-secondary leading-relaxed relative z-10">Debugging and feature planning.</p>
           </div>
 
-          <!-- <div
-            class="bg-white/[0.02] border border-white/5 p-6 rounded-3xl relative overflow-hidden group hover:border-white/10 transition-colors"
-          >
-            <div class="text-6xl font-black text-white/5 absolute -right-2 -top-4 transition-transform group-hover:scale-110">
-              IV
-            </div>
-            <div class="flex justify-between items-start mb-4 relative z-10">
-              <h4 class="font-bold text-white">Phase IV</h4>
-              <span class="text-[10px] px-2 py-1 rounded-md uppercase font-bold bg-slate-800 text-slate-400 border border-white/5"
+          <!--
+          <div class="bg-base border border-theme p-5 rounded-[4px] relative overflow-hidden">
+            <div class="text-5xl font-medium text-primary opacity-20 absolute -right-1 -top-2 font-mono">IV</div>
+            <div class="flex justify-between items-start mb-3 relative z-10">
+              <h4 class="font-semibold text-primary text-sm">Phase IV</h4>
+              <span
+                class="text-[10px] px-2 py-0.5 rounded-[2px] uppercase font-medium font-mono bg-surface-2 text-secondary border border-theme"
                 >Planned</span
               >
             </div>
-            <h5 class="text-lg font-bold text-white mb-2 relative z-10">Scaling</h5>
-            <p class="text-sm text-slate-400 leading-relaxed relative z-10">
-              Multi-DCC expansion (Maya, Nuke, Blender) & exclusive platform tools.
+            <h5 class="text-base font-semibold text-primary mb-1 relative z-10">Scaling</h5>
+            <p class="text-sm text-secondary leading-relaxed relative z-10">
+              Multi-DCC expansion (Maya, Nuke, Blender) and exclusive platform tools.
             </p>
-          </div> -->
+          </div>
+          -->
         </div>
       </div>
 
-      <!-- Commercial Model -->
+      <!-- Commercial Model (commented - redesigned for future publish) -->
       <div>
-        <!-- <div class="text-center mb-12">
-          <h2 class="text-4xl font-extrabold text-white mb-4">Commercial Model</h2>
-          <p class="text-slate-300 text-lg">Accessible tiers ensuring viability from indie artists to enterprise studios.</p>
+        <!--
+        <div class="text-center mb-10">
+          <h2 class="text-2xl font-semibold text-primary mb-2 tracking-tight">Commercial Model</h2>
+          <p class="text-secondary text-base">Tiers from indie artists to studio organizations.</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="bg-white/[0.02] border border-white/5 p-6 rounded-3xl hover:border-cyan-500/30 transition-colors">
-            <h3 class="text-2xl font-bold text-cyan-400 mb-4">Education / Student</h3>
-            <p class="text-sm text-slate-400 mb-4 leading-relaxed">
-              A free-to-use tier providing project management and community node loading, without storage capabilities.
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-base border border-theme p-5 rounded-[4px]">
+            <h3 class="text-lg font-semibold text-brand-cyan mb-3">Education / Student</h3>
+            <p class="text-sm text-secondary mb-4 leading-relaxed">
+              Free tier for project management and community node loading. No cloud storage.
             </p>
-            <ul class="text-sm text-slate-400 space-y-2">
+            <ul class="text-sm text-secondary space-y-2">
               <li class="flex items-center gap-2">
-                <Icon name="lucide:check" class="w-4 h-4 text-cyan-400" /> Project Management
+                <Icon name="lucide:check" class="w-4 h-4 text-brand-cyan shrink-0" /> Project Management
               </li>
               <li class="flex items-center gap-2">
-                <Icon name="lucide:check" class="w-4 h-4 text-cyan-400" /> Community Node Loading
+                <Icon name="lucide:check" class="w-4 h-4 text-brand-cyan shrink-0" /> Community Node Loading
               </li>
               <li class="flex items-center gap-2">
-                <Icon name="lucide:check" class="w-4 h-4 text-cyan-400" /> No Cloud Storage
+                <Icon name="lucide:check" class="w-4 h-4 text-brand-cyan shrink-0" /> No Cloud Storage
               </li>
             </ul>
           </div>
 
-          <div class="bg-white/[0.02] border border-white/5 p-6 rounded-3xl hover:border-emerald-500/30 transition-colors">
-            <h3 class="text-2xl font-bold text-emerald-400 mb-4">Freelancer / Individual</h3>
-            <p class="text-sm text-slate-400 mb-4 leading-relaxed">
-              A fixed monthly subscription with usage-based storage fees, starting with a one-month free trial.
+          <div class="bg-base border border-theme p-5 rounded-[4px]">
+            <h3 class="text-lg font-semibold text-brand-cyan mb-3">Freelancer / Individual</h3>
+            <p class="text-sm text-secondary mb-4 leading-relaxed">
+              Fixed monthly subscription with usage-based storage. One-month free trial.
             </p>
-            <p class="text-xs uppercase tracking-wider font-semibold text-slate-500 mb-3">
-              Everything in Education / Student, plus:
+            <p class="text-[10px] uppercase tracking-wider font-medium text-secondary mb-3 font-mono">
+              Everything in Education, plus:
             </p>
-            <ul class="text-sm text-slate-400 space-y-2">
+            <ul class="text-sm text-secondary space-y-2">
               <li class="flex items-center gap-2">
-                <Icon name="lucide:check" class="w-4 h-4 text-emerald-400" /> Fixed Monthly Subscription
+                <Icon name="lucide:check" class="w-4 h-4 text-brand-cyan shrink-0" /> Fixed Monthly Subscription
               </li>
               <li class="flex items-center gap-2">
-                <Icon name="lucide:check" class="w-4 h-4 text-emerald-400" /> Usage-based Storage
+                <Icon name="lucide:check" class="w-4 h-4 text-brand-cyan shrink-0" /> Usage-based Storage
               </li>
               <li class="flex items-center gap-2">
-                <Icon name="lucide:check" class="w-4 h-4 text-emerald-400" /> 1-Month Free Trial
+                <Icon name="lucide:check" class="w-4 h-4 text-brand-cyan shrink-0" /> 1-Month Free Trial
               </li>
             </ul>
           </div>
 
-          <div class="bg-white/[0.02] border border-white/5 p-6 rounded-3xl hover:border-purple-500/30 transition-colors">
-            <h3 class="text-2xl font-bold text-purple-400 mb-4">Indie Studio</h3>
-            <p class="text-sm text-slate-400 mb-4 leading-relaxed">
-              Designed for collaborative teams, with a flat monthly organizational fee for unlimited seats plus
-              pay-as-you-go API and storage costs.
+          <div class="bg-base border border-theme p-5 rounded-[4px]">
+            <h3 class="text-lg font-semibold text-brand-cyan mb-3">Indie Studio</h3>
+            <p class="text-sm text-secondary mb-4 leading-relaxed">
+              Flat monthly org fee for unlimited seats, plus pay-as-you-go API and storage.
             </p>
-            <p class="text-xs uppercase tracking-wider font-semibold text-slate-500 mb-3">
-              Everything in Freelancer / Individual, plus:
+            <p class="text-[10px] uppercase tracking-wider font-medium text-secondary mb-3 font-mono">
+              Everything in Freelancer, plus:
             </p>
-            <ul class="text-sm text-slate-400 space-y-2">
+            <ul class="text-sm text-secondary space-y-2">
               <li class="flex items-center gap-2">
-                <Icon name="lucide:check" class="w-4 h-4 text-purple-400" /> Flat Monthly Org Fee
+                <Icon name="lucide:check" class="w-4 h-4 text-brand-cyan shrink-0" /> Flat Monthly Org Fee
               </li>
               <li class="flex items-center gap-2">
-                <Icon name="lucide:check" class="w-4 h-4 text-purple-400" /> Unlimited Seats
+                <Icon name="lucide:check" class="w-4 h-4 text-brand-cyan shrink-0" /> Unlimited Seats
               </li>
               <li class="flex items-center gap-2">
-                <Icon name="lucide:check" class="w-4 h-4 text-purple-400" /> Pay-as-you-go API & Storage
+                <Icon name="lucide:check" class="w-4 h-4 text-brand-cyan shrink-0" /> Pay-as-you-go API &amp; Storage
               </li>
             </ul>
           </div>
 
-          <div class="bg-white/[0.02] border border-white/5 p-6 rounded-3xl hover:border-orange-500/30 transition-colors">
-            <h3 class="text-2xl font-bold text-orange-400 mb-4">Indie Studio +</h3>
-            <p class="text-sm text-slate-400 mb-4 leading-relaxed">
-              An advanced tier offering full API access, white-label options, priority support, and administrative
-              permission management.
+          <div class="bg-base border border-theme p-5 rounded-[4px]">
+            <h3 class="text-lg font-semibold text-brand-cyan mb-3">Indie Studio +</h3>
+            <p class="text-sm text-secondary mb-4 leading-relaxed">
+              Full API access, white-label options, priority support, and admin permission management.
             </p>
-            <p class="text-xs uppercase tracking-wider font-semibold text-slate-500 mb-3">
+            <p class="text-[10px] uppercase tracking-wider font-medium text-secondary mb-3 font-mono">
               Everything in Indie Studio, plus:
             </p>
-            <ul class="text-sm text-slate-400 space-y-2">
+            <ul class="text-sm text-secondary space-y-2">
               <li class="flex items-center gap-2">
-                <Icon name="lucide:check" class="w-4 h-4 text-orange-400" /> Full API Access
+                <Icon name="lucide:check" class="w-4 h-4 text-brand-cyan shrink-0" /> Full API Access
               </li>
               <li class="flex items-center gap-2">
-                <Icon name="lucide:check" class="w-4 h-4 text-orange-400" /> White-label Options
+                <Icon name="lucide:check" class="w-4 h-4 text-brand-cyan shrink-0" /> White-label Options
               </li>
               <li class="flex items-center gap-2">
-                <Icon name="lucide:check" class="w-4 h-4 text-orange-400" /> Priority Support & Admin Controls
+                <Icon name="lucide:check" class="w-4 h-4 text-brand-cyan shrink-0" /> Priority Support &amp; Admin Controls
               </li>
             </ul>
           </div>
-        </div> -->
+        </div>
+        -->
       </div>
     </div>
   </section>
 
-  <!-- CTA Footer & Waitlist Form -->
-  <footer id="waitlist" class="py-32 px-6 relative z-10">
-    <div class="max-w-3xl mx-auto text-center">
-      <h2
-        class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-purple-400 mb-6"
-      >
-        Ready to Streamline Your Pipeline?
+  <!-- Waitlist -->
+  <footer id="waitlist" class="py-20 sm:py-28 relative z-10 scroll-mt-20">
+    <div class="max-w-xl mx-auto text-center px-4 sm:px-6">
+      <h2 class="text-2xl md:text-[2rem] font-semibold text-primary mb-3 tracking-tight">
+        Ready for a pipeline-aware workflow?
       </h2>
-      <p class="text-slate-300 text-lg mb-12">
-        Join the indie studios and freelance practitioners using VEXiL to eliminate workflow bottlenecks.
+      <p class="text-secondary text-base mb-10">
+        Join freelancers, indie studios, and TDs on the VEXiL waitlist.
       </p>
 
-      <!-- Form Card -->
       <div class="max-w-xl mx-auto">
         <form
           id="waitlist-form"
-          class="bg-slate-900/60 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl text-left space-y-5"
+          class="bg-surface-1 hero-wash border border-theme p-6 sm:p-8 rounded-[4px] text-left space-y-4"
         >
           <div>
-            <label for="email" class="block text-sm font-semibold text-slate-300 mb-1.5">
-              Email Address <span class="text-cyan-400">*</span>
+            <label for="email" class="block text-sm font-medium text-primary mb-1.5">
+              Email Address <span class="text-brand-cyan">*</span>
             </label>
             <input
               type="email"
@@ -807,36 +736,35 @@ bun run dev
               name="email"
               required
               autocomplete="email"
-              class="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-3.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors placeholder:text-slate-600"
+              class="w-full bg-base border border-theme rounded-[4px] px-3 py-3 text-primary text-sm focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan transition-colors duration-150 placeholder:text-secondary"
               placeholder="artist@studio.com"
             />
           </div>
 
           <div>
-            <label for="userType" class="block text-sm font-semibold text-slate-300 mb-1.5">
-              I am representing a... <span class="text-cyan-400">*</span>
+            <label for="userType" class="block text-sm font-medium text-primary mb-1.5">
+              I am representing a… <span class="text-brand-cyan">*</span>
             </label>
             <div class="relative">
               <select
                 id="userType"
                 name="userType"
                 required
-                class="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-3.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors appearance-none"
+                class="w-full bg-base border border-theme rounded-[4px] px-3 py-3 text-primary text-sm focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan transition-colors duration-150 appearance-none"
               >
                 <option value="" disabled selected>Select an option</option>
                 <option value="individual">Individual Artist / Freelancer</option>
-                <option value="developer">Interested Developer / Contributor</option>
-                <option value="feedback">Providing feedback only</option>
                 <option value="studio">Studio / Team</option>
+                <option value="hobbyist">Hobbyist / Interested</option>
               </select>
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-secondary">
                 <Icon name="lucide:chevron-down" class="w-4 h-4" />
               </div>
             </div>
           </div>
 
           <div>
-            <label for="comments" class="block text-sm font-semibold text-slate-300 mb-1.5">
+            <label for="comments" class="block text-sm font-medium text-primary mb-1.5">
               Comments or Suggestions
             </label>
             <textarea
@@ -844,15 +772,16 @@ bun run dev
               name="comments"
               rows="3"
               maxlength="2000"
-              class="w-full bg-slate-950/50 border border-white/10 rounded-xl px-4 py-3.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors resize-none placeholder:text-slate-600"
-              placeholder="What features are you looking forward to? (Optional)"></textarea>
+              class="w-full bg-base border border-theme rounded-[4px] px-3 py-3 text-primary text-sm focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan transition-colors duration-150 resize-none placeholder:text-secondary"
+              placeholder="e.g. Need better shot versioning in Houdini, Docker setup for a small studio, or client review without cloud upload… (optional)"
+            ></textarea>
           </div>
 
           <div
             id="waitlist-error"
             role="alert"
             aria-live="polite"
-            class="hidden items-start gap-2 text-sm text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded-xl px-4 py-3"
+            class="hidden items-start gap-2 text-sm text-[var(--error)] bg-surface-2 border border-theme rounded-[4px] px-3 py-3"
           >
             <Icon name="lucide:alert-circle" class="w-4 h-4 mt-0.5 shrink-0" />
             <span data-error-message></span>
@@ -861,18 +790,12 @@ bun run dev
           <button
             id="waitlist-submit"
             type="submit"
-            class="w-full bg-linear-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 disabled:opacity-60 disabled:cursor-not-allowed text-white px-8 py-4 rounded-xl font-bold text-lg transition-all shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)] mt-6 hover:-translate-y-0.5 disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+            class="w-full bg-brand-gradient hover:brightness-110 active:brightness-90 disabled:opacity-60 disabled:cursor-not-allowed text-white px-6 py-3 rounded-[4px] font-semibold text-base transition-[filter] duration-150 mt-2 flex items-center justify-center gap-2"
           >
             <span data-state="idle">Submit Application</span>
             <span data-state="loading" class="hidden items-center gap-2">
-              <svg
-                class="w-5 h-5 animate-spin"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="3"
-                ></circle>
+              <svg class="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.25" stroke-width="3"></circle>
                 <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"
                 ></path>
               </svg>
@@ -885,43 +808,66 @@ bun run dev
           id="waitlist-success"
           role="status"
           aria-live="polite"
-          class="hidden bg-slate-900/60 backdrop-blur-xl border border-emerald-500/30 p-8 rounded-3xl shadow-2xl text-center"
+          class="hidden bg-surface-1 border border-theme p-8 rounded-[4px] text-center"
         >
-          <div
-            class="w-14 h-14 mx-auto mb-5 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400"
-          >
-            <Icon name="lucide:check" class="w-7 h-7" />
+          <div class="icon-tile icon-tile--lg w-12 h-12 mx-auto mb-4 !p-0">
+            <Icon name="lucide:check" class="w-6 h-6" />
           </div>
-          <h3 class="text-xl font-bold text-white mb-2">You're on the list.</h3>
-          <p class="text-slate-300 leading-relaxed">
-            Thanks for joining the VEXiL waitlist — we'll be in touch as the beta opens.
+          <h3 class="text-lg font-semibold text-primary mb-2">You're on the list.</h3>
+          <p class="text-secondary leading-relaxed text-sm">
+            Thanks for joining the VEXiL waitlist - we'll be in touch when the beta opens.
           </p>
         </div>
       </div>
 
-      <p class="mt-8 text-sm text-slate-400 font-medium flex items-center justify-center gap-2">
-        <Icon name="lucide:sparkles" class="w-4 h-4 text-purple-400" /> Beta program opening shortly.
+      <p class="mt-8 text-sm text-secondary font-medium flex items-center justify-center gap-2">
+        <Icon name="lucide:lock" class="w-3.5 h-3.5" /> Beta program opening shortly.
       </p>
+    </div>
 
-      <!-- Credits & Timelines -->
-      <div
-        class="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-medium"
-      >
-        <p>© 2026 VEXiL Project. Developed by Anand Magaji.</p>
-        <div class="flex items-center gap-6">
-          <span class="flex items-center gap-1">
-            <Icon name="lucide:github" class="w-3.5 h-3.5" /> anhedonix/vexil
-          </span>
-          <span class="flex items-center gap-1">
-            <Icon name="lucide:rocket" class="w-3.5 h-3.5" /> Target Launch: 6-8 Months
-          </span>
-        </div>
+    <div
+      class="mt-12 pt-6 border-t border-theme max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-secondary font-medium"
+    >
+      <p>© 2026 VEXiL Project. Developed by Anand Magaji.</p>
+      <div class="flex items-center gap-6 font-mono">
+        <span class="flex items-center gap-1">
+          <Icon name="lucide:github" class="w-3.5 h-3.5" /> anhedonix/vexil
+        </span>
+        <span class="flex items-center gap-1">
+          <Icon name="lucide:rocket" class="w-3.5 h-3.5" /> Launch: 6-8 months
+        </span>
       </div>
     </div>
   </footer>
 </Layout>
 
 <script>
+  // Theme toggle
+  const themeToggle = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+
+  const setTheme = (theme: 'dark' | 'light') => {
+    root.setAttribute('data-theme', theme);
+    try {
+      localStorage.setItem('vexil-theme', theme);
+    } catch (_) {
+      /* ignore */
+    }
+  };
+
+  themeToggle?.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    setTheme(next);
+  });
+
+  // Nav logo → smooth scroll to top
+  document.getElementById('nav-logo')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    history.replaceState(null, '', '#top');
+  });
+
+  // Waitlist form
   const form = document.getElementById('waitlist-form') as HTMLFormElement | null;
   const submitBtn = document.getElementById('waitlist-submit') as HTMLButtonElement | null;
   const successCard = document.getElementById('waitlist-success');
