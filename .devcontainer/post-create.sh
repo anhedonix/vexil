@@ -7,14 +7,14 @@ cd "$(dirname "$0")/.."
 # for the `vscode` user before installing into them.
 sudo mkdir -p \
   node_modules \
-  apps/plugins/houdini-package/.venv \
-  dev-tools/env-init/.venv
+  apps/vexil-package-src/.venv \
+  apps/vexil-dev-tools/env-init/.venv
 sudo chown -R vscode:vscode \
   node_modules \
-  apps/plugins/houdini-package/.venv \
-  dev-tools/env-init/.venv
+  apps/vexil-package-src/.venv \
+  apps/vexil-dev-tools/env-init/.venv
 
-# TODO(later): route uv-installed Python libs for apps/plugins/houdini-package
+# TODO(later): route uv-installed Python libs for apps/vexil-package-src
 # into that package's Houdini `PythonLibs` folder instead of a standalone
 # .venv, so Houdini's own Python can pick them up. Deferred for now.
 

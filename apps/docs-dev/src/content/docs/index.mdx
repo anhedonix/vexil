@@ -1,0 +1,87 @@
+---
+title: Dev Docs | VEXiL
+description: Source of truth for developing and contributing to VEXiL — the Houdini-centric project management monorepo.
+template: splash
+hero:
+  title: Welcome to <img src="/vexil-logo.png" alt="VEXiL" />
+  tagline: Developer handbook for VEXiL — SideFX Houdini-centric project management. Setup, architecture, and contribution workflow live here.
+  actions:
+    - text: Get started
+      link: /guides/getting-started/
+      icon: right-arrow
+    - text: GitHub
+      link: https://github.com/anhedonix/vexil
+      icon: external
+      variant: minimal
+---
+
+import { Aside, Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+<Aside type="tip" title="Source of truth">
+	**Dev Docs | VEXiL** ([dev-docs.vexil.tools](https://dev-docs.vexil.tools)) is the canonical guide for local setup, repository layout, services, and how to contribute.
+	Root `README.md` / `CONTRIBUTING.md` may lag the code — when they disagree, prefer **these docs** and the current codebase.
+</Aside>
+
+## What is VEXiL?
+
+VEXiL is a Houdini-centric project management tool with quality-of-life features for VFX pipelines. The name nods to **VEX** (Vector Expression Language) in SideFX Houdini.
+
+The product is developed as a **Bun + Turborepo** monorepo: a **Go Gin** backend API, Astro frontend apps, a Houdini plugin scaffold, and developer tooling.
+
+## Repository at a glance
+
+| Path | Role |
+| ---- | ---- |
+| `apps/vexil-server` | Go Gin API |
+| `apps/vexil-frontend` | Product UI (Astro) |
+| `apps/vexil-website` | Website for VEXiL (Astro + Tailwind) |
+| `apps/vexil-package-src` | Houdini plugin (Python / uv) |
+| `apps/vexil-dev-tools/env-init` | Env / Docker TUI (Textual) |
+| `apps/docs-dev` | These docs (Starlight; port `4323`) |
+
+Ignore legacy empty leftovers under older `apps/` paths. Details: [Repository Structure](/guides/repository-structure/).
+
+## Start here
+
+<CardGrid>
+	<LinkCard
+		title="Getting Started"
+		href="/guides/getting-started/"
+		description="Prerequisites, Devcontainer or manual setup, and bun run dev."
+	/>
+	<LinkCard
+		title="Repository Structure"
+		href="/guides/repository-structure/"
+		description="Where each app lives and which stack it uses."
+	/>
+	<LinkCard
+		title="Contributing"
+		href="/guides/contributing/"
+		description="Branch from dev, PR process, Conventional Commits, AI policy."
+	/>
+	<LinkCard
+		title="Local services & ports"
+		href="/reference/local-services/"
+		description="Known frontend ports, Docker Compose, API port status."
+	/>
+</CardGrid>
+
+## Pick a surface
+
+<CardGrid>
+	<Card title="Backend API" icon="seti:go">
+		Work in `apps/vexil-server` — Go Gin. Default listen port is **not finalized** yet; see [Local services](/reference/local-services/).
+	</Card>
+	<Card title="Product UI" icon="astro">
+		Work in `apps/vexil-frontend` (Astro). Typical local URL: `http://localhost:4321`.
+	</Card>
+	<Card title="Website for VEXiL" icon="rocket">
+		Work in `apps/vexil-website` (Astro + Tailwind).
+	</Card>
+	<Card title="Houdini plugin" icon="seti:python">
+		Work in `apps/vexil-package-src`. Requires [SideFX Houdini](https://www.sidefx.com/download/) 22.
+	</Card>
+	<Card title="Docs" icon="open-book">
+		Improve this handbook under `apps/docs-dev`. Hosted at [dev-docs.vexil.tools](https://dev-docs.vexil.tools). Local: `http://localhost:4323`.
+	</Card>
+</CardGrid>

@@ -1,17 +1,12 @@
 {
     "python-envs.pythonProjects": [
         {
-            "path": "apps/backend-api",
+            "path": "apps/vexil-dev-tools/env-init",
             "envManager": "ms-python.python:venv",
             "packageManager": "ms-python.python:uv"
         },
         {
-            "path": "dev-tools/env-init",
-            "envManager": "ms-python.python:venv",
-            "packageManager": "ms-python.python:uv"
-        },
-        {
-            "path": "apps/plugins/houdini-package",
+            "path": "apps/vexil-package-src",
             "envManager": "ms-python.python:venv",
             "packageManager": "ms-python.python:pip"
         }

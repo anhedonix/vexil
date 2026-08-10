@@ -1,11 +1,12 @@
 {
   "folders": [
     { "name": "vexil (root)", "path": "." },
-    { "name": "backend-api", "path": "apps/backend-api" },
-    { "name": "frontend-app", "path": "apps/frontend-app" },
-    { "name": "website-vexil", "path": "apps/website-vexil" },
-    { "name": "plugin-houdini", "path": "apps/plugins/houdini-package" },
-    { "name": "env-init", "path": "dev-tools/env-init" },
+    { "name": "vexil-server", "path": "apps/vexil-server" },
+    { "name": "vexil-frontend", "path": "apps/vexil-frontend" },
+    { "name": "vexil-website", "path": "apps/vexil-website" },
+    { "name": "docs-dev", "path": "apps/docs-dev" },
+    { "name": "vexil-package-src", "path": "apps/vexil-package-src" },
+    { "name": "env-init", "path": "apps/vexil-dev-tools/env-init" },
   ],
   "settings": {
     "editor.formatOnSave": true,

@@ -1,0 +1,11 @@
+{
+  "name": "vexil-package-src",
+  "version": "0.1.2",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

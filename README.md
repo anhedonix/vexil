@@ -13,12 +13,12 @@ The project code is organized within the following directories:
 ```text
 vexil/
 ├── apps/
-│   ├── backend-api/             # Django API backend (Python) (FIX: GoLang)
-│   ├── frontend-app/            # Main project management web app (Astro)
-│   ├── website-vexil/           # Vexil product marketing website (Astro + Tailwind CSS)
-│   └── houdini-package/         # Houdini integration plugin (Python package)
-├── dev-tools/
-│   └── env-init/                # Interactive TUI for environment setup (Textual)
+│   ├── vexil-server/             # Django API backend (Python) (FIX: GoLang)
+│   ├── vexil-frontend/            # Main project management web app (Astro)
+│   ├── vexil-website/           # Vexil product marketing website (Astro + Tailwind CSS)
+│   ├── vexil-dev-tools/
+│   │   └── env-init/            # Interactive TUI for environment setup (Textual)
+│   └── vexil-package-src/       # Houdini integration plugin (Python package)
 ├── .devcontainer/               # VS Code Devcontainer configuration
 └── vexil.code-workspace         # Recommended VS Code Multi-Root Workspace config
 ```
@@ -72,10 +72,10 @@ Vexil includes a custom interactive terminal user interface (TUI) to simplify de
 Run the TUI directly from the workspace root:
 
 ```bash
-uv run --directory dev-tools/env-init main.py
+uv run --directory apps/vexil-dev-tools/env-init main.py
 ```
 
-_TUI Source:_ [main.py](./dev-tools/env-init/main.py) | [main.tcss](./dev-tools/env-init/main.tcss)
+_TUI Source:_ [main.py](./apps/vexil-dev-tools/env-init/main.py) | [main.tcss](./apps/vexil-dev-tools/env-init/main.tcss)
 
 ### TUI Capabilities
 
@@ -100,9 +100,9 @@ bun run dev
 
 This starts the following development servers:
 
-- **Backend API**: [http://localhost:8000](http://localhost:8000) (Django Server via `uv run` in [apps/backend-api](./apps/backend-api))
-- **Frontend App**: [http://localhost:4321](http://localhost:4321) (Astro Dev Server in [apps/frontend-app](./apps/frontend-app))
-- **Website**: [http://localhost:4322](http://localhost:4322) (Astro Dev Server in [apps/website-vexil](./apps/website-vexil))
+- **Backend API**: [http://localhost:8000](http://localhost:8000) (Django Server via `uv run` in [apps/vexil-server](./apps/vexil-server))
+- **Frontend App**: [http://localhost:4321](http://localhost:4321) (Astro Dev Server in [apps/vexil-frontend](./apps/vexil-frontend))
+- **Website**: [http://localhost:4322](http://localhost:4322) (Astro Dev Server in [apps/vexil-website](./apps/vexil-website))
 
 ### Workflow B: Containerized (Docker Compose)
 
@@ -118,7 +118,7 @@ Docker automatically registers ports dynamically to prevent host environment con
 
 ## Houdini Plugin Setup
 
-The Vexil Houdini plugin resides under [apps/plugins/houdini-package](./apps/plugins/houdini-package). To integrate it with your local SideFX Houdini installation, configure Houdini to load the package files using one of the two methods below.
+The Vexil Houdini plugin resides under [apps/vexil-package-src](./apps/vexil-package-src). To integrate it with your local SideFX Houdini installation, configure Houdini to load the package files using one of the two methods below.
 
 ### Method 1: Houdini Package Schema (Recommended)
 
@@ -131,8 +131,8 @@ Add the following configuration, replacing `<path-to-repo-root>` with the absolu
 
 ```json
 {
-  "path": "<path-to-repo-root>/apps/plugins/houdini-package",
-  "env": [{ "PYTHONPATH": "<path-to-repo-root>/apps/plugins/houdini-package/python" }]
+  "path": "<path-to-repo-root>/apps/vexil-package-src",
+  "env": [{ "PYTHONPATH": "<path-to-repo-root>/apps/vexil-package-src/python" }]
 }
 ```
 
@@ -142,10 +142,10 @@ Alternatively, you can append directories directly to Houdini environment variab
 
 ```bash
 # Add to HOUDINI_PATH
-export HOUDINI_PATH="<path-to-repo-root>/apps/plugins/houdini-package:$HOUDINI_PATH"
+export HOUDINI_PATH="<path-to-repo-root>/apps/vexil-package-src:$HOUDINI_PATH"
 
 # Add python scripts directory to PYTHONPATH
-export PYTHONPATH="<path-to-repo-root>/apps/plugins/houdini-package/python:$PYTHONPATH"
+export PYTHONPATH="<path-to-repo-root>/apps/vexil-package-src/python:$PYTHONPATH"
 ```
 
 ---
@@ -168,7 +168,7 @@ for details.
 To maintain a consistent codebase, please adhere to the following development conventions:
 
 - **Python Styling & Linting**: We utilize `ruff` for all Python formatting and linting.
-  - Configuration is defined inside each project's [pyproject.toml](./apps/plugins/houdini-package/pyproject.toml).
+  - Configuration is defined inside each project's [pyproject.toml](./apps/vexil-package-src/pyproject.toml).
   - VS Code users are encouraged to install the Ruff extension.
 - **JS/TS/Astro Formatting**: Handled via the default TypeScript formatters inside the workspace.
 - **Workspace Formatting Defaults**:
