@@ -1,49 +1,20 @@
-# Starlight Starter Kit: Basics
+# VEXiL Dev Docs
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+Source of truth for developing and contributing to [VEXiL](https://github.com/anhedonix/vexil).
 
-```
-bun create astro@latest -- --template starlight
-```
+**Production:** [https://dev-docs.vexil.tools](https://dev-docs.vexil.tools)
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+This Astro Starlight site lives at `docs/dev` in the monorepo. It is **not** part of the root Bun workspaces — install and run it from this directory.
 
-## 🚀 Project Structure
+## Commands
 
-Inside of your Astro + Starlight project, you'll see the following folders and files:
+| Command | Action |
+| :------ | :----- |
+| `bun install` | Install dependencies |
+| `bun run dev` | Local dev server |
+| `bun run build` | Production build to `./dist/` |
+| `bun run preview` | Preview the production build |
 
-```
-.
-├── public/
-├── src/
-│   ├── assets/
-│   ├── content/
-│   │   └── docs/
-│   └── content.config.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
-```
+## Content
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
-
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
-
-Static assets, like favicons, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+Docs content lives in `src/content/docs/`. Site branding and sidebar are configured in `astro.config.mjs`.

@@ -4,21 +4,37 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
+	site: 'https://dev-docs.vexil.tools',
 	integrations: [
 		starlight({
-			title: 'My Docs',
-			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
+			title: 'VEXiL Dev Docs',
+			logo: {
+				src: './src/assets/vexil-logo.png',
+				alt: 'VEXiL',
+				replacesTitle: true,
+			},
+			social: [
+				{
+					icon: 'github',
+					label: 'GitHub',
+					href: 'https://github.com/anhedonix/vexil',
+				},
+			],
+			customCss: ['./src/styles/custom.css'],
 			sidebar: [
 				{
 					label: 'Guides',
 					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', slug: 'guides/example' },
+						{ label: 'Getting Started', slug: 'guides/getting-started' },
+						{ label: 'Repository Structure', slug: 'guides/repository-structure' },
+						{ label: 'Contributing', slug: 'guides/contributing' },
 					],
 				},
 				{
 					label: 'Reference',
-					items: [{ autogenerate: { directory: 'reference' } }],
+					items: [
+						{ label: 'Local services & ports', slug: 'reference/local-services' },
+					],
 				},
 			],
 		}),

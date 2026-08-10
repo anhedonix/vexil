@@ -1,7 +1,9 @@
 {
-  "name": "dev",
+  "name": "vexil-dev-docs",
+  "description": "VEXiL developer documentation (https://dev-docs.vexil.tools)",
   "type": "module",
   "version": "0.0.1",
+
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
