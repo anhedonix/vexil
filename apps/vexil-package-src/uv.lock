@@ -3,6 +3,6 @@ revision = 3
 requires-python = "==3.13.*"
 
 [[package]]
-name = "houdini-package-src"
+name = "vexil-package-src"
 version = "0.1.1"
 source = { virtual = "." }

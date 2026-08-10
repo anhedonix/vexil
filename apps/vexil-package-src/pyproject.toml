@@ -1,5 +1,5 @@
 [project]
-name = "houdini-package-src"
+name = "vexil-package-src"
 version = "0.1.1"
 description = "Houdini package for Vexil, a tool for managing projects in Houdini"
 readme = "README.md"
