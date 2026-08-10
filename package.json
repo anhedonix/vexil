@@ -4,7 +4,7 @@
   "private": true,
   "tasks": {
     "dev": "turbo run dev",
-    "setup": "(cd apps/plugins/houdini-package && uv sync) && (cd dev-tools/env-init && uv sync) && (cd apps/backend-api && go mod download)"
+    "setup": "(cd apps/packages/houdini-package-src && uv sync) && (cd dev-tools/env-init && uv sync) && (cd apps/vexil-server && go mod download)"
   },
   "devDependencies": {
     "@types/bun": "latest",
