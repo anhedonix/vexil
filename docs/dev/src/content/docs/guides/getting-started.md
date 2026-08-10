@@ -18,7 +18,7 @@ This guide gets you from a fresh clone to running the monorepo locally.
 
 ### Why Bun?
 
-VEXiL uses Bun for fast installs and first-class workspaces that fit this monorepo. Root scripts and `packageManager` assume Bun. You can use another package manager if you prefer — just know that docs, CI, and examples stay Bun-oriented.
+VEXiL prefers [Bun](https://bun.sh) over [npm](https://www.npmjs.com/), [Yarn](https://yarnpkg.com/), and [pnpm](https://pnpm.io/) for speed and simple monorepo / workspace ergonomics. That is a preference, not a hard requirement — you are free to use other workspace-aware package managers such as [pnpm](https://pnpm.io/). Docs, CI, and `packageManager` examples stay Bun-oriented, so adapt commands if you choose something else.
 
 ## Optional: Devcontainer
 
