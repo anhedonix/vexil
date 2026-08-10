@@ -1,19 +1,19 @@
 import { defineConfig, envField } from 'astro/config';
 import icon from 'astro-icon';
 import tailwindcss from '@tailwindcss/vite';
-import vercel from '@astrojs/vercel';
-import netlify from '@astrojs/netlify';
-
 import favicons from 'astro-favicons';
 
 const isNetlify = process.env.DEPLOY_TARGET === 'netlify';
+const { default: adapter } = isNetlify
+  ? await import('@astrojs/netlify')
+  : await import('@astrojs/vercel');
 
 export default defineConfig({
   output: 'server',
   // Astro 7 defaults to compressHTML: 'jsx', which strips newlines around inline
   // tags and glues words (e.g. "toVector", "aPython"). Use HTML-aware compression.
   compressHTML: true,
-  adapter: isNetlify ? netlify() : vercel(),
+  adapter: adapter(),
   site: process.env.SITE_URL || 'https://vexil.tools',
   integrations: [icon(), favicons()],
   vite: { plugins: [tailwindcss()] },
