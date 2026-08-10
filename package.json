@@ -5,7 +5,7 @@
   "private": true,
   "tasks": {
     "dev": "turbo run dev",
-    "setup": "(cd apps/packages/houdini-package-src && uv sync) && (cd dev-tools/env-init && uv sync) && (cd apps/vexil-server && go mod download)"
+    "setup": "(cd apps/packages/houdini-package-src && uv sync) && (cd apps/vexil-dev-tools/env-init && uv sync) && (cd apps/vexil-server && go mod download)"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -17,7 +17,7 @@
   "packageManager": "bun@1.3.13",
   "workspaces": [
     "apps/*",
-    "dev-tools/*",
+    "apps/vexil-dev-tools/*",
     "apps/packages/*"
   ]
 }

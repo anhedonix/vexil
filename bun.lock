@@ -31,6 +31,16 @@
         "typescript": "^5",
       },
     },
+    "apps/vexil-dev-tools/env-init": {
+      "name": "dev-tui",
+      "version": "0.1.1",
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+      "peerDependencies": {
+        "typescript": "^5",
+      },
+    },
     "apps/vexil-frontend": {
       "name": "vexil-frontend",
       "version": "0.1.1",
@@ -70,16 +80,6 @@
         "@types/node": "^22.10.0",
         "tailwindcss": "^4.0.0",
         "typescript": "^5.7.0",
-      },
-    },
-    "dev-tools/env-init": {
-      "name": "dev-tui",
-      "version": "0.1.1",
-      "devDependencies": {
-        "@types/bun": "latest",
-      },
-      "peerDependencies": {
-        "typescript": "^5",
       },
     },
   },
@@ -998,7 +998,7 @@
 
     "dettle": ["dettle@1.0.5", "", {}, "sha512-ZVyjhAJ7sCe1PNXEGveObOH9AC8QvMga3HJIghHawtG7mE4K5pW9nz/vDGAr/U7a3LWgdOzEE7ac9MURnyfaTA=="],
 
-    "dev-tui": ["dev-tui@workspace:dev-tools/env-init"],
+    "dev-tui": ["dev-tui@workspace:apps/vexil-dev-tools/env-init"],
 
     "devalue": ["devalue@5.8.1", "", {}, "sha512-4CXDYRBGqN+57wVJkuXBYmpAVUSg3L6JAQa/DFqm238G73E1wuyc/JhGQJzN7vUf/CMphYau2zXbfWzDR5aTEw=="],
 
