@@ -8,7 +8,7 @@ For full environment setup (Devcontainer, manual setup, running the dev servers,
 
 ```bash
 bun run setup   # installs JS deps and syncs Python venvs via uv
-bun run dev     # runs backend-api, frontend-app, and website-vexil together
+bun run dev     # runs vexil-server, vexil-frontend, and vexil-website together
 ```
 
 ## Branching & Commits

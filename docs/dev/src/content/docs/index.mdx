@@ -32,10 +32,10 @@ The product is developed as a **Bun + Turborepo** monorepo: a **Go Gin** backend
 
 | Path | Role |
 | ---- | ---- |
-| `apps/backend-api` | Go Gin API |
-| `apps/frontend-app` | Product UI (Astro) |
-| `apps/website-vexil` | Marketing site (Astro + Tailwind) |
-| `apps/plugins/houdini-package` | Houdini plugin (Python / uv) |
+| `apps/vexil-server` | Go Gin API |
+| `apps/vexil-frontend` | Product UI (Astro) |
+| `apps/vexil-website` | Marketing site (Astro + Tailwind) |
+| `apps/packages/houdini-package-src` | Houdini plugin (Python / uv) |
 | `dev-tools/env-init` | Env / Docker TUI (Textual) |
 | `docs/dev` | These docs (run separately) |
 
@@ -70,16 +70,16 @@ Ignore legacy empty leftovers under older `apps/` paths. Details: [Repository St
 
 <CardGrid>
 	<Card title="Backend API" icon="seti:go">
-		Work in `apps/backend-api` — Go Gin. Default listen port is **not finalized** yet; see [Local services](/reference/local-services/).
+		Work in `apps/vexil-server` — Go Gin. Default listen port is **not finalized** yet; see [Local services](/reference/local-services/).
 	</Card>
 	<Card title="Product UI" icon="astro">
-		Work in `apps/frontend-app` (Astro). Typical local URL: `http://localhost:4321`.
+		Work in `apps/vexil-frontend` (Astro). Typical local URL: `http://localhost:4321`.
 	</Card>
 	<Card title="Marketing site" icon="rocket">
-		Work in `apps/website-vexil` (Astro + Tailwind).
+		Work in `apps/vexil-website` (Astro + Tailwind).
 	</Card>
 	<Card title="Houdini plugin" icon="seti:python">
-		Work in `apps/plugins/houdini-package`. Optional — only if you have SideFX Houdini installed.
+		Work in `apps/packages/houdini-package-src`. Optional — only if you have SideFX Houdini installed.
 	</Card>
 	<Card title="Docs" icon="open-book">
 		Improve this handbook under `docs/dev`. Hosted at [dev-docs.vexil.tools](https://dev-docs.vexil.tools).

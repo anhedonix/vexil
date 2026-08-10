@@ -10,7 +10,7 @@ This guide gets you from a fresh clone to running the monorepo locally.
 | Tool | Notes |
 | ---- | ----- |
 | [Bun](https://bun.sh) | Package manager / workspace runner (`packageManager` pins Bun 1.3.x) |
-| Go 1.26.x | Backend API (`apps/backend-api`) |
+| Go 1.26.x | Backend API (`apps/vexil-server`) |
 | [uv](https://docs.astral.sh/uv/) + Python 3.13 | Houdini plugin + `dev-tools/env-init` |
 | Docker (optional) | Compose workflow |
 | VS Code + Dev Containers (recommended) | Matches `.devcontainer/` |
@@ -52,9 +52,9 @@ This uses Turborepo to start workspace `dev` scripts (backend API, frontend app,
 Run a single app when you only need one surface:
 
 ```bash
-cd apps/backend-api && bun run dev
-cd apps/frontend-app && bun run dev
-cd apps/website-vexil && bun run dev
+cd apps/vexil-server && bun run dev
+cd apps/vexil-frontend && bun run dev
+cd apps/vexil-website && bun run dev
 ```
 
 ## Docker Compose
