@@ -34,6 +34,7 @@ export default defineConfig({
 					label: 'Reference',
 					items: [
 						{ label: 'Local services & ports', slug: 'reference/local-services' },
+						{ label: 'Changelog', slug: 'reference/changelog' },
 					],
 				},
 			],
