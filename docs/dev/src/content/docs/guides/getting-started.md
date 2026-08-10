@@ -10,19 +10,20 @@ This guide gets you from a fresh clone to running the monorepo locally.
 | Tool | Notes |
 | ---- | ----- |
 | [Bun](https://bun.sh) | Package manager / workspace runner (`packageManager` pins Bun 1.3.x) |
-| Go 1.26.x | Backend API (`apps/vexil-server`) |
-| [uv](https://docs.astral.sh/uv/) + Python 3.13 | Houdini plugin + `dev-tools/env-init` |
-| Docker (optional) | Compose workflow |
-| VS Code + Dev Containers (recommended) | Matches `.devcontainer/` |
-| SideFX Houdini (optional) | Only for plugin work |
+| [Turborepo](https://turborepo.com) | Task runner used by `bun run dev` → `turbo run dev` (installed via root `devDependencies`) |
+| [Go](https://go.dev/dl/) 1.26.x | Backend API (`apps/vexil-server`) |
+| [uv](https://docs.astral.sh/uv/) + [Python](https://www.python.org/downloads/) 3.13 | Houdini plugin + `dev-tools/env-init` |
+| [SideFX Houdini](https://www.sidefx.com/download/) 22 | Required for the Houdini plugin and DCC-centric workflows |
+| [Docker](https://www.docker.com/products/docker-desktop/) (optional) | Compose workflow |
+| [Zed](https://zed.dev) or [GoLand](https://www.jetbrains.com/go/) | Editor options — GoLand is a strong fit for the Go API |
 
-## Recommended: Devcontainer
+### Why Bun?
 
-1. Open the repository in VS Code.
-2. **Reopen in Container** when prompted (or Command Palette → `Dev Containers: Reopen in Container`).
-3. Post-create runs `bun install` and `bun run setup`.
+VEXiL uses Bun for fast installs and first-class workspaces that fit this monorepo. Root scripts and `packageManager` assume Bun. You can use another package manager if you prefer — just know that docs, CI, and examples stay Bun-oriented.
 
-Config lives under `.devcontainer/` at the repository root.
+## Optional: Devcontainer
+
+Config lives under `.devcontainer/` at the repository root. If your editor supports Dev Containers, reopen the repo in the container; post-create runs `bun install` and `bun run setup`. Otherwise use manual setup below with [Zed](https://zed.dev) or [GoLand](https://www.jetbrains.com/go/).
 
 ## Manual setup
 
@@ -47,13 +48,19 @@ uv run --directory dev-tools/env-init main.py
 bun run dev
 ```
 
-This uses Turborepo to start workspace `dev` scripts (backend API, frontend app, marketing site). See [Local services & ports](/reference/local-services/) for URLs.
+This uses [Turborepo](https://turborepo.com) (`turbo run dev`) to start workspace `dev` scripts (backend API, frontend app, website for VEXiL). See [Local services & ports](/reference/local-services/) for URLs.
 
-Run a single app when you only need one surface:
+Run a single app when you only need one surface (pick one):
 
 ```bash
 cd apps/vexil-server && bun run dev
+```
+
+```bash
 cd apps/vexil-frontend && bun run dev
+```
+
+```bash
 cd apps/vexil-website && bun run dev
 ```
 
