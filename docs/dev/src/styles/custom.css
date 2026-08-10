@@ -1,0 +1,8 @@
+/* Inline logo in splash hero title ("Welcome to <logo>") */
+.hero h1 img {
+	display: inline-block;
+	height: 1.15em;
+	width: auto;
+	vertical-align: -0.15em;
+	margin-inline-start: 0.2em;
+}
