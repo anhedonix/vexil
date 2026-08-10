@@ -2,6 +2,19 @@
 
 All notable changes to VEXiL are documented in this file.
 
+## v0.1.1 - 2026-08-10
+
+Monorepo rename and reconnect for consistent VEXiL package identities.
+
+### 🔧 Improvements
+
+- **Renamed apps for consistent branding** — `backend-api` → `vexil-server`, `frontend-app` → `vexil-frontend`, `website-vexil` → `vexil-website`.
+- **Moved Houdini package** — `apps/plugins/houdini-package` → `apps/packages/houdini-package-src`.
+- **Reconnected local tooling** — Docker Compose, root setup, VS Code workspace, devcontainer, and env-init TUI now target the new paths and service names.
+- **Aligned package versions** — bumped workspace packages to `0.1.1`; Pre-MVP docs banner now reads `0.1.X`.
+
+---
+
 ## [Unreleased] - 2026-07-18
 
 ### ✨ New Features
