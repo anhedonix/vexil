@@ -20,9 +20,16 @@ This guide gets you from a fresh clone to running the monorepo locally.
 
 VEXiL prefers [Bun](https://bun.sh) over [npm](https://www.npmjs.com/), [Yarn](https://yarnpkg.com/), and [pnpm](https://pnpm.io/) for speed and simple monorepo / workspace ergonomics. That is a preference, not a hard requirement — you are free to use other workspace-aware package managers such as [pnpm](https://pnpm.io/). Docs, CI, and `packageManager` examples stay Bun-oriented, so adapt commands if you choose something else.
 
+## Recommended editors
+
+- **[Zed](https://zed.dev)** — recommended general editor for the monorepo
+- **[GoLand](https://www.jetbrains.com/go/)** — recommended for Go work in `apps/vexil-server`
+
+Either works for the full repo; [GoLand](https://www.jetbrains.com/go/) is the stronger fit when focusing on the API.
+
 ## Optional: Devcontainer
 
-Config lives under `.devcontainer/` at the repository root. If your editor supports Dev Containers, reopen the repo in the container; post-create runs `bun install` and `bun run setup`. Otherwise use manual setup below with [Zed](https://zed.dev) or [GoLand](https://www.jetbrains.com/go/).
+Config lives under `.devcontainer/` at the repository root. If your editor supports Dev Containers, reopen the repo in the container; post-create runs `bun install` and `bun run setup`. Otherwise use [manual setup](#manual-setup) with [Zed](https://zed.dev) or [GoLand](https://www.jetbrains.com/go/).
 
 ## Manual setup
 
