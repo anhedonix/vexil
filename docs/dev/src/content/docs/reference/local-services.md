@@ -3,14 +3,14 @@ title: Local services & ports
 description: How VEXiL services run locally, known frontend ports, and backend API port status.
 ---
 
-## Backend API (`apps/backend-api`)
+## Backend API (`apps/vexil-server`)
 
 - **Stack:** Go with **Gin**.
 - **Default listen port:** **not finalized yet.** Do not treat any hard-coded API port in older README snippets or tooling labels as the permanent contract.
-- When you run `bun run dev` or `cd apps/backend-api && bun run dev`, check the process output (and any `.env` in that package) for the port currently in use.
+- When you run `bun run dev` or `cd apps/vexil-server && bun run dev`, check the process output (and any `.env` in that package) for the port currently in use.
 - Docker Compose currently publishes a host range that maps into the container’s internal listen port for development; that mapping may change as the default port is finalized.
 
-## Frontend app (`apps/frontend-app`)
+## Frontend app (`apps/vexil-frontend`)
 
 | Item | Value |
 | ---- | ----- |
@@ -18,7 +18,7 @@ description: How VEXiL services run locally, known frontend ports, and backend A
 | Typical local URL | `http://localhost:4321` |
 | Dev script | `astro dev --host` |
 
-## Marketing website (`apps/website-vexil`)
+## Marketing website (`apps/vexil-website`)
 
 | Item | Value |
 | ---- | ----- |
@@ -46,9 +46,9 @@ Services defined in `docker-compose.yml`:
 
 | Service | Package | Host port mapping (ranges) |
 | ------- | ------- | -------------------------- |
-| `backend-api` | `apps/backend-api` | Dynamic range into the API container |
-| `frontend-app` | `apps/frontend-app` | `4321–4399` → container `4321` |
-| `website` | `apps/website-vexil` | `4322–4399` → container `4321` |
+| `vexil-server` | `apps/vexil-server` | Dynamic range into the API container |
+| `vexil-frontend` | `apps/vexil-frontend` | `4321–4399` → container `4321` |
+| `vexil-website` | `apps/vexil-website` | `4322–4399` → container `4321` |
 
 Ranges avoid collisions when a preferred host port is already taken. Inspect `docker compose ps` for the actual published ports.
 
@@ -58,4 +58,4 @@ Ranges avoid collisions when a preferred host port is already taken. Inspect `do
 uv run --directory dev-tools/env-init main.py
 ```
 
-Use this to scaffold local config and manage Compose. Some TUI actions may still reflect older backend assumptions — prefer this handbook and the current `apps/backend-api` code when something looks stale.
+Use this to scaffold local config and manage Compose. Some TUI actions may still reflect older backend assumptions — prefer this handbook and the current `apps/vexil-server` code when something looks stale.
