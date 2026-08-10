@@ -80,11 +80,10 @@ Compose maps host port ranges for services so local conflicts are less likely. T
 
 ## These docs
 
-`docs/dev` is **outside** the root Bun workspaces. From that directory:
+`apps/docs-dev` is a Bun workspace package. Root `bun run dev` starts it via Turborepo (port `4323`). To run only the docs:
 
 ```bash
-cd docs/dev
-bun install
+cd apps/docs-dev
 bun run dev
 ```
 

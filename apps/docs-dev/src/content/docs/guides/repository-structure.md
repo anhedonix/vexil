@@ -13,12 +13,11 @@ vexil/
 │   ├── vexil-server/              # Go Gin API
 │   ├── vexil-frontend/            # Product UI (Astro)
 │   ├── vexil-website/             # Website for VEXiL (Astro + Tailwind)
+│   ├── docs-dev/                  # Dev Docs | VEXiL (Starlight; port 4323)
 │   └── packages/
 │       └── houdini-package-src/   # Houdini plugin (Python 3.13 / uv)
 ├── dev-tools/
 │   └── env-init/                  # Env / Docker TUI (Textual)
-├── docs/
-│   └── dev/                       # Dev Docs | VEXiL (Starlight; not in workspaces)
 ├── .devcontainer/                 # Optional Devcontainer
 ├── docker-compose.yml
 ├── package.json                   # Root scripts: setup, dev
@@ -32,9 +31,9 @@ vexil/
 | `apps/vexil-server` | Go, Gin | Backend API for the product |
 | `apps/vexil-frontend` | Astro | Main project-management web app |
 | `apps/vexil-website` | Astro 7, Tailwind 4 | Website for VEXiL |
+| `apps/docs-dev` | Astro Starlight | Contributor handbook at [dev-docs.vexil.tools](https://dev-docs.vexil.tools) |
 | `apps/packages/houdini-package-src` | Python 3.13, uv | SideFX Houdini 22 integration package |
 | `dev-tools/env-init` | Python 3.13, Textual | Interactive env scaffolding and Docker helpers |
-| `docs/dev` | Astro Starlight | Contributor handbook at [dev-docs.vexil.tools](https://dev-docs.vexil.tools) |
 
 ## Root scripts
 
@@ -59,4 +58,4 @@ You may still see empty or leftover directories under older names (for example h
 | Website for VEXiL | `apps/vexil-website` |
 | Houdini DCC integration | `apps/packages/houdini-package-src` |
 | Env scaffolding TUI | `dev-tools/env-init` |
-| This handbook | `docs/dev` |
+| This handbook | `apps/docs-dev` |
