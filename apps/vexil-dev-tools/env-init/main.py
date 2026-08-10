@@ -49,7 +49,7 @@ def load_all_env_files() -> dict[str, str]:
             except Exception:
                 pass
                 
-    yaml_path = MONOREPO_ROOT / "apps" / "packages" / "houdini-package-src" / "env.yaml"
+    yaml_path = MONOREPO_ROOT / "apps" / "vexil-package-src" / "env.yaml"
     if yaml_path.is_file():
         try:
             current_section = None
@@ -94,7 +94,7 @@ def check_env_files_exist() -> bool:
         MONOREPO_ROOT / "apps" / "vexil-server" / ".env",
         MONOREPO_ROOT / "apps" / "vexil-frontend" / ".env",
         MONOREPO_ROOT / "apps" / "vexil-website" / ".env",
-        MONOREPO_ROOT / "apps" / "packages" / "houdini-package-src" / "env.yaml",
+        MONOREPO_ROOT / "apps" / "vexil-package-src" / "env.yaml",
     ]
     return all(p.is_file() for p in env_files)
 
@@ -379,8 +379,8 @@ class HoudiniSection(Widget):
         pwd = LOADED_ENV.get("VEXIL_ONLINE_PASSWORD", "")
         
         log_level = LOADED_ENV.get("VEXIL_LOG_LEVEL", "INFO")
-        h_path_override = LOADED_ENV.get("HOUDINI_PATH", str(MONOREPO_ROOT / "apps" / "packages" / "houdini-package-src"))
-        pythonpath_override = LOADED_ENV.get("PYTHONPATH", str(MONOREPO_ROOT / "apps" / "packages" / "houdini-package-src" / "python"))
+        h_path_override = LOADED_ENV.get("HOUDINI_PATH", str(MONOREPO_ROOT / "apps" / "vexil-package-src"))
+        pythonpath_override = LOADED_ENV.get("PYTHONPATH", str(MONOREPO_ROOT / "apps" / "vexil-package-src" / "python"))
 
         with Collapsible(title="  Houdini Plugin Settings", collapsed=False, id="collapsible-houdini"):
             with Vertical(classes="form-field"):
@@ -903,12 +903,12 @@ class VexilApp(App):
                     f"  data_dir: {h_values['local']['data_dir']}\n",
                 ])
             
-            yaml_path = MONOREPO_ROOT / "apps" / "packages" / "houdini-package-src" / "env.yaml"
+            yaml_path = MONOREPO_ROOT / "apps" / "vexil-package-src" / "env.yaml"
             yaml_path.write_text("".join(yaml_lines))
             log.write(f"[dim]Wrote {yaml_path.relative_to(MONOREPO_ROOT)}[/dim]")
             
             # Clean up old .env from Houdini packages folder
-            old_dotenv = MONOREPO_ROOT / "apps" / "packages" / "houdini-package-src" / ".env"
+            old_dotenv = MONOREPO_ROOT / "apps" / "vexil-package-src" / ".env"
             if old_dotenv.is_file():
                 try:
                     old_dotenv.unlink()
