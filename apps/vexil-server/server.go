@@ -1,7 +1,7 @@
 package main
 
 import (
-	"backend-api/graph"
+	"vexil-server/graph"
 	"log"
 	"net/http"
 	"os"

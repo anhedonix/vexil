@@ -2,8 +2,8 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-  cmd = "go build -o ./tmp/backend-api ."
-  bin = "./tmp/backend-api"
+  cmd = "go build -o ./tmp/vexil-server ."
+  bin = "./tmp/vexil-server"
   include_ext = ["go", "graphqls"]
   exclude_dir = ["tmp", "node_modules"]
   delay = 1000

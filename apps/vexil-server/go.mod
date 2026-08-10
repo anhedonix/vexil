@@ -1,4 +1,4 @@
-module backend-api
+module vexil-server
 
 go 1.26.5
 

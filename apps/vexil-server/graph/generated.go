@@ -3,7 +3,7 @@
 package graph
 
 import (
-	"backend-api/graph/model"
+	"vexil-server/graph/model"
 	"bytes"
 	"context"
 	"embed"
