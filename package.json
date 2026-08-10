@@ -1,5 +1,6 @@
 {
   "name": "vexil",
+  "version": "0.1.1",
   "description": "Houdini centric project management system",
   "private": true,
   "tasks": {
