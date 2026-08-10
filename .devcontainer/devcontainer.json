@@ -17,7 +17,7 @@
   "mounts": [
     "source=vexil-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=vexil-houdini-venv,target=${containerWorkspaceFolder}/apps/packages/houdini-package-src/.venv,type=volume",
-    "source=vexil-envinit-venv,target=${containerWorkspaceFolder}/dev-tools/env-init/.venv,type=volume",
+    "source=vexil-envinit-venv,target=${containerWorkspaceFolder}/apps/vexil-dev-tools/env-init/.venv,type=volume",
     "source=vexil-uv-cache,target=/home/vscode/.cache/uv,type=volume",
     "source=vexil-bun-cache,target=/home/vscode/.bun/install/cache,type=volume",
     "source=vexil-go-mod-cache,target=/home/vscode/go/pkg/mod,type=volume",

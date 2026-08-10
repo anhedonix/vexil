@@ -55,7 +55,7 @@ Ranges avoid collisions when a preferred host port is already taken. Inspect `do
 ## Env init TUI
 
 ```bash
-uv run --directory dev-tools/env-init main.py
+uv run --directory apps/vexil-dev-tools/env-init main.py
 ```
 
 Use this to scaffold local config and manage Compose. Some TUI actions may still reflect older backend assumptions — prefer this handbook and the current `apps/vexil-server` code when something looks stale.

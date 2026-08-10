@@ -1,7 +1,7 @@
 {
     "python-envs.pythonProjects": [
         {
-            "path": "dev-tools/env-init",
+            "path": "apps/vexil-dev-tools/env-init",
             "envManager": "ms-python.python:venv",
             "packageManager": "ms-python.python:uv"
         },
