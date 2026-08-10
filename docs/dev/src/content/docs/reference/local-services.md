@@ -18,7 +18,7 @@ description: How VEXiL services run locally, known frontend ports, and backend A
 | Typical local URL | `http://localhost:4321` |
 | Dev script | `astro dev --host` |
 
-## Marketing website (`apps/vexil-website`)
+## Website for VEXiL (`apps/vexil-website`)
 
 | Item | Value |
 | ---- | ----- |
