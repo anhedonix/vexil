@@ -26,11 +26,11 @@ description: How VEXiL services run locally, known frontend ports, and backend A
 | Expected local port (Devcontainer / Compose) | `4322` when that port is free |
 | Note | The package `dev` script uses Astro’s default port unless overridden; Compose maps the website service toward host `4322+`. |
 
-## Dev Docs (`docs/dev`)
+## Dev Docs (`apps/docs-dev`)
 
 | Item | Value |
 | ---- | ----- |
-| Local | `bun run dev` from `docs/dev` (Astro default, often `4321` if nothing else is bound) |
+| Local | `http://localhost:4323` (`bun run dev` from `apps/docs-dev`, or via root Turborepo) |
 | Production | [https://dev-docs.vexil.tools](https://dev-docs.vexil.tools) |
 
 ## Docker Compose overview
