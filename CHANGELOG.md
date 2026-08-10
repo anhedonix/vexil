@@ -2,6 +2,20 @@
 
 All notable changes to VEXiL are documented in this file.
 
+## v0.1.2 - 2026-08-10
+
+Monorepo layout consolidation under `apps/` and Dev Docs setup refresh.
+
+### 🔧 Improvements
+
+- **Moved Dev Docs into the monorepo workspace** — Starlight site now lives at `apps/docs-dev`, joins Bun/Turborepo, and serves locally on port `4323`.
+- **Moved env-init under apps** — developer TUI path is now `apps/vexil-dev-tools/env-init`.
+- **Moved Houdini package** — `apps/packages/houdini-package-src` → `apps/vexil-package-src` (package renamed to match).
+- **Expanded Getting Started** — download links for the toolchain, recommended Zed/GoLand editors, required SideFX Houdini 22, and a clear Bun preference blurb vs npm/Yarn/pnpm.
+- **Aligned package versions** — bumped workspace packages to `0.1.2`.
+
+---
+
 ## v0.1.1 - 2026-08-10
 
 Monorepo rename and reconnect for consistent VEXiL package identities.
