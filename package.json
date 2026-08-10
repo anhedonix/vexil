@@ -17,6 +17,6 @@
   "workspaces": [
     "apps/*",
     "dev-tools/*",
-    "apps/plugins/*"
+    "apps/packages/*"
   ]
 }
