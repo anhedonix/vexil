@@ -1,5 +1,5 @@
 {
-  "name": "vexil-backend",
+  "name": "vexil-server",
   "private": true,
   "devDependencies": {
     "@types/bun": "latest"
