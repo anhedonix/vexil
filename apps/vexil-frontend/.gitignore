@@ -169,3 +169,5 @@ package
 .turbo
 
 # End of https://www.toptal.com/developers/gitignore/api/node,astro,react,svelte
+# Vercel
+.vercel/
