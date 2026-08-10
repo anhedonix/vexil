@@ -16,10 +16,10 @@ vexil/
 │   ├── vexil-server/             # Django API backend (Python) (FIX: GoLang)
 │   ├── vexil-frontend/            # Main project management web app (Astro)
 │   ├── vexil-website/           # Vexil product marketing website (Astro + Tailwind CSS)
+│   ├── vexil-dev-tools/
+│   │   └── env-init/            # Interactive TUI for environment setup (Textual)
 │   └── packages/
 │       └── houdini-package-src/ # Houdini integration plugin (Python package)
-├── dev-tools/
-│   └── env-init/                # Interactive TUI for environment setup (Textual)
 ├── .devcontainer/               # VS Code Devcontainer configuration
 └── vexil.code-workspace         # Recommended VS Code Multi-Root Workspace config
 ```
@@ -73,10 +73,10 @@ Vexil includes a custom interactive terminal user interface (TUI) to simplify de
 Run the TUI directly from the workspace root:
 
 ```bash
-uv run --directory dev-tools/env-init main.py
+uv run --directory apps/vexil-dev-tools/env-init main.py
 ```
 
-_TUI Source:_ [main.py](./dev-tools/env-init/main.py) | [main.tcss](./dev-tools/env-init/main.tcss)
+_TUI Source:_ [main.py](./apps/vexil-dev-tools/env-init/main.py) | [main.tcss](./apps/vexil-dev-tools/env-init/main.tcss)
 
 ### TUI Capabilities
 

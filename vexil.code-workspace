@@ -6,7 +6,7 @@
     { "name": "vexil-website", "path": "apps/vexil-website" },
     { "name": "docs-dev", "path": "apps/docs-dev" },
     { "name": "houdini-package-src", "path": "apps/packages/houdini-package-src" },
-    { "name": "env-init", "path": "dev-tools/env-init" },
+    { "name": "env-init", "path": "apps/vexil-dev-tools/env-init" },
   ],
   "settings": {
     "editor.formatOnSave": true,

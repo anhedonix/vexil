@@ -8,11 +8,11 @@ cd "$(dirname "$0")/.."
 sudo mkdir -p \
   node_modules \
   apps/packages/houdini-package-src/.venv \
-  dev-tools/env-init/.venv
+  apps/vexil-dev-tools/env-init/.venv
 sudo chown -R vscode:vscode \
   node_modules \
   apps/packages/houdini-package-src/.venv \
-  dev-tools/env-init/.venv
+  apps/vexil-dev-tools/env-init/.venv
 
 # TODO(later): route uv-installed Python libs for apps/packages/houdini-package-src
 # into that package's Houdini `PythonLibs` folder instead of a standalone

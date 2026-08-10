@@ -12,7 +12,7 @@ This guide gets you from a fresh clone to running the monorepo locally.
 | [Bun](https://bun.sh) | Package manager / workspace runner (`packageManager` pins [Bun](https://bun.sh) 1.3.x) |
 | [Turborepo](https://turborepo.com) | Task runner used by `bun run dev` → `turbo run dev` (installed via root `devDependencies`) |
 | [Go 1.26.x](https://go.dev/dl/) | Backend API (`apps/vexil-server`) |
-| [uv](https://docs.astral.sh/uv/) + [Python 3.13](https://www.python.org/downloads/) | Houdini plugin + `dev-tools/env-init` |
+| [uv](https://docs.astral.sh/uv/) + [Python 3.13](https://www.python.org/downloads/) | Houdini plugin + `apps/vexil-dev-tools/env-init` |
 | [SideFX Houdini 22](https://www.sidefx.com/download/) | Required for the Houdini plugin and DCC-centric workflows |
 | [Docker](https://www.docker.com/products/docker-desktop/) (optional) | Compose workflow |
 
@@ -45,7 +45,7 @@ bun run setup
 Optional env / Docker helper TUI:
 
 ```bash
-uv run --directory dev-tools/env-init main.py
+uv run --directory apps/vexil-dev-tools/env-init main.py
 ```
 
 ## Run the monorepo

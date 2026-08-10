@@ -9,10 +9,10 @@ const repoTree = `<span class="text-brand-cyan">vexil/</span>
 │   ├── <span class="text-[var(--success)]">vexil-website/</span>              <span class="text-secondary">- website (Astro 7 · Tailwind v4)</span>
 │   ├── <span class="text-[var(--success)]">vexil-frontend/</span>               <span class="text-secondary">- product web UI (Astro 7)</span>
 │   ├── <span class="text-[var(--success)]">vexil-server/</span>                <span class="text-secondary">- core API (<span class="lang-name">Go</span> · RestAPI)</span>
+│   ├── <span class="text-secondary">vexil-dev-tools/</span>
+│   │   └── <span class="text-[var(--success)]">env-init/</span>              <span class="text-secondary">- environment setup using specific tools for developers</span>
 │   └── <span class="text-secondary">packages/</span>
-│       └── <span class="text-[var(--success)]">houdini-package-src/</span>      <span class="text-secondary">- Houdini plugin (uv · <span class="lang-name">Python 3.13</span>)</span>
-└── <span class="text-secondary">dev-tools/</span>
-    └── <span class="text-[var(--success)]">env-init/</span>                  <span class="text-secondary">- environment setup using specific tools for developers</span>`;
+│       └── <span class="text-[var(--success)]">houdini-package-src/</span>      <span class="text-secondary">- Houdini plugin (uv · <span class="lang-name">Python 3.13</span>)</span>`;
 
 const quickstart = `<span class="text-secondary"># 1. Clone and hydrate the JS workspaces</span>
 git clone https://github.com/anhedonix/vexil
@@ -403,7 +403,7 @@ const langChip =
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
             <div class="icon-tile !p-1.5"><Icon name="lucide:terminal" class="w-4 h-4" /></div>
-            <span class="text-xs text-secondary uppercase tracking-wider font-mono">dev-tools/env-init</span>
+            <span class="text-xs text-secondary uppercase tracking-wider font-mono">apps/vexil-dev-tools/env-init</span>
           </div>
           <span
             class="text-[10px] px-2 py-0.5 rounded-[2px] uppercase font-medium font-mono bg-surface-2 text-brand-cyan border border-theme"
