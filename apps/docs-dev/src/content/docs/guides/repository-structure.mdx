@@ -3,25 +3,27 @@ title: Repository Structure
 description: Active packages in the VEXiL monorepo and what each one is for.
 ---
 
+import { FileTree } from '@astrojs/starlight/components';
+
 VEXiL is a **Bun workspaces + Turborepo** monorepo. Workspaces are declared at the repository root as `apps/*` and `apps/vexil-dev-tools/*`.
 
 ## Layout
 
-```text
-vexil/
-├── apps/
-│   ├── vexil-server/              # Go Gin API
-│   ├── vexil-frontend/            # Product UI (Astro)
-│   ├── vexil-website/             # Website for VEXiL (Astro + Tailwind)
-│   ├── docs-dev/                  # Dev Docs | VEXiL (Starlight; port 4323)
-│   ├── vexil-dev-tools/
-│   │   └── env-init/              # Env / Docker TUI (Textual)
-│   └── vexil-package-src/         # Houdini plugin (Python 3.13 / uv)
-├── .devcontainer/                 # Optional Devcontainer
-├── docker-compose.yml
-├── package.json                   # Root scripts: setup, dev
-└── turbo.json
-```
+<FileTree>
+- vexil/
+  - apps/
+    - vexil-server/ Go Gin API
+    - vexil-frontend/ Product UI (Astro)
+    - vexil-website/ Website for VEXiL (Astro + Tailwind)
+    - docs-dev/ Dev Docs | VEXiL (Starlight; port 4323)
+    - vexil-dev-tools/
+      - env-init/ Env / Docker TUI (Textual)
+    - vexil-package-src/ Houdini plugin (Python 3.13 / uv)
+  - .devcontainer/ Optional Devcontainer
+  - docker-compose.yml
+  - package.json Root scripts: setup, dev
+  - turbo.json
+</FileTree>
 
 ## Active packages
 
