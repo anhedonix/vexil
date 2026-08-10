@@ -1,6 +1,6 @@
 {
   "name": "vexil-website",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Website for VEXiL - A specialized project management tool for SideFX Houdini.",
   "type": "module",
   "author": "Anand Magaji",
