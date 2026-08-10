@@ -3,8 +3,9 @@
   "version": "0.1.2",
   "description": "Houdini centric project management system",
   "private": true,
-  "tasks": {
+  "scripts": {
     "dev": "turbo run dev",
+    "build": "turbo run build",
     "setup": "(cd apps/vexil-package-src && uv sync) && (cd apps/vexil-dev-tools/env-init && uv sync) && (cd apps/vexil-server && go mod download)"
   },
   "devDependencies": {

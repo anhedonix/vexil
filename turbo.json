@@ -4,6 +4,11 @@
     "dev": {
       "persistent": true,
       "cache": false
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".vercel/output/**", ".astro/**"],
+      "env": ["SITE_URL", "DEPLOY_TARGET", "VERCEL"]
     }
   }
 }
