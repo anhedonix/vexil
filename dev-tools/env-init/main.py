@@ -31,9 +31,9 @@ LOADED_ENV: dict[str, str] = {}
 def load_all_env_files() -> dict[str, str]:
     res = {}
     dir_map = {
-        "backend-api": "backend-api",
-        "frontend-app": "frontend-app",
-        "website-vexil": "website-vexil",
+        "vexil-server": "vexil-server",
+        "vexil-frontend": "vexil-frontend",
+        "vexil-website": "vexil-website",
     }
     for service_name, service_dir in dir_map.items():
         env_path = MONOREPO_ROOT / "apps" / service_dir / ".env"
@@ -49,7 +49,7 @@ def load_all_env_files() -> dict[str, str]:
             except Exception:
                 pass
                 
-    yaml_path = MONOREPO_ROOT / "apps" / "plugins" / "houdini-package" / "env.yaml"
+    yaml_path = MONOREPO_ROOT / "apps" / "packages" / "houdini-package-src" / "env.yaml"
     if yaml_path.is_file():
         try:
             current_section = None
@@ -91,10 +91,10 @@ def load_all_env_files() -> dict[str, str]:
 
 def check_env_files_exist() -> bool:
     env_files = [
-        MONOREPO_ROOT / "apps" / "backend-api" / ".env",
-        MONOREPO_ROOT / "apps" / "frontend-app" / ".env",
-        MONOREPO_ROOT / "apps" / "website-vexil" / ".env",
-        MONOREPO_ROOT / "apps" / "plugins" / "houdini-package" / "env.yaml",
+        MONOREPO_ROOT / "apps" / "vexil-server" / ".env",
+        MONOREPO_ROOT / "apps" / "vexil-frontend" / ".env",
+        MONOREPO_ROOT / "apps" / "vexil-website" / ".env",
+        MONOREPO_ROOT / "apps" / "packages" / "houdini-package-src" / "env.yaml",
     ]
     return all(p.is_file() for p in env_files)
 
@@ -112,7 +112,7 @@ VEXIL_ASCII = r"""
 """
 
 SERVICE_VARS: dict[str, list[dict]] = {
-    "backend-api": [
+    "vexil-server": [
         {
             "key": "SECRET_KEY",
             "label": "Secret Key",
@@ -137,16 +137,16 @@ SERVICE_VARS: dict[str, list[dict]] = {
         {
             "key": "DATABASE_URL",
             "label": "Database URL",
-            "default": f"sqlite:///{MONOREPO_ROOT}/apps/backend-api/db.sqlite3",
+            "default": f"sqlite:///{MONOREPO_ROOT}/apps/vexil-server/db.sqlite3",
             "hidden": True,
             "help": "Database connection URL. Default uses SQLite for local development.",
         },
     ],
-    "frontend-app": [
+    "vexil-frontend": [
         {
             "key": "API_URL",
             "label": "API URL (internal)",
-            "default": "http://backend-api:8000",
+            "default": "http://vexil-server:8000",
             "help": "Internal Docker network URL for backend API communication.",
         },
         {
@@ -156,7 +156,7 @@ SERVICE_VARS: dict[str, list[dict]] = {
             "help": "Public-facing URL for API access from browser/external clients.",
         },
     ],
-    "website-vexil": [
+    "vexil-website": [
         {
             "key": "RESEND_API_KEY",
             "label": "Resend API Key",
@@ -188,8 +188,8 @@ SERVICE_VARS: dict[str, list[dict]] = {
     ],
 }
 
-DOCKER_SERVICES = ["backend-api", "frontend-app", "website"]
-SERVICE_PORTS = {"backend-api": 8000, "frontend-app": 4321, "website": 4322}
+DOCKER_SERVICES = ["vexil-server", "vexil-frontend", "vexil-website"]
+SERVICE_PORTS = {"vexil-server": 8000, "vexil-frontend": 4321, "vexil-website": 4322}
 
 
 class SelectableRichLog(RichLog):
@@ -379,8 +379,8 @@ class HoudiniSection(Widget):
         pwd = LOADED_ENV.get("VEXIL_ONLINE_PASSWORD", "")
         
         log_level = LOADED_ENV.get("VEXIL_LOG_LEVEL", "INFO")
-        h_path_override = LOADED_ENV.get("HOUDINI_PATH", str(MONOREPO_ROOT / "apps" / "plugins" / "houdini-package"))
-        pythonpath_override = LOADED_ENV.get("PYTHONPATH", str(MONOREPO_ROOT / "apps" / "plugins" / "houdini-package" / "python"))
+        h_path_override = LOADED_ENV.get("HOUDINI_PATH", str(MONOREPO_ROOT / "apps" / "packages" / "houdini-package-src"))
+        pythonpath_override = LOADED_ENV.get("PYTHONPATH", str(MONOREPO_ROOT / "apps" / "packages" / "houdini-package-src" / "python"))
 
         with Collapsible(title="  Houdini Plugin Settings", collapsed=False, id="collapsible-houdini"):
             with Vertical(classes="form-field"):
@@ -863,9 +863,9 @@ class VexilApp(App):
             
             # 1. Save general services dotenv files
             dir_map = {
-                "backend-api": "backend-api",
-                "frontend-app": "frontend-app",
-                "website-vexil": "website-vexil",
+                "vexil-server": "vexil-server",
+                "vexil-frontend": "vexil-frontend",
+                "vexil-website": "vexil-website",
             }
             
             for service_name, service_dir in dir_map.items():
@@ -903,16 +903,16 @@ class VexilApp(App):
                     f"  data_dir: {h_values['local']['data_dir']}\n",
                 ])
             
-            yaml_path = MONOREPO_ROOT / "apps" / "plugins" / "houdini-package" / "env.yaml"
+            yaml_path = MONOREPO_ROOT / "apps" / "packages" / "houdini-package-src" / "env.yaml"
             yaml_path.write_text("".join(yaml_lines))
             log.write(f"[dim]Wrote {yaml_path.relative_to(MONOREPO_ROOT)}[/dim]")
             
-            # Clean up old .env from Houdini plugins folder
-            old_dotenv = MONOREPO_ROOT / "apps" / "plugins" / "houdini-package" / ".env"
+            # Clean up old .env from Houdini packages folder
+            old_dotenv = MONOREPO_ROOT / "apps" / "packages" / "houdini-package-src" / ".env"
             if old_dotenv.is_file():
                 try:
                     old_dotenv.unlink()
-                    log.write(f"[dim]Removed obsolete .env from plugins folder[/dim]")
+                    log.write(f"[dim]Removed obsolete .env from packages folder[/dim]")
                 except Exception:
                     pass
             
@@ -972,10 +972,10 @@ class VexilApp(App):
         
         # Check container state
         states = self.service_status
-        if "running" not in states.get("backend-api", ""):
-            log.write("[bold yellow]Warning: backend-api container is not running. Starting it first...[/bold yellow]")
+        if "running" not in states.get("vexil-server", ""):
+            log.write("[bold yellow]Warning: vexil-server container is not running. Starting it first...[/bold yellow]")
             proc = await asyncio.create_subprocess_exec(
-                "docker", "compose", "-f", str(COMPOSE_FILE), "up", "-d", "backend-api",
+                "docker", "compose", "-f", str(COMPOSE_FILE), "up", "-d", "vexil-server",
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.STDOUT,
                 cwd=str(MONOREPO_ROOT)
@@ -987,10 +987,10 @@ class VexilApp(App):
             await asyncio.sleep(2)
         
         log.write("[bold blue]Applying Django database migrations inside container...[/bold blue]")
-        log.write("[dim]$ docker compose exec backend-api uv run python manage.py migrate[/dim]")
+        log.write("[dim]$ docker compose exec vexil-server uv run python manage.py migrate[/dim]")
         
         proc = await asyncio.create_subprocess_exec(
-            "docker", "compose", "-f", str(COMPOSE_FILE), "exec", "backend-api",
+            "docker", "compose", "-f", str(COMPOSE_FILE), "exec", "vexil-server",
             "uv", "run", "python", "manage.py", "migrate",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
@@ -1016,9 +1016,9 @@ class VexilApp(App):
         log = self.query_one("#log-console", RichLog)
         
         states = self.service_status
-        if "running" not in states.get("backend-api", ""):
-            log.write("[bold red]Error: backend-api container must be running to create a superuser.[/bold red]")
-            self.notify("backend-api not running!", severity="error")
+        if "running" not in states.get("vexil-server", ""):
+            log.write("[bold red]Error: vexil-server container must be running to create a superuser.[/bold red]")
+            self.notify("vexil-server not running!", severity="error")
             return
             
         username = self.query_one("#su-username", Input).value
@@ -1031,14 +1031,14 @@ class VexilApp(App):
             return
             
         log.write(f"[bold blue]Creating superuser '{username}'...[/bold blue]")
-        log.write("[dim]$ docker compose exec -e DJANGO_SUPERUSER_USERNAME=... backend-api uv run python manage.py createsuperuser --noinput[/dim]")
+        log.write("[dim]$ docker compose exec -e DJANGO_SUPERUSER_USERNAME=... vexil-server uv run python manage.py createsuperuser --noinput[/dim]")
         
         proc = await asyncio.create_subprocess_exec(
             "docker", "compose", "-f", str(COMPOSE_FILE), "exec",
             "-e", f"DJANGO_SUPERUSER_USERNAME={username}",
             "-e", f"DJANGO_SUPERUSER_EMAIL={email}",
             "-e", f"DJANGO_SUPERUSER_PASSWORD={password}",
-            "backend-api", "uv", "run", "python",
+            "vexil-server", "uv", "run", "python",
             "manage.py", "createsuperuser", "--noinput",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
