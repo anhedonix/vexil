@@ -1,4 +1,4 @@
-# VEXiL Dev Docs
+# Dev Docs | VEXiL
 
 Source of truth for developing and contributing to [VEXiL](https://github.com/anhedonix/vexil).
 

@@ -7,7 +7,7 @@ export default defineConfig({
 	site: 'https://dev-docs.vexil.tools',
 	integrations: [
 		starlight({
-			title: 'VEXiL Dev Docs',
+			title: 'Dev Docs | VEXiL',
 			logo: {
 				src: './src/assets/vexil-logo.png',
 				alt: 'VEXiL',
