@@ -6,7 +6,7 @@
             "packageManager": "ms-python.python:uv"
         },
         {
-            "path": "apps/packages/houdini-package-src",
+            "path": "apps/vexil-package-src",
             "envManager": "ms-python.python:venv",
             "packageManager": "ms-python.python:pip"
         }

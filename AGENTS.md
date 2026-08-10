@@ -8,8 +8,8 @@
 
 ## Learned Workspace Facts
 
-- Bun workspaces + Turborepo monorepo; primary apps are `apps/vexil-server`, `apps/vexil-frontend`, and `apps/vexil-website`; Houdini package source lives at `apps/packages/houdini-package-src` (not under `apps/plugins/`); env-init TUI lives at `apps/vexil-dev-tools/env-init`
-- Do not use leftover directories under older names (`backend-api`, `frontend-app`, `website-vexil`, `plugins/houdini-package`, etc.) for new work
+- Do not use leftover directories under older names (`backend-api`, `frontend-app`, `website-vexil`, `plugins/houdini-package`, `packages/houdini-package-src`, etc.) for new work
+- Bun workspaces + Turborepo monorepo; primary apps are `apps/vexil-server`, `apps/vexil-frontend`, and `apps/vexil-website`; Houdini package source lives at `apps/vexil-package-src` (not under `apps/plugins/` or `apps/packages/`); env-init TUI lives at `apps/vexil-dev-tools/env-init`
 - Backend is Go with Gin (API port not finalized); Houdini/plugin work targets Python 3.13 and SideFX Houdini 22
 - VEXiL Dev Docs live at `apps/docs-dev` (Starlight; in root Bun workspaces), intended host `dev-docs.vexil.tools`; pre-MVP versioning is `0.1.X` with expected breaking changes or restructuring
 - Core hierarchy is Project → Sequence → Shot → Scene (`.hip`); explicit publish with a comment creates a version, while every save creates a backup
