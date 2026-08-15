@@ -1,4 +1,4 @@
-"""Tests for .env rendering."""
+"""Tests for .env rendering (local files only)."""
 
 from __future__ import annotations
 
@@ -9,22 +9,20 @@ from env_init.envfiles import preview_env_files, write_env_files
 from env_init.salt import generate_salt
 
 
-def test_preview_redacts_secrets_in_templates() -> None:
+def test_preview_only_env_files() -> None:
     cfg = VexilConfig()
     cfg.vexil_io.salt = generate_salt()
     cfg.vexil_io.password = "secret-pass"
-    cfg.website.resend_api_key = "re_secret"
     preview = preview_env_files(cfg, monorepo_root=Path("/tmp/vexil-fake"))
-    template = next(p for p in preview if p.name == ".env.template" and "vexil-io" in str(p))
-    body = preview[template]
-    assert "VEXIL_SALT=" in body
-    assert cfg.vexil_io.salt not in body
-    assert "secret-pass" not in body
-    env = next(p for p in preview if p.name == ".env" and "vexil-io" in str(p))
+    assert preview
+    assert all(p.name == ".env" for p in preview)
+    assert not any(".env.template" in str(p) for p in preview)
+    env = next(p for p in preview if "vexil-io" in str(p))
     assert cfg.vexil_io.salt in preview[env]
+    assert "secret-pass" in preview[env]
 
 
-def test_write_env_files(tmp_path: Path) -> None:
+def test_write_env_files_preserves_templates(tmp_path: Path) -> None:
     apps = tmp_path / "apps"
     for name in (
         "vexil-io",
@@ -35,13 +33,19 @@ def test_write_env_files(tmp_path: Path) -> None:
         "vexil-dev-tools/env-init",
     ):
         (apps / name).mkdir(parents=True)
+    template = apps / "vexil-io" / ".env.template"
+    template.write_text("# tracked template\nPORT=\n", encoding="utf-8")
+    example = apps / "vexil-website" / ".env.example"
+    example.write_text("RESEND_API_KEY=\n", encoding="utf-8")
+
     cfg = VexilConfig()
     cfg.vexil_io.salt = generate_salt()
     cfg.vexil_io.port = 6600
     written = write_env_files(cfg, monorepo_root=tmp_path)
-    assert any(p.name == ".env" and p.parent.name == "vexil-io" for p in written)
+
+    assert all(p.name == ".env" for p in written)
+    assert any(p.parent.name == "vexil-io" for p in written)
     content = (apps / "vexil-io" / ".env").read_text(encoding="utf-8")
     assert "PORT=6600" in content
-    template = (apps / "vexil-io" / ".env.template").read_text(encoding="utf-8")
-    assert "VEXIL_SALT=" in template
-    assert cfg.vexil_io.salt not in template
+    assert template.read_text(encoding="utf-8") == "# tracked template\nPORT=\n"
+    assert example.read_text(encoding="utf-8") == "RESEND_API_KEY=\n"

@@ -1,4 +1,4 @@
-"""Render and write per-app .env / .env.template files."""
+"""Render and write per-app local .env files."""
 
 from __future__ import annotations
 
@@ -6,12 +6,6 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from env_init.config import MONOREPO_ROOT, VexilConfig
-
-SECRET_KEYS = {
-    "VEXIL_PASSWORD",
-    "VEXIL_SALT",
-    "RESEND_API_KEY",
-}
 
 
 @dataclass(frozen=True)
@@ -89,24 +83,21 @@ def _specs(cfg: VexilConfig) -> list[EnvFileSpec]:
     ]
 
 
-def render_env_body(spec: EnvFileSpec, *, template: bool) -> str:
+def render_env_body(spec: EnvFileSpec) -> str:
     chunks: list[str] = []
     for key, value, comment in spec.lines:
         chunks.append(f"# {comment}")
-        if template and key in SECRET_KEYS:
-            chunks.append(f"{key}=")
-        else:
-            chunks.append(f"{key}={value}")
+        chunks.append(f"{key}={value}")
         chunks.append("")
     return "\n".join(chunks).rstrip() + "\n"
 
 
 def preview_env_files(cfg: VexilConfig, monorepo_root: Path | None = None) -> dict[Path, str]:
+    """Preview only local `.env` files (never templates)."""
     root = monorepo_root or MONOREPO_ROOT
     out: dict[Path, str] = {}
     for spec in _specs(cfg):
-        out[root / "apps" / spec.app_dir / ".env"] = render_env_body(spec, template=False)
-        out[root / "apps" / spec.app_dir / ".env.template"] = render_env_body(spec, template=True)
+        out[root / "apps" / spec.app_dir / ".env"] = render_env_body(spec)
     return out
 
 
@@ -121,21 +112,12 @@ def write_env_files(
     cfg: VexilConfig,
     *,
     monorepo_root: Path | None = None,
-    write_templates: bool = True,
 ) -> list[Path]:
+    """Write local `.env` files only. Tracked templates are never modified."""
     written: list[Path] = []
     for path, body in preview_env_files(cfg, monorepo_root).items():
-        if path.name == ".env.template" and not write_templates:
-            continue
-        if path.name == ".env.example":
+        if path.name != ".env":
             continue
         atomic_write(path, body)
         written.append(path)
-    # Keep website .env.example aligned with template secrets placeholders
-    root = monorepo_root or MONOREPO_ROOT
-    example = root / "apps" / "vexil-website" / ".env.example"
-    template = root / "apps" / "vexil-website" / ".env.template"
-    if template.is_file():
-        atomic_write(example, template.read_text(encoding="utf-8"))
-        written.append(example)
     return written
