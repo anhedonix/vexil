@@ -12,10 +12,10 @@ VEXiL is a **Bun workspaces + Turborepo** monorepo. Workspaces are declared at t
 <FileTree>
 - vexil/
   - apps/
-    - vexil-server/ Go Gin API
+    - vexil-io/ Go Gin API
     - vexil-frontend/ Product UI (Astro)
     - vexil-website/ Website for VEXiL (Astro + Tailwind)
-    - docs-dev/ Dev Docs | VEXiL (Starlight; port 4323)
+    - docs-dev/ Dev Docs | VEXiL (Starlight; port 6633)
     - vexil-dev-tools/
       - env-init/ Env / Docker TUI (Textual)
     - vexil-package-src/ Houdini plugin (Python 3.13 / uv)
@@ -29,7 +29,7 @@ VEXiL is a **Bun workspaces + Turborepo** monorepo. Workspaces are declared at t
 
 | Path | Stack | Purpose |
 | ---- | ----- | ------- |
-| `apps/vexil-server` | Go, Gin | Backend API for the product |
+| `apps/vexil-io` | Go, Gin | Backend API for the product |
 | `apps/vexil-frontend` | Astro | Main project-management web app |
 | `apps/vexil-website` | Astro 7, Tailwind 4 | Website for VEXiL |
 | `apps/docs-dev` | Astro Starlight | Contributor handbook at [dev-docs.vexil.tools](https://dev-docs.vexil.tools) |
@@ -54,7 +54,7 @@ You may still see empty or leftover directories under older names (for example h
 
 | If you are changing… | Edit… |
 | -------------------- | ----- |
-| API behavior | `apps/vexil-server` |
+| API behavior | `apps/vexil-io` |
 | In-app product UI | `apps/vexil-frontend` |
 | Website for VEXiL | `apps/vexil-website` |
 | Houdini DCC integration | `apps/vexil-package-src` |

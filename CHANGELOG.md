@@ -2,6 +2,13 @@
 
 All notable changes to VEXiL are documented in this file.
 
+## [Unreleased]
+
+### 🔧 Improvements
+
+- **Renamed backend app** — `apps/vexil-server` → `apps/vexil-io` (Go module, Compose service, and docs updated).
+- **Developer-safe local ports** — API `6600`, frontend `6611`, website `6622`, Dev Docs `6633`, env-init Streamlit `6644`.
+
 ## v0.1.2 - 2026-08-10
 
 Monorepo layout consolidation under `apps/` and Dev Docs setup refresh.

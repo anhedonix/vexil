@@ -13,11 +13,12 @@ The project code is organized within the following directories:
 ```text
 vexil/
 ├── apps/
-│   ├── vexil-server/             # Django API backend (Python) (FIX: GoLang)
-│   ├── vexil-frontend/            # Main project management web app (Astro)
-│   ├── vexil-website/           # Vexil product marketing website (Astro + Tailwind CSS)
+│   ├── vexil-io/                # Go API backend (Gin REST target)
+│   ├── vexil-frontend/          # Main project management web app (Astro)
+│   ├── vexil-website/           # VEXiL website (Astro + Tailwind CSS)
+│   ├── docs-dev/                # Developer documentation (Starlight)
 │   ├── vexil-dev-tools/
-│   │   └── env-init/            # Interactive TUI for environment setup (Textual)
+│   │   └── env-init/            # Streamlit UI for environment setup
 │   └── vexil-package-src/       # Houdini integration plugin (Python package)
 ├── .devcontainer/               # VS Code Devcontainer configuration
 └── vexil.code-workspace         # Recommended VS Code Multi-Root Workspace config
@@ -63,26 +64,24 @@ If you prefer running services natively on your local machine:
 
 ---
 
-## The Dev Environment Initialization TUI
+## The Dev Environment Initialization UI
 
-Vexil includes a custom interactive terminal user interface (TUI) to simplify developer environment initialization, Docker container orchestration, database migrations, and superuser creation.
+VEXiL includes a Streamlit app to scaffold local configuration, initialize workspaces, and install the Houdini package.
 
-### How to Run the TUI
-
-Run the TUI directly from the workspace root:
+### How to Run
 
 ```bash
-uv run --directory apps/vexil-dev-tools/env-init main.py
+uv run --directory apps/vexil-dev-tools/env-init streamlit run main.py --server.port 6644
 ```
 
-_TUI Source:_ [main.py](./apps/vexil-dev-tools/env-init/main.py) | [main.tcss](./apps/vexil-dev-tools/env-init/main.tcss)
+_Source:_ [apps/vexil-dev-tools/env-init](./apps/vexil-dev-tools/env-init) — configuration lives in `vexil.toml`.
 
-### TUI Capabilities
+### Capabilities
 
-- **Scaffold Configuration**: Generates and manages local configuration files (`.env` and `env.yaml`).
-- **Manage Docker Services**: Spin up and tear down services defined in [docker-compose.yml](./docker-compose.yml).
-- **Database Migrations**: Run Django database migrations (`python manage.py migrate`) inside the Docker container.
-- **Superuser Wizard**: Interactively create a Django administrator/superuser in the running backend container.
+- **Scaffold Configuration**: Generates local `.env` files and updates tracked `.env.template` files from TOML.
+- **Workspace Init**: Runs `go mod download`, Bun workspace install, and `uv sync` for Python apps.
+- **Houdini Package**: Installs `vexil.json` into a detected Houdini 22+ preference profile.
+- **Reset Dev Env**: Clears generated `.env` files and repository `/.scratch` data after confirmation.
 
 ---
 
@@ -100,9 +99,10 @@ bun run dev
 
 This starts the following development servers:
 
-- **Backend API**: [http://localhost:8000](http://localhost:8000) (Django Server via `uv run` in [apps/vexil-server](./apps/vexil-server))
-- **Frontend App**: [http://localhost:4321](http://localhost:4321) (Astro Dev Server in [apps/vexil-frontend](./apps/vexil-frontend))
-- **Website**: [http://localhost:4322](http://localhost:4322) (Astro Dev Server in [apps/vexil-website](./apps/vexil-website))
+- **Backend API**: [http://localhost:6600](http://localhost:6600) (`apps/vexil-io`)
+- **Frontend App**: [http://localhost:6611](http://localhost:6611) (Astro Dev Server in [apps/vexil-frontend](./apps/vexil-frontend))
+- **Website**: [http://localhost:6622](http://localhost:6622) (Astro Dev Server in [apps/vexil-website](./apps/vexil-website))
+- **Dev Docs**: [http://localhost:6633](http://localhost:6633) (Starlight in [apps/docs-dev](./apps/docs-dev))
 
 ### Workflow B: Containerized (Docker Compose)
 
@@ -112,7 +112,7 @@ To run the production-like isolated container environment:
 docker compose up --build -d
 ```
 
-Docker automatically registers ports dynamically to prevent host environment conflicts (mapping ports in ranges like `8000-8099`, `4321-4399`, etc.).
+Docker Compose publishes uncommon developer-safe ports (`6600`, `6611`, `6622`) to reduce collisions with other local stacks.
 
 ---
 

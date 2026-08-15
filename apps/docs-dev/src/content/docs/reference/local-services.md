@@ -3,34 +3,34 @@ title: Local services & ports
 description: How VEXiL services run locally, known frontend ports, and backend API port status.
 ---
 
-## Backend API (`apps/vexil-server`)
+## Backend API (`apps/vexil-io`)
 
-- **Stack:** Go with **Gin**.
-- **Default listen port:** **not finalized yet.** Do not treat any hard-coded API port in older README snippets or tooling labels as the permanent contract.
-- When you run `bun run dev` or `cd apps/vexil-server && bun run dev`, check the process output (and any `.env` in that package) for the port currently in use.
-- Docker Compose currently publishes a host range that maps into the container’s internal listen port for development; that mapping may change as the default port is finalized.
+- **Stack:** Go with **Gin** (legacy gqlgen scaffold may still be present until replaced).
+- **Default listen port:** `6600` (uncommon developer-safe default; override with `PORT` in `.env`).
+- When you run `bun run dev` or `cd apps/vexil-io && bun run dev`, check the process output (and any `.env` in that package) for the port currently in use.
+- Docker Compose publishes host `6600` into the API container for development.
 
 ## Frontend app (`apps/vexil-frontend`)
 
 | Item | Value |
 | ---- | ----- |
 | Framework | Astro |
-| Typical local URL | `http://localhost:4321` |
-| Dev script | `astro dev --host` |
+| Typical local URL | `http://localhost:6611` |
+| Dev script | `astro dev --host --port 6611` |
 
 ## Website for VEXiL (`apps/vexil-website`)
 
 | Item | Value |
 | ---- | ----- |
 | Framework | Astro + Tailwind |
-| Expected local port (Devcontainer / Compose) | `4322` when that port is free |
-| Note | The package `dev` script uses Astro’s default port unless overridden; Compose maps the website service toward host `4322+`. |
+| Expected local port | `6622` |
+| Note | Compose maps the website service to host `6622`. |
 
 ## Dev Docs (`apps/docs-dev`)
 
 | Item | Value |
 | ---- | ----- |
-| Local | `http://localhost:4323` (`bun run dev` from `apps/docs-dev`, or via root Turborepo) |
+| Local | `http://localhost:6633` (`bun run dev` from `apps/docs-dev`, or via root Turborepo) |
 | Production | [https://dev-docs.vexil.tools](https://dev-docs.vexil.tools) |
 
 ## Docker Compose overview
@@ -44,18 +44,18 @@ docker compose down
 
 Services defined in `docker-compose.yml`:
 
-| Service | Package | Host port mapping (ranges) |
-| ------- | ------- | -------------------------- |
-| `vexil-server` | `apps/vexil-server` | Dynamic range into the API container |
-| `vexil-frontend` | `apps/vexil-frontend` | `4321–4399` → container `4321` |
-| `vexil-website` | `apps/vexil-website` | `4322–4399` → container `4321` |
+| Service | Package | Host port |
+| ------- | ------- | --------- |
+| `vexil-io` | `apps/vexil-io` | `6600` |
+| `vexil-frontend` | `apps/vexil-frontend` | `6611` |
+| `vexil-website` | `apps/vexil-website` | `6622` |
 
-Ranges avoid collisions when a preferred host port is already taken. Inspect `docker compose ps` for the actual published ports.
+Inspect `docker compose ps` for the actual published ports.
 
-## Env init TUI
+## Env init (Streamlit)
 
 ```bash
-uv run --directory apps/vexil-dev-tools/env-init main.py
+uv run --directory apps/vexil-dev-tools/env-init streamlit run main.py --server.port 6644
 ```
 
-Use this to scaffold local config and manage Compose. Some TUI actions may still reflect older backend assumptions — prefer this handbook and the current `apps/vexil-server` code when something looks stale.
+Use this to scaffold local config from `vexil.toml`, initialize workspaces, and install the Houdini package. Prefer this handbook and the current `apps/vexil-io` code when something looks stale.
