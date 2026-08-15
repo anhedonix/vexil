@@ -10,7 +10,7 @@ port = 6600
 houdini_dir = ""
 dir_project_root = ""
 user = "vexil"
-password = "lixev"
+password = ""
 dir_data_root = ""
 salt = "UUID"
 
