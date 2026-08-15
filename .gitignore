@@ -113,5 +113,8 @@ $RECYCLE.BIN/
 
 node_modules
 
+# Local scratch artifacts
+/.scratch/
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode,bazel,windows,linux
 /apps/website/dist
