@@ -1,0 +1,8 @@
+{
+  "path": "$VEXIL_PACKAGE",
+  "env": [
+    {
+      "PYTHONPATH": "$VEXIL_PACKAGE/python"
+    }
+  ]
+}
