@@ -21,6 +21,18 @@ uv run streamlit run main.py --server.port 6644
 uv run env-init
 ```
 
+## Patch version bump
+
+Increment product patch (`0.1.2` → `0.1.3`) across the monorepo:
+
+```bash
+bun run bump-version
+# dry-run
+uv run python -m env_init.bump_cli --dry-run
+```
+
+Or use **Bump patch version** in the Streamlit Base section (once per UI session).
+
 ## Features
 
 - Edit and persist `vexil.toml` (`[vexil-io]`, frontend, website, docs, package)
@@ -29,4 +41,5 @@ uv run env-init
 - In-app folder browser for project/data roots under `/.scratch`
 - Initialize Go / Bun / uv workspaces
 - Install Houdini 22+ `packages/vexil.json`
+- Bump product patch version across package manifests
 - Reset Dev Env (delete `.env` + clear `/.scratch`)

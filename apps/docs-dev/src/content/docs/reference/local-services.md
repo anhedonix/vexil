@@ -54,8 +54,13 @@ Inspect `docker compose ps` for the actual published ports.
 
 ## Env init (Streamlit)
 
+Local URL: [http://localhost:6644](http://localhost:6644)
+
 ```bash
-uv run --directory apps/vexil-dev-tools/env-init streamlit run main.py --server.port 6644
+bun run env-init
+# or after bun run setup (setup ends by launching this UI)
 ```
 
-Use this to scaffold local config from `vexil.toml`, initialize workspaces, and install the Houdini package. Prefer this handbook and the current `apps/vexil-io` code when something looks stale.
+Scaffold local `.env` files from `vexil.toml`, initialize Go/Bun/uv workspaces, install the Houdini 22+ package, and optionally bump the product **patch** version. See [Env init (Streamlit)](/guides/env-init/).
+
+Prefer this handbook and the current `apps/vexil-io` code when something looks stale.

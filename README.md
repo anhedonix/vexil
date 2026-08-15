@@ -82,10 +82,13 @@ _Source:_ [apps/vexil-dev-tools/env-init](./apps/vexil-dev-tools/env-init) — c
 
 ### Capabilities
 
-- **Scaffold Configuration**: Generates local `.env` files and updates tracked `.env.template` files from TOML.
+- **Scaffold Configuration**: Generates local `.env` files from `vexil.toml` (tracked `.env.template` files are not rewritten at runtime).
 - **Workspace Init**: Runs `go mod download`, Bun workspace install, and `uv sync` for Python apps.
 - **Houdini Package**: Installs `vexil.json` into a detected Houdini 22+ preference profile.
+- **Bump patch version**: Increments product patch across the monorepo after confirmation (`bun run bump-version` from the root).
 - **Reset Dev Env**: Clears generated `.env` files and repository `/.scratch` data after confirmation.
+
+Details: see Dev Docs guide **Env init (Streamlit)** (`/guides/env-init/` when the docs site is running).
 
 ---
 

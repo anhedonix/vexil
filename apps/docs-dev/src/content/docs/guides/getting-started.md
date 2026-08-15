@@ -40,13 +40,15 @@ bun install
 bun run setup
 ```
 
-`bun run setup` syncs Python envs (`uv sync` for the Houdini package and Streamlit env-init) and downloads Go modules for the backend.
+`bun run setup` syncs Python envs (`uv sync` for the Houdini package and Streamlit env-init), downloads Go modules for the backend, and launches the Streamlit env-init UI in the foreground on port `6644`.
 
-Optional Streamlit env initializer:
+Launch env-init alone:
 
 ```bash
-uv run --directory apps/vexil-dev-tools/env-init streamlit run main.py --server.port 6644
+bun run env-init
 ```
+
+Full workflow (`.env` generation, workspace init, Houdini package, patch bumps): [Env init (Streamlit)](/guides/env-init/).
 
 ## Run the monorepo
 
@@ -91,5 +93,6 @@ Production host: [https://dev-docs.vexil.tools](https://dev-docs.vexil.tools).
 
 ## Next steps
 
+- [Env init (Streamlit)](/guides/env-init/) — local `.env`, workspace init, Houdini package, patch bumps
 - [Repository Structure](/guides/repository-structure/) — where to put changes
 - [Contributing](/guides/contributing/) — branches, PRs, AI policy
