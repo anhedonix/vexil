@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "setup": "(cd apps/vexil-package-src && uv sync) && (cd apps/vexil-dev-tools/env-init && uv sync) && (cd apps/vexil-io && go mod download)"
+    "env-init": "uv run --directory apps/vexil-dev-tools/env-init streamlit run main.py --server.port 6644",
+    "setup": "(cd apps/vexil-package-src && uv sync) && (cd apps/vexil-dev-tools/env-init && uv sync) && (cd apps/vexil-io && go mod download) && bun run env-init"
   },
   "devDependencies": {
     "@types/bun": "latest",

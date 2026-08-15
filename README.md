@@ -60,7 +60,7 @@ If you prefer running services natively on your local machine:
    ```bash
    bun run setup
    ```
-   _This command installs Node/TypeScript dependencies and syncs virtual environments for the Python projects using `uv` (defined in the root [package.json](./package.json))._
+   _This installs workspace dependencies (`uv sync`, `go mod download`) and then launches the Streamlit env-init UI in the foreground on port `6644`._
 
 ---
 
@@ -71,8 +71,12 @@ VEXiL includes a Streamlit app to scaffold local configuration, initialize works
 ### How to Run
 
 ```bash
+bun run env-init
+# or
 uv run --directory apps/vexil-dev-tools/env-init streamlit run main.py --server.port 6644
 ```
+
+`bun run setup` ends by launching this UI in the foreground.
 
 _Source:_ [apps/vexil-dev-tools/env-init](./apps/vexil-dev-tools/env-init) — configuration lives in `vexil.toml`.
 
