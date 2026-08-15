@@ -1,4 +1,4 @@
-module vexil-server
+module vexil-io
 
 go 1.26.5
 
