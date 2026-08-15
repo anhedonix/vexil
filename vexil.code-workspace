@@ -1,7 +1,7 @@
 {
   "folders": [
     { "name": "vexil (root)", "path": "." },
-    { "name": "vexil-server", "path": "apps/vexil-server" },
+    { "name": "vexil-io", "path": "apps/vexil-io" },
     { "name": "vexil-frontend", "path": "apps/vexil-frontend" },
     { "name": "vexil-website", "path": "apps/vexil-website" },
     { "name": "docs-dev", "path": "apps/docs-dev" },

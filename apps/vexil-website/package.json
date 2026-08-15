@@ -1,6 +1,6 @@
 {
   "name": "vexil-website",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Website for VEXiL - A specialized project management tool for SideFX Houdini.",
   "type": "module",
   "author": "Anand Magaji",
@@ -15,9 +15,9 @@
     "url": "https://github.com/anhedonix/vexil/issues"
   },
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --port 6622",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "astro preview --port 6622",
     "check": "astro check"
   },
   "dependencies": {

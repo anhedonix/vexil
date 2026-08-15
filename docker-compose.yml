@@ -1,15 +1,15 @@
 services:
-  vexil-server:
+  vexil-io:
     build:
-      context: apps/vexil-server
+      context: apps/vexil-io
       target: dev
     ports:
-      - "8080-8099:8080"
+      - "6600:6600"
     env_file:
-      - path: apps/vexil-server/.env
+      - path: apps/vexil-io/.env
         required: false
     volumes:
-      - ./apps/vexil-server:/app
+      - ./apps/vexil-io:/app
       - backend-go-mod-cache:/go/pkg/mod
       - backend-go-build-cache:/root/.cache/go-build
 
@@ -17,7 +17,7 @@ services:
     build:
       context: apps/vexil-frontend
     ports:
-      - "4321-4399:4321"
+      - "6611:6611"
     env_file:
       - path: apps/vexil-frontend/.env
         required: false
@@ -25,13 +25,13 @@ services:
       - ./apps/vexil-frontend:/app
       - frontend-node-modules:/app/node_modules
     depends_on:
-      - vexil-server
+      - vexil-io
 
   vexil-website:
     build:
       context: apps/vexil-website
     ports:
-      - "4322-4399:4321"
+      - "6622:6622"
     env_file:
       - path: apps/vexil-website/.env
         required: false

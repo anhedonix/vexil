@@ -13,11 +13,12 @@ The project code is organized within the following directories:
 ```text
 vexil/
 ├── apps/
-│   ├── vexil-server/             # Django API backend (Python) (FIX: GoLang)
-│   ├── vexil-frontend/            # Main project management web app (Astro)
-│   ├── vexil-website/           # Vexil product marketing website (Astro + Tailwind CSS)
+│   ├── vexil-io/                # Go API backend (Gin REST target)
+│   ├── vexil-frontend/          # Main project management web app (Astro)
+│   ├── vexil-website/           # VEXiL website (Astro + Tailwind CSS)
+│   ├── docs-dev/                # Developer documentation (Starlight)
 │   ├── vexil-dev-tools/
-│   │   └── env-init/            # Interactive TUI for environment setup (Textual)
+│   │   └── env-init/            # Streamlit UI for environment setup
 │   └── vexil-package-src/       # Houdini integration plugin (Python package)
 ├── .devcontainer/               # VS Code Devcontainer configuration
 └── vexil.code-workspace         # Recommended VS Code Multi-Root Workspace config
@@ -59,30 +60,35 @@ If you prefer running services natively on your local machine:
    ```bash
    bun run setup
    ```
-   _This command installs Node/TypeScript dependencies and syncs virtual environments for the Python projects using `uv` (defined in the root [package.json](./package.json))._
+   _This installs workspace dependencies (`uv sync`, `go mod download`) and then launches the Streamlit env-init UI in the foreground on port `6644`._
 
 ---
 
-## The Dev Environment Initialization TUI
+## The Dev Environment Initialization UI
 
-Vexil includes a custom interactive terminal user interface (TUI) to simplify developer environment initialization, Docker container orchestration, database migrations, and superuser creation.
+VEXiL includes a Streamlit app to scaffold local configuration, initialize workspaces, and install the Houdini package.
 
-### How to Run the TUI
-
-Run the TUI directly from the workspace root:
+### How to Run
 
 ```bash
-uv run --directory apps/vexil-dev-tools/env-init main.py
+bun run env-init
+# or
+uv run --directory apps/vexil-dev-tools/env-init streamlit run main.py --server.port 6644
 ```
 
-_TUI Source:_ [main.py](./apps/vexil-dev-tools/env-init/main.py) | [main.tcss](./apps/vexil-dev-tools/env-init/main.tcss)
+`bun run setup` ends by launching this UI in the foreground.
 
-### TUI Capabilities
+_Source:_ [apps/vexil-dev-tools/env-init](./apps/vexil-dev-tools/env-init) — configuration lives in `vexil.toml`.
 
-- **Scaffold Configuration**: Generates and manages local configuration files (`.env` and `env.yaml`).
-- **Manage Docker Services**: Spin up and tear down services defined in [docker-compose.yml](./docker-compose.yml).
-- **Database Migrations**: Run Django database migrations (`python manage.py migrate`) inside the Docker container.
-- **Superuser Wizard**: Interactively create a Django administrator/superuser in the running backend container.
+### Capabilities
+
+- **Scaffold Configuration**: Generates local `.env` files from `vexil.toml` (tracked `.env.template` files are not rewritten at runtime).
+- **Workspace Init**: Runs `go mod download`, Bun workspace install, and `uv sync` for Python apps.
+- **Houdini Package**: Installs `vexil.json` into a detected Houdini 22+ preference profile.
+- **Bump patch version**: Increments product patch across the monorepo after confirmation (`bun run bump-version` from the root).
+- **Reset Dev Env**: Clears generated `.env` files and repository `/.scratch` data after confirmation.
+
+Details: see Dev Docs guide **Env init (Streamlit)** (`/guides/env-init/` when the docs site is running).
 
 ---
 
@@ -100,9 +106,10 @@ bun run dev
 
 This starts the following development servers:
 
-- **Backend API**: [http://localhost:8000](http://localhost:8000) (Django Server via `uv run` in [apps/vexil-server](./apps/vexil-server))
-- **Frontend App**: [http://localhost:4321](http://localhost:4321) (Astro Dev Server in [apps/vexil-frontend](./apps/vexil-frontend))
-- **Website**: [http://localhost:4322](http://localhost:4322) (Astro Dev Server in [apps/vexil-website](./apps/vexil-website))
+- **Backend API**: [http://localhost:6600](http://localhost:6600) (`apps/vexil-io`)
+- **Frontend App**: [http://localhost:6611](http://localhost:6611) (Astro Dev Server in [apps/vexil-frontend](./apps/vexil-frontend))
+- **Website**: [http://localhost:6622](http://localhost:6622) (Astro Dev Server in [apps/vexil-website](./apps/vexil-website))
+- **Dev Docs**: [http://localhost:6633](http://localhost:6633) (Starlight in [apps/docs-dev](./apps/docs-dev))
 
 ### Workflow B: Containerized (Docker Compose)
 
@@ -112,7 +119,7 @@ To run the production-like isolated container environment:
 docker compose up --build -d
 ```
 
-Docker automatically registers ports dynamically to prevent host environment conflicts (mapping ports in ranges like `8000-8099`, `4321-4399`, etc.).
+Docker Compose publishes uncommon developer-safe ports (`6600`, `6611`, `6622`) to reduce collisions with other local stacks.
 
 ---
 

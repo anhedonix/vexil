@@ -32,12 +32,12 @@ The product is developed as a **Bun + Turborepo** monorepo: a **Go Gin** backend
 
 | Path | Role |
 | ---- | ---- |
-| `apps/vexil-server` | Go Gin API |
+| `apps/vexil-io` | Go Gin API |
 | `apps/vexil-frontend` | Product UI (Astro) |
 | `apps/vexil-website` | Website for VEXiL (Astro + Tailwind) |
 | `apps/vexil-package-src` | Houdini plugin (Python / uv) |
-| `apps/vexil-dev-tools/env-init` | Env / Docker TUI (Textual) |
-| `apps/docs-dev` | These docs (Starlight; port `4323`) |
+| `apps/vexil-dev-tools/env-init` | Env initializer (Streamlit) |
+| `apps/docs-dev` | These docs (Starlight; port `6633`) |
 
 Ignore legacy empty leftovers under older `apps/` paths. Details: [Repository Structure](/guides/repository-structure/).
 
@@ -70,10 +70,10 @@ Ignore legacy empty leftovers under older `apps/` paths. Details: [Repository St
 
 <CardGrid>
 	<Card title="Backend API" icon="seti:go">
-		Work in `apps/vexil-server` — Go Gin. Default listen port is **not finalized** yet; see [Local services](/reference/local-services/).
+		Work in `apps/vexil-io` — Go Gin. Default listen port is **6600**; see [Local services](/reference/local-services/).
 	</Card>
 	<Card title="Product UI" icon="astro">
-		Work in `apps/vexil-frontend` (Astro). Typical local URL: `http://localhost:4321`.
+		Work in `apps/vexil-frontend` (Astro). Typical local URL: `http://localhost:6611`.
 	</Card>
 	<Card title="Website for VEXiL" icon="rocket">
 		Work in `apps/vexil-website` (Astro + Tailwind).
@@ -82,6 +82,6 @@ Ignore legacy empty leftovers under older `apps/` paths. Details: [Repository St
 		Work in `apps/vexil-package-src`. Requires [SideFX Houdini](https://www.sidefx.com/download/) 22.
 	</Card>
 	<Card title="Docs" icon="open-book">
-		Improve this handbook under `apps/docs-dev`. Hosted at [dev-docs.vexil.tools](https://dev-docs.vexil.tools). Local: `http://localhost:4323`.
+		Improve this handbook under `apps/docs-dev`. Hosted at [dev-docs.vexil.tools](https://dev-docs.vexil.tools). Local: `http://localhost:6633`.
 	</Card>
 </CardGrid>

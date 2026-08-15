@@ -1,1067 +1,557 @@
+"""Streamlit UI for VEXiL environment initialization."""
+
 from __future__ import annotations
 
-import asyncio
-import json
-import os
-import secrets
 from pathlib import Path
 
-from textual import events, work
-from textual.app import App, ComposeResult
-from textual.binding import Binding
-from textual.containers import Horizontal, Vertical, VerticalScroll
-from textual.reactive import reactive
-from textual.widget import Widget
-from textual.widgets import (
-    Button,
-    Checkbox,
-    Collapsible,
-    Input,
-    Label,
-    RichLog,
-    Static,
+import streamlit as st
+
+from env_init.config import DEFAULT_TOML, ENV_INIT_ROOT, VexilConfig, load_config, save_config
+from env_init.envfiles import preview_env_files, write_env_files
+from env_init.folder_browser import FolderBrowserError, FolderBrowserState, init_browser
+from env_init.houdini import (
+    copy_template_into_repo,
+    discover_houdini_profiles,
+    install_houdini_package,
+)
+from env_init.init_cmds import (
+    initialize_all,
+    initialize_bun_workspace,
+    initialize_env_init,
+    initialize_package_src,
+    initialize_vexil_io,
+)
+from env_init.paths import PathValidationError, create_dev_dirs, resolve_scratch, validate_dev_roots
+from env_init.reset import reset_dev_env
+from env_init.salt import generate_salt, is_placeholder_salt
+from env_init.version_bump import (
+    VersionBumpError,
+    apply_version_changes,
+    discover_version_changes,
+    preview_lines,
 )
 
-MONOREPO_ROOT = Path(__file__).resolve().parents[2]
-COMPOSE_FILE = MONOREPO_ROOT / "docker-compose.yml"
+LOGO_PATH = ENV_INIT_ROOT / "assets" / "vexil-logo.png"
 
-LOADED_ENV: dict[str, str] = {}
-
-
-def load_all_env_files() -> dict[str, str]:
-    res = {}
-    dir_map = {
-        "vexil-server": "vexil-server",
-        "vexil-frontend": "vexil-frontend",
-        "vexil-website": "vexil-website",
-    }
-    for service_name, service_dir in dir_map.items():
-        env_path = MONOREPO_ROOT / "apps" / service_dir / ".env"
-        if env_path.is_file():
-            try:
-                for line in env_path.read_text().splitlines():
-                    line = line.strip()
-                    if not line or line.startswith("#"):
-                        continue
-                    if "=" in line:
-                        k, v = line.split("=", 1)
-                        res[k.strip()] = v.strip()
-            except Exception:
-                pass
-                
-    yaml_path = MONOREPO_ROOT / "apps" / "vexil-package-src" / "env.yaml"
-    if yaml_path.is_file():
-        try:
-            current_section = None
-            for line in yaml_path.read_text().splitlines():
-                stripped = line.strip()
-                if not stripped or stripped.startswith("#"):
-                    continue
-                indent = len(line) - len(line.lstrip())
-                if indent == 0:
-                    current_section = None
-                if ":" in stripped:
-                    k, v = stripped.split(":", 1)
-                    k = k.strip()
-                    v = v.strip()
-                    if not v:
-                        current_section = k
-                        continue
-                    if current_section == "online":
-                        res[f"VEXIL_ONLINE_{k.upper()}"] = v
-                    elif current_section == "local":
-                        res[f"VEXIL_LOCAL_{k.upper()}"] = v
-                    else:
-                        if k == "houdini_install_path":
-                            res["HOUDINI_INSTALL_PATH"] = v
-                        elif k == "projects_root":
-                            res["VEXIL_PROJECTS_ROOT"] = v
-                        elif k == "mode":
-                            res["VEXIL_MODE"] = v
-                        elif k == "log_level":
-                            res["VEXIL_LOG_LEVEL"] = v
-                        elif k == "houdini_path":
-                            res["HOUDINI_PATH"] = v
-                        elif k == "pythonpath":
-                            res["PYTHONPATH"] = v
-        except Exception:
-            pass
-    return res
-
-
-def check_env_files_exist() -> bool:
-    env_files = [
-        MONOREPO_ROOT / "apps" / "vexil-server" / ".env",
-        MONOREPO_ROOT / "apps" / "vexil-frontend" / ".env",
-        MONOREPO_ROOT / "apps" / "vexil-website" / ".env",
-        MONOREPO_ROOT / "apps" / "vexil-package-src" / "env.yaml",
-    ]
-    return all(p.is_file() for p in env_files)
-
-
-VEXIL_ASCII = r"""
- __      __  _______  __   __    _    _       
- \ \    / / |  _____| \ \ / /   (_)  | |      
-  \ \  / /  | |__      \ V /    | |  | |      
-   \ \/ /   |  __|      > <     | |  | |      
-    \  /    | |_____   / . \    | |  | |____  
-     \/     |_______| /_/ \_\   |_|  |______|
-
- VEXiL Developer Environment Builder & Docker Dashboard
- Configure local settings, manage docker services, and run DCC Houdini pipelines.
-"""
-
-SERVICE_VARS: dict[str, list[dict]] = {
-    "vexil-server": [
-        {
-            "key": "SECRET_KEY",
-            "label": "Secret Key",
-            "default": lambda: secrets.token_urlsafe(50),
-            "password": True,
-            "hidden": True,
-            "help": "Django secret key for cryptographic signing. Auto-generated secure random string.",
-        },
-        {
-            "key": "DEBUG",
-            "label": "Debug",
-            "default": "True",
-            "help": "Enable Django debug mode. Set to False in production.",
-        },
-        {
-            "key": "ALLOWED_HOSTS",
-            "label": "Allowed Hosts",
-            "default": "localhost,127.0.0.1,0.0.0.0",
-            "hidden": True,
-            "help": "Comma-separated list of host/domain names that Django can serve.",
-        },
-        {
-            "key": "DATABASE_URL",
-            "label": "Database URL",
-            "default": f"sqlite:///{MONOREPO_ROOT}/apps/vexil-server/db.sqlite3",
-            "hidden": True,
-            "help": "Database connection URL. Default uses SQLite for local development.",
-        },
-    ],
-    "vexil-frontend": [
-        {
-            "key": "API_URL",
-            "label": "API URL (internal)",
-            "default": "http://vexil-server:8000",
-            "help": "Internal Docker network URL for backend API communication.",
-        },
-        {
-            "key": "PUBLIC_API_URL",
-            "label": "Public API URL",
-            "default": "http://localhost:8000",
-            "help": "Public-facing URL for API access from browser/external clients.",
-        },
-    ],
-    "vexil-website": [
-        {
-            "key": "RESEND_API_KEY",
-            "label": "Resend API Key",
-            "default": "re_your_key_here",
-            "password": True,
-            "hidden": True,
-            "help": "API key for Resend email service. Get yours at resend.com.",
-        },
-        {
-            "key": "RESEND_FROM_EMAIL",
-            "label": "From Email",
-            "default": "",
-            "hidden": True,
-            "help": "Email address to send from (must be verified in Resend).",
-        },
-        {
-            "key": "RESEND_TO_EMAIL",
-            "label": "To Email",
-            "default": "",
-            "hidden": True,
-            "help": "Email address to receive waitlist notifications.",
-        },
-        {
-            "key": "SITE_URL",
-            "label": "Site URL",
-            "default": "https://vexil.tools",
-            "help": "Public URL where the website is hosted.",
-        },
-    ],
+HELP = {
+    "version": "VEXiL workspace version stamped into generated config. Read-only; use Bump patch version to update the monorepo.",
+    "bump_patch": "Increment patch across all product version files (0.1.2 → 0.1.3). Confirm once; disabled after a successful bump this session.",
+    "dev": "When enabled, project/data roots must live under repository /.scratch.",
+    "os": "Detected host OS used for Houdini preference-path discovery. Read-only in the UI.",
+    "scratch": "Relative path from env-init to the monorepo .scratch folder. Read-only in the UI.",
+    "port_io": "Uncommon local API port (default 6600). Writes PORT and frontend API URLs.",
+    "user": "Default local username written to apps/vexil-io/.env.",
+    "password": "Default local password written only to ignored .env files.",
+    "salt": "Long random credential salt. Auto-generated on load; regenerate to rotate.",
+    "project_root": "Projects directory. In dev mode must resolve under /.scratch.",
+    "data_root": "Data / SQLite directory. In dev mode must resolve under /.scratch.",
+    "houdini_dir": "Selected Houdini preference profile path (set by package install).",
+    "fe_port": "Local Astro port for vexil-frontend (default 6611).",
+    "api_url": "Internal SSR URL used by Astro to reach vexil-io.",
+    "public_api_url": "Browser-facing API URL for the frontend.",
+    "auto_open": "Hint for tooling to auto-open the frontend after init.",
+    "use_houdini_browser": "Prefer Houdini’s embedded browser when launching UI links.",
+    "web_port": "Local Astro port for the VEXiL website (default 6622).",
+    "resend_key": "Resend API key for waitlist email (secret; not written to tracked templates).",
+    "resend_from": "Verified Resend from address.",
+    "resend_to": "Inbox that receives waitlist submissions.",
+    "site_url": "Canonical production site URL.",
+    "public_site_url": "Local/public site URL used by website helpers.",
+    "docs_port": "Local Dev Docs port (default 6633).",
+    "env_port": "Streamlit port for this env-init UI (default 6644).",
+    "houdini_install": "Houdini 22+ preference profile that will receive packages/vexil.json.",
 }
 
-DOCKER_SERVICES = ["vexil-server", "vexil-frontend", "vexil-website"]
-SERVICE_PORTS = {"vexil-server": 8000, "vexil-frontend": 4321, "vexil-website": 4322}
+
+def _field_row(label: str, guidance: str):
+    """Consistent label | control columns with visible guidance (not hover-only)."""
+    left, right = st.columns([1.2, 2.0], vertical_alignment="center")
+    with left:
+        st.markdown(f"**{label}**")
+        st.caption(guidance)
+    return right
 
 
-class SelectableRichLog(RichLog):
-    can_focus = True
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.history: list[str] = []
-
-    def write(self, text: str, *args, **kwargs) -> SelectableRichLog:
-        clean = str(text)
-        for tag in ["[bold]", "[/bold]", "[bold accent]", "[/bold accent]", "[bold green]", "[/bold green]", "[bold red]", "[/bold red]", "[bold blue]", "[/bold blue]", "[bold yellow]", "[/bold yellow]", "[green]", "[/green]", "[red]", "[/red]", "[blue]", "[/blue]", "[yellow]", "[/yellow]", "[dim]", "[/dim]"]:
-            clean = clean.replace(tag, "")
-        self.history.append(clean)
-        return super().write(text, *args, **kwargs)
+def _cfg() -> VexilConfig:
+    if "vexil_cfg" not in st.session_state:
+        cfg = load_config(DEFAULT_TOML)
+        if is_placeholder_salt(cfg.vexil_io.salt):
+            cfg.vexil_io.salt = generate_salt()
+        st.session_state.vexil_cfg = cfg
+        st.session_state.salt_dirty = True
+    return st.session_state.vexil_cfg
 
 
-class AutocompleteInput(Input):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.suggestions: list[str] = []
-
-    def on_key(self, event: events.Key) -> None:
-        if event.key == "tab" and self.suggestions:
-            event.prevent_default()
-            event.stop()
-            self.value = self.suggestions[0]
-            self.suggestions = []
-            self.post_message(self.Changed(self, self.value))
+def _save(cfg: VexilConfig) -> None:
+    save_config(cfg, DEFAULT_TOML)
+    st.session_state.vexil_cfg = cfg
+    st.session_state.salt_dirty = False
 
 
-class PathInput(Widget):
-    def __init__(self, value: str, id: str, password: bool = False) -> None:
-        super().__init__(id=id)
-        self.initial_value = value
-        self.input_id = f"input-{id}"
-        self.password = password
+def _show_cmd_results(results) -> None:
+    for result in results:
+        status = "OK" if result.ok else "FAILED"
+        with st.expander(f"{result.name}: {status}", expanded=not result.ok):
+            st.code(" ".join(result.command))
+            if result.stdout:
+                st.text(result.stdout)
+            if result.stderr:
+                st.text(result.stderr)
 
-    def compose(self) -> ComposeResult:
-        yield AutocompleteInput(value=self.initial_value, id=self.input_id, password=self.password)
-        yield Label("", classes="suggestions-label")
 
-    @property
-    def value(self) -> str:
-        return self.query_one(AutocompleteInput).value
+def _browser_key(field: str) -> str:
+    return f"folder_browser_{field}"
 
-    @value.setter
-    def value(self, val: str) -> None:
-        self.query_one(AutocompleteInput).value = val
 
-    def on_input_changed(self, event: Input.Changed) -> None:
-        if event.input.id == self.input_id:
-            self.update_suggestions(event.value)
+def _get_browser(field: str, root: Path, start: Path | None = None) -> FolderBrowserState:
+    key = _browser_key(field)
+    state = st.session_state.get(key)
+    if state is None or state.root != root.resolve():
+        state = init_browser(root, start=start)
+        st.session_state[key] = state
+    return state
 
-    def update_suggestions(self, current_val: str) -> None:
+
+def _render_folder_browser(field: str, root: Path, current_value: str) -> str | None:
+    """Render in-app folder browser. Returns selected path string or None."""
+    start = Path(current_value) if current_value.strip() else None
+    if start is not None and not start.is_absolute():
+        start = root / start
+    browser = _get_browser(field, root, start=start)
+
+    st.markdown(f"Browsing under `{browser.root}`")
+    st.code(str(browser.current))
+
+    nav_cols = st.columns([1, 1, 2])
+    if nav_cols[0].button(
+        "Up",
+        key=f"{field}_up",
+        disabled=not browser.can_go_up(),
+    ):
         try:
-            expanded = os.path.expanduser(current_val)
-            path = Path(expanded)
-            
-            if current_val.endswith(os.sep):
-                parent = path
-                prefix = ""
-            else:
-                parent = path.parent
-                prefix = path.name
+            browser.go_up()
+            st.session_state[_browser_key(field)] = browser
+            st.rerun()
+        except FolderBrowserError as exc:
+            st.error(str(exc))
 
-            if parent.is_dir():
-                matches = []
-                for entry in parent.iterdir():
-                    if entry.is_dir() and not entry.name.startswith("."):
-                        if entry.name.lower().startswith(prefix.lower()):
-                            base = current_val
-                            if prefix:
-                                base = current_val[:-len(prefix)]
-                            sep = "" if base.endswith(os.sep) else os.sep
-                            matches.append(f"{base}{sep}{entry.name}")
-                
-                matches = sorted(matches)
-                inp = self.query_one(AutocompleteInput)
-                inp.suggestions = matches
-                
-                label = self.query_one(".suggestions-label", Label)
-                if matches:
-                    first = matches[0]
-                    more = f" (+{len(matches)-1} more)" if len(matches) > 1 else ""
-                    label.update(f"Suggestion: [bold]{first}[/bold]{more} [Press Tab to accept]")
-                    label.styles.display = "block"
-                else:
-                    label.styles.display = "none"
-            else:
-                self.query_one(".suggestions-label", Label).styles.display = "none"
-                self.query_one(AutocompleteInput).suggestions = []
-        except Exception:
-            try:
-                self.query_one(".suggestions-label", Label).styles.display = "none"
-                self.query_one(AutocompleteInput).suggestions = []
-            except Exception:
-                pass
-
-
-class EnvField(Widget):
-    def __init__(
-        self,
-        key: str,
-        label: str,
-        default_value: str,
-        password: bool = False,
-        hidden: bool = False,
-        help_text: str = "",
-    ) -> None:
-        super().__init__(classes="env-field" + (" advanced-field" if hidden else ""))
-        self.key = key
-        self._label = label
-        self.default_value = default_value
-        self.password = password
-        self.hidden_by_spec = hidden
-        self.help_text = help_text
-
-    def compose(self) -> ComposeResult:
-        yield Label(self._label)
-        if self.help_text:
-            yield Label(f"[dim]{self.help_text}[/dim]", classes="help-text")
-        yield Input(
-            value=self.default_value,
-            password=self.password,
-            id=f"input-{self.key.lower().replace('_', '-')}",
-        )
-
-    @property
-    def value(self) -> str:
-        return self.query_one(Input).value
-
-    def set_reveal_secrets(self, reveal: bool) -> None:
-        if self.password:
-            self.query_one(Input).password = not reveal
-
-
-class ServiceSection(Widget):
-    def __init__(self, service_name: str, field_specs: list[dict]) -> None:
-        super().__init__(id=f"section-{service_name}")
-        self.service_name = service_name
-        self.field_specs = field_specs
-
-    def _resolve_default(self, spec: dict) -> str:
-        raw = spec.get("default", "")
-        resolved = raw() if callable(raw) else raw
-        if spec["key"] in LOADED_ENV:
-            return LOADED_ENV[spec["key"]]
-        return os.environ.get(spec["key"], str(resolved))
-
-    def compose(self) -> ComposeResult:
-        with Collapsible(
-            title=f"  {self.service_name}",
-            collapsed=False,
-            id=f"collapsible-{self.service_name}",
-        ):
-            for spec in self.field_specs:
-                yield EnvField(
-                    spec["key"],
-                    spec["label"],
-                    self._resolve_default(spec),
-                    password=spec.get("password", False),
-                    hidden=spec.get("hidden", False),
-                    help_text=spec.get("help", ""),
-                )
-
-    def get_values(self) -> dict[str, str]:
-        return {field.key: field.value for field in self.query(EnvField)}
-
-
-class HoudiniSection(Widget):
-    def __init__(self) -> None:
-        super().__init__(id="section-houdini")
-
-    def compose(self) -> ComposeResult:
-        h_path = LOADED_ENV.get("HOUDINI_INSTALL_PATH", "/opt/hfs20.5")
-        p_root = LOADED_ENV.get("VEXIL_PROJECTS_ROOT", str(Path.home() / "vexil_projects"))
-        mode = LOADED_ENV.get("VEXIL_MODE", "local")
-        online_val = (mode == "online")
-        
-        local_dir = LOADED_ENV.get("VEXIL_LOCAL_CONFIG_DIR", str(Path.home() / ".config" / "vexil"))
-        local_db = LOADED_ENV.get("VEXIL_LOCAL_DB_DIR", str(Path.home() / ".local" / "share" / "vexil" / "db"))
-        local_data = LOADED_ENV.get("VEXIL_LOCAL_DATA_DIR", str(Path.home() / ".local" / "share" / "vexil" / "data"))
-        
-        online_api = LOADED_ENV.get("VEXIL_ONLINE_API_URL", "http://localhost:8000")
-        user = LOADED_ENV.get("VEXIL_ONLINE_USERNAME", "")
-        pwd = LOADED_ENV.get("VEXIL_ONLINE_PASSWORD", "")
-        
-        log_level = LOADED_ENV.get("VEXIL_LOG_LEVEL", "INFO")
-        h_path_override = LOADED_ENV.get("HOUDINI_PATH", str(MONOREPO_ROOT / "apps" / "vexil-package-src"))
-        pythonpath_override = LOADED_ENV.get("PYTHONPATH", str(MONOREPO_ROOT / "apps" / "vexil-package-src" / "python"))
-
-        with Collapsible(title="  Houdini Plugin Settings", collapsed=False, id="collapsible-houdini"):
-            with Vertical(classes="form-field"):
-                yield Label("Houdini Install Path")
-                yield Label("[dim]Path to Houdini installation directory (e.g., /opt/hfs20.5)[/dim]", classes="form-help")
-                yield PathInput(value=h_path, id="h-install-path")
-            
-            with Vertical(classes="form-field"):
-                yield Label("Projects Root Folder")
-                yield Label("[dim]Root directory where VEXiL projects are stored[/dim]", classes="form-help")
-                yield PathInput(value=p_root, id="h-projects-root")
-            
-            with Vertical(classes="form-field"):
-                yield Label("Online Mode")
-                yield Label("[dim]Enable to sync projects with backend API, disable for local-only mode[/dim]", classes="form-help")
-                yield Checkbox("Use Online Project Sync", value=online_val, id="h-mode-online")
-            
-            # Local Mode Settings
-            with Vertical(classes="form-field", id="h-row-local-dir"):
-                yield Label("Local Config Folder")
-                yield Label("[dim]Directory for local configuration files[/dim]", classes="form-help", id="h-help-local-dir")
-                yield PathInput(value=local_dir, id="h-local-dir")
-            
-            with Vertical(classes="form-field", id="h-row-local-db"):
-                yield Label("Local Database Folder")
-                yield Label("[dim]Directory for local SQLite database[/dim]", classes="form-help", id="h-help-local-db")
-                yield PathInput(value=local_db, id="h-local-db")
-            
-            with Vertical(classes="form-field", id="h-row-local-data"):
-                yield Label("Local Data Folder")
-                yield Label("[dim]Directory for local project data and assets[/dim]", classes="form-help", id="h-help-local-data")
-                yield PathInput(value=local_data, id="h-local-data")
-                
-            # Online Mode Settings
-            with Vertical(classes="form-field advanced-field", id="h-row-online-api"):
-                yield Label("Online API URL")
-                yield Label("[dim]Backend API endpoint URL[/dim]", classes="form-help advanced-field", id="h-help-online-api")
-                yield Input(value=online_api, id="h-online-api")
-            
-            with Vertical(classes="form-field", id="h-row-online-user"):
-                yield Label("Online Username")
-                yield Label("[dim]Username for backend API authentication[/dim]", classes="form-help", id="h-help-online-user")
-                yield Input(value=user, id="h-online-user")
-            
-            with Vertical(classes="form-field", id="h-row-online-pass"):
-                yield Label("Online Password")
-                yield Label("[dim]Password for backend API authentication[/dim]", classes="form-help", id="h-help-online-pass")
-                yield Input(value=pwd, password=True, id="h-online-pass")
-
-            # Advanced environment variables
-            with Vertical(classes="form-field advanced-field", id="h-row-path-override"):
-                yield Label("HOUDINI_PATH")
-                yield Label("[dim]Custom HOUDINI_PATH environment variable override[/dim]", classes="form-help advanced-field", id="h-help-path-override")
-                yield PathInput(value=h_path_override, id="h-path-override")
-            
-            with Vertical(classes="form-field advanced-field", id="h-row-pythonpath-override"):
-                yield Label("PYTHONPATH")
-                yield Label("[dim]Custom PYTHONPATH environment variable override[/dim]", classes="form-help advanced-field", id="h-help-pythonpath-override")
-                yield PathInput(value=pythonpath_override, id="h-pythonpath-override")
-            
-            with Vertical(classes="form-field advanced-field", id="h-row-log-level"):
-                yield Label("Log Level")
-                yield Label("[dim]Logging verbosity: DEBUG, INFO, WARNING, ERROR, CRITICAL[/dim]", classes="form-help advanced-field", id="h-help-log-level")
-                yield Input(value=log_level, id="h-log-level")
-
-    def on_mount(self) -> None:
-        online_mode = self.query_one("#h-mode-online", Checkbox).value
-        self.update_visibility(online_mode)
-
-    def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
-        if event.checkbox.id == "h-mode-online":
-            self.update_visibility(event.value)
-
-    def update_visibility(self, online_mode: bool) -> None:
-        self.query_one("#h-row-local-dir").styles.display = "none" if online_mode else "block"
-        self.query_one("#h-row-local-db").styles.display = "none" if online_mode else "block"
-        self.query_one("#h-row-local-data").styles.display = "none" if online_mode else "block"
-        self.query_one("#h-help-local-dir").styles.display = "none" if online_mode else "block"
-        self.query_one("#h-help-local-db").styles.display = "none" if online_mode else "block"
-        self.query_one("#h-help-local-data").styles.display = "none" if online_mode else "block"
-        
-        self.query_one("#h-row-online-user").styles.display = "block" if online_mode else "none"
-        self.query_one("#h-row-online-pass").styles.display = "block" if online_mode else "none"
-        self.query_one("#h-help-online-user").styles.display = "block" if online_mode else "none"
-        self.query_one("#h-help-online-pass").styles.display = "block" if online_mode else "none"
-        
+    if nav_cols[1].button("Select this folder", key=f"{field}_select", type="primary"):
+        selected = browser.select_current()
         try:
-            show_advanced = self.screen.query_one("#toggle-advanced", Checkbox).value
-            self.set_show_advanced(show_advanced)
-        except Exception:
-            pass
+            relative = selected.relative_to(root)
+            return str(relative) if str(relative) != "." else str(root)
+        except ValueError:
+            return str(selected)
 
-    def set_show_advanced(self, show: bool) -> None:
-        self.query_one("#h-row-path-override").styles.display = "block" if show else "none"
-        self.query_one("#h-row-pythonpath-override").styles.display = "block" if show else "none"
-        self.query_one("#h-row-log-level").styles.display = "block" if show else "none"
-        self.query_one("#h-help-path-override").styles.display = "block" if show else "none"
-        self.query_one("#h-help-pythonpath-override").styles.display = "block" if show else "none"
-        self.query_one("#h-help-log-level").styles.display = "block" if show else "none"
-        
-        online_mode = self.query_one("#h-mode-online", Checkbox).value
-        self.query_one("#h-row-online-api").styles.display = "block" if (show and online_mode) else "none"
-        self.query_one("#h-help-online-api").styles.display = "block" if (show and online_mode) else "none"
+    dirs = browser.list_dirs()
+    if not dirs:
+        st.caption("No subfolders here.")
+        return None
 
-    def get_values(self) -> dict:
-        online_mode = self.query_one("#h-mode-online", Checkbox).value
-        res = {
-            "houdini_install_path": self.query_one("#h-install-path", PathInput).value,
-            "projects_root": self.query_one("#h-projects-root", PathInput).value,
-            "mode": "online" if online_mode else "local",
-            "log_level": self.query_one("#h-log-level", Input).value,
-            "houdini_path": self.query_one("#h-path-override", PathInput).value,
-            "pythonpath": self.query_one("#h-pythonpath-override", PathInput).value,
-        }
-        if online_mode:
-            res["online"] = {
-                "api_url": self.query_one("#h-online-api", Input).value,
-                "username": self.query_one("#h-online-user", Input).value,
-                "password": self.query_one("#h-online-pass", Input).value,
-            }
-        else:
-            res["local"] = {
-                "config_dir": self.query_one("#h-local-dir", PathInput).value,
-                "db_dir": self.query_one("#h-local-db", PathInput).value,
-                "data_dir": self.query_one("#h-local-data", PathInput).value,
-            }
-        return res
-
-    def set_reveal_secrets(self, reveal: bool) -> None:
-        self.query_one("#h-online-pass", Input).password = not reveal
-
-
-class ServiceStatusBar(Widget):
-    port: reactive[int | None] = reactive(None)
-    
-    def __init__(self, name: str) -> None:
-        super().__init__(id=f"bar-{name}")
-        self.service_name = name
-
-    def compose(self) -> ComposeResult:
-        yield Static(
-            "*",
-            id=f"dot-{self.service_name}",
-            classes="status-dot status-unknown",
-        )
-        yield Label(
-            f"[bold]{self.service_name}[/bold]  :{SERVICE_PORTS[self.service_name]} [dim](default)[/dim]",
-            id=f"label-{self.service_name}",
-        )
-        yield Button("Start", variant="success", id=f"start-{self.service_name}")
-        yield Button("Stop", variant="error", id=f"stop-{self.service_name}")
-        yield Button("Open", variant="default", id=f"open-{self.service_name}")
-        yield Button("Logs", variant="default", id=f"logs-{self.service_name}")
-
-    def watch_port(self, new_port: int | None) -> None:
-        """Update label when port changes."""
+    labels = [d.name for d in dirs]
+    choice = st.selectbox("Subfolders", labels, key=f"{field}_dirs")
+    if st.button("Open selected folder", key=f"{field}_open"):
         try:
-            label = self.query_one(f"#label-{self.service_name}", Label)
-            if new_port:
-                label.update(f"[bold]{self.service_name}[/bold]  :{new_port}")
-            else:
-                default_port = SERVICE_PORTS.get(self.service_name, "????")
-                label.update(f"[bold]{self.service_name}[/bold]  :{default_port} [dim](default)[/dim]")
-        except Exception:
-            pass
-
-    def set_state(self, state: str, port: int | None = None) -> None:
-        try:
-            dot = self.query_one(f"#dot-{self.service_name}", Static)
-            dot.remove_class("status-running", "status-exited", "status-unknown")
-            
-            is_running = "running" in state
-            
-            if is_running:
-                dot.add_class("status-running")
-            elif "exited" in state or "stopped" in state:
-                dot.add_class("status-exited")
-            else:
-                dot.add_class("status-unknown")
-            
-            # Update port
-            self.port = port if is_running else None
-            
-            # Enable/disable buttons based on running state
-            try:
-                start_btn = self.query_one(f"#start-{self.service_name}", Button)
-                stop_btn = self.query_one(f"#stop-{self.service_name}", Button)
-                open_btn = self.query_one(f"#open-{self.service_name}", Button)
-                
-                # Start button: enabled when NOT running
-                start_btn.disabled = is_running
-                # Stop button: enabled when running
-                stop_btn.disabled = not is_running
-                # Open button: enabled when running
-                open_btn.disabled = not is_running
-            except Exception:
-                pass
-        except Exception:
-            pass
+            browser.enter(choice)
+            st.session_state[_browser_key(field)] = browser
+            st.rerun()
+        except FolderBrowserError as exc:
+            st.error(str(exc))
+    return None
 
 
-class HelpStatusBar(Static):
-    can_focus = True
-    
-    def __init__(self) -> None:
-        super().__init__(
-            " [b #fafafa]Ctrl+Q[/] [@click=quit]Quit[/]  [#3f3f46]|[/]  "
-            "[b #fafafa]Ctrl+S[/] [@click=save_configs]Save Configs[/]  [#3f3f46]|[/]  "
-            "[b #fafafa]Ctrl+U[/] [@click=start_services]Start All[/]  [#3f3f46]|[/]  "
-            "[b #fafafa]Ctrl+D[/] [@click=stop_services]Stop All[/]  [#3f3f46]|[/]  "
-            "[b #fafafa]Ctrl+Y[/] [@click=copy_logs]Copy Logs[/]  [#3f3f46]|[/]  "
-            "[b #fafafa]Ctrl+L[/] [@click=focus_logs]Focus Logs[/]",
-            id="help-status-bar",
-            markup=True,
-        )
-    
-    def action_quit(self) -> None:
-        self.app.exit()
-    
-    def action_save_configs(self) -> None:
-        self.app.action_save_configs()
-    
-    def action_start_services(self) -> None:
-        self.app.action_start_services()
-    
-    def action_stop_services(self) -> None:
-        self.app.action_stop_services()
-    
-    def action_copy_logs(self) -> None:
-        self.app.action_copy_logs()
-    
-    def action_focus_logs(self) -> None:
-        self.app.action_focus_logs()
-
-
-class VexilApp(App):
-    TITLE = "VEXiL Dev Tools"
-    BINDINGS = [
-        Binding("ctrl+q", "quit", "Quit"),
-        Binding("ctrl+s", "save_configs", "Save Configs"),
-        Binding("ctrl+u", "start_services", "Start All"),
-        Binding("ctrl+d", "stop_services", "Stop All"),
-        Binding("ctrl+y", "copy_logs", "Copy Logs"),
-        Binding("ctrl+l", "focus_logs", "Focus Logs"),
-    ]
-
-    CSS_PATH = "main.tcss"
-
-    service_status: reactive[dict[str, str]] = reactive({})
-    service_ports: reactive[dict[str, int]] = reactive({})
-
-    def compose(self) -> ComposeResult:
-        yield Static(VEXIL_ASCII, id="app-header")
-        with Horizontal(id="main-content"):
-            with Vertical(id="left-pane"):
-                yield Label("[bold accent]Environment Builder[/bold accent]\n")
-                with Horizontal(id="toggle-container"):
-                    yield Checkbox("Show Advanced / Hidden Fields", value=False, id="toggle-advanced")
-                    yield Checkbox("Reveal Passwords / Secrets", value=False, id="toggle-secrets")
-                with VerticalScroll(id="config-scroll"):
-                    for service_name, specs in SERVICE_VARS.items():
-                        yield ServiceSection(service_name, specs)
-                    yield HoudiniSection()
-                with Horizontal(id="config-actions"):
-                    yield Button("Save & Apply Configs", variant="success", id="btn-save-config")
-            
-            with Vertical(id="right-pane"):
-                with VerticalScroll(id="right-scroll"):
-                    yield Label("[bold accent]Service Control Dashboard[/bold accent]\n")
-                    for name in DOCKER_SERVICES:
-                        yield ServiceStatusBar(name)
-                        
-                    with Collapsible(title="  Django Database & Admin Actions", collapsed=True, id="section-django"):
-                        with Horizontal(classes="action-row"):
-                            yield Button("Apply Database Migrations", variant="primary", id="btn-migrate")
-                        
-                        yield Label("\n[bold]Create Django Admin Superuser[/bold]")
-                        with Vertical(classes="form-field"):
-                            yield Label("Username")
-                            yield Input(value="admin", id="su-username")
-                        with Vertical(classes="form-field"):
-                            yield Label("Email")
-                            yield Input(value="admin@example.com", id="su-email")
-                        with Vertical(classes="form-field"):
-                            yield Label("Password")
-                            yield Input(value="adminpass", password=True, id="su-password")
-                        with Horizontal(classes="action-row"):
-                            yield Button("Create Superuser", variant="primary", id="btn-create-su")
-                
-                yield SelectableRichLog(id="log-console", highlight=True, markup=True, auto_scroll=True)
-                with Horizontal(id="global-actions"):
-                    yield Button("Copy Logs", variant="default", id="btn-copy-logs")
-                    yield Button("Start All Services", variant="success", id="btn-start-all")
-                    yield Button("Stop All Services", variant="error", id="btn-stop-all")
-        yield HelpStatusBar()
-
-    def action_save_configs(self) -> None:
-        self.save_configurations()
-
-    def action_start_services(self) -> None:
-        if check_env_files_exist():
-            self.stream_compose("up", "-d")
-        else:
-            self.notify("Please save environment configurations first!", severity="warning")
-
-    def action_stop_services(self) -> None:
-        if check_env_files_exist():
-            self.stream_compose("down")
-        else:
-            self.notify("Please save environment configurations first!", severity="warning")
-
-    def action_copy_logs(self) -> None:
-        try:
-            log_widget = self.query_one("#log-console", SelectableRichLog)
-            full_text = "\n".join(log_widget.history)
-            self.copy_to_clipboard(full_text)
-            self.notify("[OK] Logs copied to clipboard!", severity="information")
-        except Exception as e:
-            self.notify(f"Failed to copy logs: {e}", severity="error")
-
-    def action_focus_logs(self) -> None:
-        try:
-            self.query_one("#log-console").focus()
-        except Exception:
-            pass
-
-    def on_mount(self) -> None:
-        global LOADED_ENV
-        LOADED_ENV.clear()
-        LOADED_ENV.update(load_all_env_files())
-        self.update_config_status()
-        
-        self._poll_timer = self.set_interval(4.0, self._poll_status)
-        self._poll_status()
-
-    def update_config_status(self) -> None:
-        # Status is now shown in logs instead of a dedicated alert box
-        pass
-
-    def watch_service_status(self, new_status: dict[str, str]) -> None:
-        for name in DOCKER_SERVICES:
-            try:
-                bar = self.query_one(f"#bar-{name}", ServiceStatusBar)
-                state = new_status.get(name, "unknown")
-                port = self.service_ports.get(name)
-                bar.set_state(state, port)
-            except Exception:
-                pass
-
-    @work(exclusive=True, group="status-poll", exit_on_error=False)
-    async def _poll_status(self) -> None:
-        try:
-            proc = await asyncio.create_subprocess_exec(
-                "docker",
-                "compose",
-                "-f",
-                str(COMPOSE_FILE),
-                "ps",
-                "--format",
-                "json",
-                "--all",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.DEVNULL,
-                cwd=str(MONOREPO_ROOT),
-            )
-            stdout, _ = await proc.communicate()
-            new_status: dict[str, str] = {}
-            port_map: dict[str, int] = {}
-            
-            for line in stdout.decode().strip().splitlines():
-                if not line.strip():
-                    continue
-                data = json.loads(line)
-                service = data["Service"]
-                new_status[service] = data["State"]
-                
-                # Extract actual published port
-                publishers = data.get("Publishers", [])
-                if publishers:
-                    for pub in publishers:
-                        if isinstance(pub, dict) and "PublishedPort" in pub:
-                            port_map[service] = pub["PublishedPort"]
-                            break
-            
-            self.service_status = new_status
-            self.service_ports = port_map
-        except Exception:
-            pass
-
-    def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
-        if event.checkbox.id == "toggle-advanced":
-            show = event.value
-            for field in self.query(EnvField):
-                if field.hidden_by_spec:
-                    field.styles.display = "block" if show else "none"
-            try:
-                self.query_one(HoudiniSection).set_show_advanced(show)
-            except Exception:
-                pass
-        elif event.checkbox.id == "toggle-secrets":
-            reveal = event.value
-            for field in self.query(EnvField):
-                field.set_reveal_secrets(reveal)
-            try:
-                self.query_one(HoudiniSection).set_reveal_secrets(reveal)
-            except Exception:
-                pass
-            try:
-                self.query_one("#su-password", Input).password = not reveal
-            except Exception:
-                pass
-
-    def on_button_pressed(self, event: Button.Pressed) -> None:
-        btn_id = event.button.id
-        if not btn_id:
-            return
-        
-        # Guard docker commands if unconfigured
-        if btn_id in ["btn-start-all", "btn-stop-all", "btn-migrate", "btn-create-su"] or \
-           btn_id.startswith("start-") or btn_id.startswith("stop-") or btn_id.startswith("logs-"):
-            if not check_env_files_exist():
-                self.notify("Please save environment configurations first!", severity="warning")
-                event.stop()
-                return
-
-        if btn_id == "btn-save-config":
-            self.save_configurations()
-        elif btn_id == "btn-copy-logs":
-            try:
-                log_widget = self.query_one("#log-console", SelectableRichLog)
-                full_text = "\n".join(log_widget.history)
-                self.copy_to_clipboard(full_text)
-                self.notify("[OK] Logs copied to clipboard!", severity="information")
-            except Exception as e:
-                self.notify(f"Failed to copy logs: {e}", severity="error")
-        elif btn_id == "btn-start-all":
-            self.stream_compose("up", "-d")
-        elif btn_id == "btn-stop-all":
-            self.stream_compose("down")
-        elif btn_id == "btn-migrate":
-            self.run_migrations()
-        elif btn_id == "btn-create-su":
-            self.run_create_superuser()
-        elif btn_id.startswith("start-"):
-            svc = btn_id[len("start-"):]
-            self.stream_compose("up", "-d", svc)
-        elif btn_id.startswith("stop-"):
-            svc = btn_id[len("stop-"):]
-            self.stream_compose("stop", svc)
-        elif btn_id.startswith("open-"):
-            svc = btn_id[len("open-"):]
-            try:
-                bar = self.query_one(f"#bar-{svc}", ServiceStatusBar)
-                port = bar.port or SERVICE_PORTS.get(svc)
-                
-                if port:
-                    url = f"http://localhost:{port}"
-                    try:
-                        import webbrowser
-                        webbrowser.open(url)
-                        log = self.query_one("#log-console", RichLog)
-                        log.write(f"[bold blue]Opening {url} in browser...[/bold blue]")
-                        self.notify(f"Opening {url}", severity="information")
-                    except Exception as e:
-                        self.notify(f"Failed to open browser: {e}", severity="error")
-                else:
-                    self.notify("Port not available", severity="warning")
-            except Exception as e:
-                self.notify(f"Error: {e}", severity="error")
-        elif btn_id.startswith("logs-"):
-            svc = btn_id[len("logs-"):]
-            self.stream_compose("logs", "--follow", "--tail=100", svc)
-        
-        event.stop()
-
-    def save_configurations(self) -> None:
-        try:
-            log = self.query_one("#log-console", RichLog)
-            log.write("[bold blue]Saving environment configurations...[/bold blue]")
-            
-            # 1. Save general services dotenv files
-            dir_map = {
-                "vexil-server": "vexil-server",
-                "vexil-frontend": "vexil-frontend",
-                "vexil-website": "vexil-website",
-            }
-            
-            for service_name, service_dir in dir_map.items():
-                section = self.query_one(f"#section-{service_name}", ServiceSection)
-                values = section.get_values()
-                env_path = MONOREPO_ROOT / "apps" / service_dir / ".env"
-                lines = [f"{k}={v}\n" for k, v in values.items()]
-                env_path.write_text("".join(lines))
-                log.write(f"[dim]Wrote {env_path.relative_to(MONOREPO_ROOT)}[/dim]")
-                
-            # 2. Save Houdini env.yaml settings
-            houdini_sec = self.query_one(HoudiniSection)
-            h_values = houdini_sec.get_values()
-            
-            yaml_lines = [
-                f"houdini_install_path: {h_values['houdini_install_path']}\n",
-                f"projects_root: {h_values['projects_root']}\n",
-                f"mode: {h_values['mode']}\n",
-                f"log_level: {h_values['log_level']}\n",
-                f"houdini_path: {h_values['houdini_path']}\n",
-                f"pythonpath: {h_values['pythonpath']}\n",
-            ]
-            if h_values['mode'] == 'online':
-                yaml_lines.extend([
-                    "online:\n",
-                    f"  api_url: {h_values['online']['api_url']}\n",
-                    f"  username: {h_values['online']['username']}\n",
-                    f"  password: {h_values['online']['password']}\n",
-                ])
-            else:
-                yaml_lines.extend([
-                    "local:\n",
-                    f"  config_dir: {h_values['local']['config_dir']}\n",
-                    f"  db_dir: {h_values['local']['db_dir']}\n",
-                    f"  data_dir: {h_values['local']['data_dir']}\n",
-                ])
-            
-            yaml_path = MONOREPO_ROOT / "apps" / "vexil-package-src" / "env.yaml"
-            yaml_path.write_text("".join(yaml_lines))
-            log.write(f"[dim]Wrote {yaml_path.relative_to(MONOREPO_ROOT)}[/dim]")
-            
-            # Clean up old .env from Houdini packages folder
-            old_dotenv = MONOREPO_ROOT / "apps" / "vexil-package-src" / ".env"
-            if old_dotenv.is_file():
-                try:
-                    old_dotenv.unlink()
-                    log.write(f"[dim]Removed obsolete .env from packages folder[/dim]")
-                except Exception:
-                    pass
-            
-            # 3. Reload variables
-            global LOADED_ENV
-            LOADED_ENV.clear()
-            LOADED_ENV.update(load_all_env_files())
-            
-            log.write("[green][OK] Environment configurations written successfully![/green]")
-            self.notify("Configurations saved!", severity="information")
-            self.update_config_status()
-            
-        except Exception as e:
-            self.query_one("#log-console", RichLog).write(f"[bold red]Error saving configurations: {e}[/bold red]")
-            self.notify("Failed to save configurations", severity="error")
-
-    @work(exclusive=True, group="docker-stream", exit_on_error=False)
-    async def stream_compose(self, *args: str) -> None:
-        log = self.query_one("#log-console", RichLog)
-        log.write(f"[dim]$ docker compose {' '.join(args)}[/dim]")
-        proc = await asyncio.create_subprocess_exec(
-            "docker",
-            "compose",
-            "-f",
-            str(COMPOSE_FILE),
-            *args,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.STDOUT,
-            cwd=str(MONOREPO_ROOT),
-        )
-        try:
-            assert proc.stdout is not None
-            async for raw in proc.stdout:
-                log.write(raw.decode(errors="replace").rstrip())
-            await proc.wait()
-            rc = proc.returncode
-            log.write(f"[{'green' if rc == 0 else 'red'}]exit {rc}[/]")
-        except asyncio.CancelledError:
-            proc.terminate()
-            await proc.wait()
-            log.write("[dim]cancelled[/dim]")
-            raise
-        
-        # Poll immediately after command completes
-        self.call_after_refresh(self._poll_status)
-        
-        # If starting services, poll a few more times to catch port assignments
-        if "up" in args:
-            await asyncio.sleep(1)
-            self.call_after_refresh(self._poll_status)
-            await asyncio.sleep(2)
-            self.call_after_refresh(self._poll_status)
-
-    @work(exclusive=True, group="docker-stream", exit_on_error=False)
-    async def run_migrations(self) -> None:
-        log = self.query_one("#log-console", RichLog)
-        
-        # Check container state
-        states = self.service_status
-        if "running" not in states.get("vexil-server", ""):
-            log.write("[bold yellow]Warning: vexil-server container is not running. Starting it first...[/bold yellow]")
-            proc = await asyncio.create_subprocess_exec(
-                "docker", "compose", "-f", str(COMPOSE_FILE), "up", "-d", "vexil-server",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.STDOUT,
-                cwd=str(MONOREPO_ROOT)
-            )
-            assert proc.stdout is not None
-            async for raw in proc.stdout:
-                log.write(raw.decode(errors="replace").rstrip())
-            await proc.wait()
-            await asyncio.sleep(2)
-        
-        log.write("[bold blue]Applying Django database migrations inside container...[/bold blue]")
-        log.write("[dim]$ docker compose exec vexil-server uv run python manage.py migrate[/dim]")
-        
-        proc = await asyncio.create_subprocess_exec(
-            "docker", "compose", "-f", str(COMPOSE_FILE), "exec", "vexil-server",
-            "uv", "run", "python", "manage.py", "migrate",
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.STDOUT,
-            cwd=str(MONOREPO_ROOT),
-        )
-        try:
-            assert proc.stdout is not None
-            async for raw in proc.stdout:
-                log.write(raw.decode(errors="replace").rstrip())
-            await proc.wait()
-            rc = proc.returncode
-            if rc == 0:
-                log.write("[green][OK] Database migrations applied successfully![/green]")
-                self.notify("Migrations completed!", severity="information")
-            else:
-                log.write(f"[red][FAIL] Migrations failed with exit code {rc}[/red]")
-                self.notify("Migrations failed!", severity="error")
-        except Exception as e:
-            log.write(f"[red]Error running migrations: {e}[/red]")
-
-    @work(exclusive=True, group="docker-stream", exit_on_error=False)
-    async def run_create_superuser(self) -> None:
-        log = self.query_one("#log-console", RichLog)
-        
-        states = self.service_status
-        if "running" not in states.get("vexil-server", ""):
-            log.write("[bold red]Error: vexil-server container must be running to create a superuser.[/bold red]")
-            self.notify("vexil-server not running!", severity="error")
-            return
-            
-        username = self.query_one("#su-username", Input).value
-        email = self.query_one("#su-email", Input).value
-        password = self.query_one("#su-password", Input).value
-        
-        if not username or not password:
-            log.write("[bold red]Error: Username and Password are required.[/bold red]")
-            self.notify("Missing credentials!", severity="error")
-            return
-            
-        log.write(f"[bold blue]Creating superuser '{username}'...[/bold blue]")
-        log.write("[dim]$ docker compose exec -e DJANGO_SUPERUSER_USERNAME=... vexil-server uv run python manage.py createsuperuser --noinput[/dim]")
-        
-        proc = await asyncio.create_subprocess_exec(
-            "docker", "compose", "-f", str(COMPOSE_FILE), "exec",
-            "-e", f"DJANGO_SUPERUSER_USERNAME={username}",
-            "-e", f"DJANGO_SUPERUSER_EMAIL={email}",
-            "-e", f"DJANGO_SUPERUSER_PASSWORD={password}",
-            "vexil-server", "uv", "run", "python",
-            "manage.py", "createsuperuser", "--noinput",
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.STDOUT,
-            cwd=str(MONOREPO_ROOT),
-        )
-        try:
-            assert proc.stdout is not None
-            async for raw in proc.stdout:
-                log.write(raw.decode(errors="replace").rstrip())
-            await proc.wait()
-            rc = proc.returncode
-            if rc == 0:
-                log.write(f"[green][OK] Superuser '{username}' created successfully![/green]")
-                self.notify("Superuser created!", severity="information")
-            else:
-                log.write(f"[red][FAIL] Failed to create superuser (code {rc}). It might already exist.[/red]")
-                self.notify("Superuser creation failed!", severity="warning")
-        except Exception as e:
-            log.write(f"[red]Error creating superuser: {e}[/red]")
+def _heading() -> None:
+    if LOGO_PATH.is_file():
+        st.image(str(LOGO_PATH), width=220)
+    else:
+        st.markdown("### VEXiL")
+    st.title("Environment Initializer")
+    st.caption(f"Config file: `{DEFAULT_TOML}`")
 
 
 def main() -> None:
-    VexilApp().run()
+    st.set_page_config(
+        page_title="VEXiL Env Init",
+        page_icon=str(LOGO_PATH) if LOGO_PATH.is_file() else "🛠️",
+        layout="wide",
+    )
+    _heading()
+
+    cfg = _cfg()
+    scratch = resolve_scratch(cfg)
+
+    st.header("Base")
+    with _field_row("version", HELP["version"]):
+        st.text_input(
+            "version",
+            cfg.base.version,
+            disabled=True,
+            label_visibility="collapsed",
+            key="base_version",
+        )
+
+    bumped = bool(st.session_state.get("version_bumped"))
+    with _field_row("Bump patch version", HELP["bump_patch"]):
+        if bumped:
+            st.info("Patch already bumped this session. Restart the app to bump again.")
+        else:
+            try:
+                pending = discover_version_changes()
+                st.caption(f"Would bump `{pending[0].old}` → `{pending[0].new}` in:")
+                for line in preview_lines(pending):
+                    st.write(f"- `{line}`")
+                confirm_bump = st.checkbox(
+                    "I confirm updating all listed version locations",
+                    key="confirm_patch_bump",
+                    disabled=bumped,
+                )
+                if st.button(
+                    "Bump patch version",
+                    key="bump_patch_btn",
+                    disabled=bumped or not confirm_bump,
+                    type="primary",
+                ):
+                    apply_version_changes(pending, refresh_locks=True)
+                    cfg.base.version = pending[0].new
+                    st.session_state.vexil_cfg = cfg
+                    st.session_state.version_bumped = True
+                    st.success(f"Bumped product version to {pending[0].new}")
+                    st.rerun()
+            except VersionBumpError as exc:
+                st.error(str(exc))
+
+    with _field_row("dev environment", HELP["dev"]):
+        cfg.base.dev = st.checkbox(
+            "dev environment",
+            value=cfg.base.dev,
+            label_visibility="collapsed",
+            key="base_dev",
+        )
+    with _field_row("os", HELP["os"]):
+        st.text_input(
+            "os",
+            cfg.base.os,
+            disabled=True,
+            label_visibility="collapsed",
+            key="base_os",
+        )
+    with _field_row("scratch", HELP["scratch"]):
+        st.text_input(
+            "scratch",
+            cfg.base.scratch,
+            disabled=True,
+            label_visibility="collapsed",
+            key="base_scratch",
+        )
+    st.info(f"Resolved scratch: `{scratch}`")
+
+    st.header("vexil-io")
+    with _field_row("port", HELP["port_io"]):
+        cfg.vexil_io.port = int(
+            st.number_input(
+                "port",
+                min_value=1,
+                max_value=65535,
+                value=cfg.vexil_io.port,
+                label_visibility="collapsed",
+                key="io_port",
+            )
+        )
+    with _field_row("user", HELP["user"]):
+        cfg.vexil_io.user = st.text_input(
+            "user",
+            cfg.vexil_io.user,
+            label_visibility="collapsed",
+            key="io_user",
+        )
+    with _field_row("password", HELP["password"]):
+        cfg.vexil_io.password = st.text_input(
+            "password",
+            cfg.vexil_io.password,
+            type="password",
+            label_visibility="collapsed",
+            key="io_password",
+        )
+    with _field_row("salt", HELP["salt"]):
+        salt_col, regen_col = st.columns([3, 1])
+        cfg.vexil_io.salt = salt_col.text_input(
+            "salt",
+            cfg.vexil_io.salt,
+            label_visibility="collapsed",
+            key="io_salt",
+        )
+        if regen_col.button("Regenerate", key="regen_salt"):
+            cfg.vexil_io.salt = generate_salt()
+            st.session_state.vexil_cfg = cfg
+            st.rerun()
+
+    with _field_row("dir_project_root", HELP["project_root"]):
+        cfg.vexil_io.dir_project_root = st.text_input(
+            "dir_project_root",
+            cfg.vexil_io.dir_project_root,
+            label_visibility="collapsed",
+            key="io_project_root",
+        )
+        if st.checkbox("Browse for project root", key="browse_project_toggle"):
+            selected = _render_folder_browser(
+                "project_root",
+                scratch if cfg.base.dev else scratch.parent,
+                cfg.vexil_io.dir_project_root,
+            )
+            if selected is not None:
+                cfg.vexil_io.dir_project_root = selected
+                st.session_state.vexil_cfg = cfg
+                st.session_state["browse_project_toggle"] = False
+                st.rerun()
+
+    with _field_row("dir_data_root", HELP["data_root"]):
+        cfg.vexil_io.dir_data_root = st.text_input(
+            "dir_data_root",
+            cfg.vexil_io.dir_data_root,
+            label_visibility="collapsed",
+            key="io_data_root",
+        )
+        if st.checkbox("Browse for data root", key="browse_data_toggle"):
+            selected = _render_folder_browser(
+                "data_root",
+                scratch if cfg.base.dev else scratch.parent,
+                cfg.vexil_io.dir_data_root,
+            )
+            if selected is not None:
+                cfg.vexil_io.dir_data_root = selected
+                st.session_state.vexil_cfg = cfg
+                st.session_state["browse_data_toggle"] = False
+                st.rerun()
+
+    with _field_row("houdini_dir", HELP["houdini_dir"]):
+        cfg.vexil_io.houdini_dir = st.text_input(
+            "houdini_dir",
+            cfg.vexil_io.houdini_dir,
+            label_visibility="collapsed",
+            key="io_houdini_dir",
+        )
+    st.write(f"Initialized: `{cfg.vexil_io.init}`")
+
+    st.header("Frontend")
+    with _field_row("frontend port", HELP["fe_port"]):
+        cfg.frontend.port = int(
+            st.number_input(
+                "frontend port",
+                min_value=1,
+                max_value=65535,
+                value=cfg.frontend.port,
+                label_visibility="collapsed",
+                key="fe_port",
+            )
+        )
+    with _field_row("auto_open", HELP["auto_open"]):
+        cfg.frontend.auto_open = st.checkbox(
+            "auto_open",
+            value=cfg.frontend.auto_open,
+            label_visibility="collapsed",
+            key="fe_auto_open",
+        )
+    with _field_row("use_houdini_browser", HELP["use_houdini_browser"]):
+        cfg.frontend.use_houdini_browser = st.checkbox(
+            "use_houdini_browser",
+            value=cfg.frontend.use_houdini_browser,
+            label_visibility="collapsed",
+            key="fe_houdini_browser",
+        )
+    with _field_row("api_url", HELP["api_url"]):
+        cfg.frontend.api_url = st.text_input(
+            "api_url",
+            cfg.frontend.api_url,
+            label_visibility="collapsed",
+            key="fe_api_url",
+        )
+    with _field_row("public_api_url", HELP["public_api_url"]):
+        cfg.frontend.public_api_url = st.text_input(
+            "public_api_url",
+            cfg.frontend.public_api_url,
+            label_visibility="collapsed",
+            key="fe_public_api_url",
+        )
+    st.write(f"Initialized: `{cfg.frontend.init}`")
+
+    st.header("Website & Docs")
+    with _field_row("website port", HELP["web_port"]):
+        cfg.website.port = int(
+            st.number_input(
+                "website port",
+                min_value=1,
+                max_value=65535,
+                value=cfg.website.port,
+                label_visibility="collapsed",
+                key="web_port",
+            )
+        )
+    with _field_row("docs-dev port", HELP["docs_port"]):
+        cfg.docs_dev.port = int(
+            st.number_input(
+                "docs-dev port",
+                min_value=1,
+                max_value=65535,
+                value=cfg.docs_dev.port,
+                label_visibility="collapsed",
+                key="docs_port",
+            )
+        )
+    with _field_row("resend_api_key", HELP["resend_key"]):
+        cfg.website.resend_api_key = st.text_input(
+            "resend_api_key",
+            cfg.website.resend_api_key,
+            type="password",
+            label_visibility="collapsed",
+            key="web_resend_key",
+        )
+    with _field_row("resend_from_email", HELP["resend_from"]):
+        cfg.website.resend_from_email = st.text_input(
+            "resend_from_email",
+            cfg.website.resend_from_email,
+            label_visibility="collapsed",
+            key="web_resend_from",
+        )
+    with _field_row("resend_to_email", HELP["resend_to"]):
+        cfg.website.resend_to_email = st.text_input(
+            "resend_to_email",
+            cfg.website.resend_to_email,
+            label_visibility="collapsed",
+            key="web_resend_to",
+        )
+    with _field_row("site_url", HELP["site_url"]):
+        cfg.website.site_url = st.text_input(
+            "site_url",
+            cfg.website.site_url,
+            label_visibility="collapsed",
+            key="web_site_url",
+        )
+    with _field_row("public_site_url", HELP["public_site_url"]):
+        cfg.website.public_site_url = st.text_input(
+            "public_site_url",
+            cfg.website.public_site_url,
+            label_visibility="collapsed",
+            key="web_public_site_url",
+        )
+    with _field_row("env-init port", HELP["env_port"]):
+        cfg.env_init.port = int(
+            st.number_input(
+                "env-init port",
+                min_value=1,
+                max_value=65535,
+                value=cfg.env_init.port,
+                label_visibility="collapsed",
+                key="env_port",
+            )
+        )
+
+    st.header("Save configuration")
+    st.caption("Persist validated edits to vexil.toml after path checks.")
+    if st.button("Validate & save TOML", type="primary", key="save_toml"):
+        try:
+            validate_dev_roots(cfg)
+            created = create_dev_dirs(cfg)
+            if not cfg.frontend.api_url or "vexil-io:" in cfg.frontend.api_url:
+                cfg.frontend.api_url = f"http://vexil-io:{cfg.vexil_io.port}"
+            if not cfg.frontend.public_api_url or "localhost:" in cfg.frontend.public_api_url:
+                cfg.frontend.public_api_url = f"http://localhost:{cfg.vexil_io.port}"
+            _save(cfg)
+            st.success(f"Saved `{DEFAULT_TOML}`")
+            if created:
+                st.write("Ensured directories:", ", ".join(str(p) for p in created))
+        except PathValidationError as exc:
+            st.error(str(exc))
+
+    st.header("Generate environment files")
+    st.caption("Writes local `.env` files only. Tracked `.env.template` files are never modified.")
+    preview = preview_env_files(cfg)
+    with st.expander("Preview generated .env files", expanded=False):
+        for path, body in preview.items():
+            st.subheader(str(path))
+            st.code(body, language="bash")
+    if st.button("Write .env files", key="write_env"):
+        try:
+            validate_dev_roots(cfg)
+            _save(cfg)
+            written = write_env_files(cfg)
+            st.success(f"Wrote {len(written)} .env files")
+            for path in written:
+                st.write(f"- `{path}`")
+        except PathValidationError as exc:
+            st.error(str(exc))
+
+    st.header("Initialize repositories")
+    st.caption("go mod download · bun install · uv sync (marks init=true on success)")
+    cols = st.columns(5)
+    if cols[0].button("Init vexil-io", key="init_io"):
+        result = initialize_vexil_io(cfg)
+        _save(cfg)
+        _show_cmd_results([result])
+    if cols[1].button("Init Bun apps", key="init_bun"):
+        result = initialize_bun_workspace(cfg)
+        _save(cfg)
+        _show_cmd_results([result])
+    if cols[2].button("Init package-src", key="init_pkg"):
+        result = initialize_package_src(cfg)
+        _save(cfg)
+        _show_cmd_results([result])
+    if cols[3].button("Init env-init", key="init_env"):
+        result = initialize_env_init(cfg)
+        _save(cfg)
+        _show_cmd_results([result])
+    if cols[4].button("Initialize all", type="primary", key="init_all"):
+        results = initialize_all(cfg)
+        st.session_state.vexil_cfg = cfg
+        _show_cmd_results(results)
+
+    st.header("Houdini package (22+)")
+    st.caption(HELP["houdini_install"])
+    copy_template_into_repo()
+    if st.button("Refresh Houdini profiles", key="refresh_houdini"):
+        st.session_state.houdini_profiles = discover_houdini_profiles()
+    profiles = st.session_state.get("houdini_profiles")
+    if profiles is None:
+        profiles = discover_houdini_profiles()
+        st.session_state.houdini_profiles = profiles
+    if not profiles:
+        st.warning("No Houdini 22+ preference profiles found.")
+    else:
+        labels = [p.label for p in profiles]
+        with _field_row("Houdini preference profile", HELP["houdini_install"]):
+            choice = st.selectbox(
+                "Houdini preference profile",
+                labels,
+                label_visibility="collapsed",
+                key="houdini_choice",
+            )
+        selected = next(p for p in profiles if p.label == choice)
+        st.write(f"packages destination: `{selected.path / 'packages' / 'vexil.json'}`")
+        if st.button("Install vexil.json package", key="install_houdini"):
+            dest = install_houdini_package(cfg, selected.path)
+            st.session_state.vexil_cfg = cfg
+            st.success(f"Installed `{dest}`")
+
+    st.header("Reset Dev Env")
+    st.warning("Deletes generated `.env` files and clears repository `/.scratch` contents.")
+    with _field_row("Type RESET to confirm", "Safety gate before destructive reset."):
+        confirm = st.text_input(
+            "Type RESET to confirm",
+            value="",
+            label_visibility="collapsed",
+            key="reset_confirm",
+        )
+    if st.button("Reset Dev Env", type="primary", key="reset_btn"):
+        if confirm.strip() != "RESET":
+            st.error("Confirmation text must be exactly RESET")
+        else:
+            result = reset_dev_env(cfg)
+            st.session_state.vexil_cfg = cfg
+            if result.errors:
+                for err in result.errors:
+                    st.error(err)
+            st.success("Dev environment reset")
+            st.write("Deleted:", ", ".join(str(p) for p in result.deleted_env_files) or "(none)")
+            st.write("Cleared scratch:", result.cleared_scratch)
 
 
 if __name__ == "__main__":

@@ -7,5 +7,5 @@ RUN bun install
 
 COPY . .
 
-EXPOSE 4321
+EXPOSE 6622
 CMD ["bun", "run", "dev", "--host", "0.0.0.0"]

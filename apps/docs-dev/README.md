@@ -12,7 +12,7 @@ From the repository root (`bun install` once for all workspaces), or from this d
 
 | Command | Action |
 | :------ | :----- |
-| `bun run dev` | Local dev server on port `4323` |
+| `bun run dev` | Local dev server on port `6633` |
 | `bun run build` | Production build to `./dist/` |
 | `bun run preview` | Preview the production build |
 

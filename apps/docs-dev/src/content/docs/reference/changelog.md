@@ -5,6 +5,27 @@ description: Notable changes to VEXiL across releases. Canonical copy also lives
 
 Notable changes to VEXiL are documented here. The same history is maintained at the repository root in `CHANGELOG.md`.
 
+## [Unreleased]
+
+## v0.1.3 - 2026-08-15
+
+Streamlit-based developer environment setup, backend rename, and safer local ports.
+
+### New Features
+
+- **Streamlit env-init** — configure local development from a browser UI driven by `vexil.toml` (`bun run setup` / `bun run env-init` on port `6644`). Generate `.env` files, initialize Go/Bun/uv workspaces, install the Houdini 22+ package, and reset scratch/`.env` data after confirmation.
+- **Patch version bump** — bump the product patch across the monorepo in one step from Streamlit or `bun run bump-version` (with a preview of every file that will change).
+
+### Improvements
+
+- **Renamed backend app** — `apps/vexil-server` is now `apps/vexil-io` (Go module, Compose service, and docs updated).
+- **Developer-safe local ports** — defaults that are less likely to collide on a busy machine: API `6600`, frontend `6611`, website `6622`, Dev Docs `6633`, env-init `6644`.
+- **Env init docs** — Dev Docs and the root README describe the Streamlit workflow (not the old Textual TUI), including Getting Started and Local services links.
+
+### Fixes
+
+- **Env templates stay stable** — runtime env-init writes local `.env` files only; tracked `.env.template` / `.env.example` files are no longer overwritten on every run.
+
 ## v0.1.2 - 2026-08-10
 
 Monorepo layout consolidation under `apps/` and Dev Docs setup refresh.

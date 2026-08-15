@@ -1,12 +1,14 @@
 {
   "name": "vexil",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Houdini centric project management system",
   "private": true,
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "setup": "(cd apps/vexil-package-src && uv sync) && (cd apps/vexil-dev-tools/env-init && uv sync) && (cd apps/vexil-server && go mod download)"
+    "env-init": "uv run --directory apps/vexil-dev-tools/env-init streamlit run main.py --server.port 6644",
+    "bump-version": "uv run --directory apps/vexil-dev-tools/env-init python -m env_init.bump_cli",
+    "setup": "(cd apps/vexil-package-src && uv sync) && (cd apps/vexil-dev-tools/env-init && uv sync) && (cd apps/vexil-io && go mod download) && bun run env-init"
   },
   "devDependencies": {
     "@types/bun": "latest",
