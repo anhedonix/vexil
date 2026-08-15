@@ -1,0 +1,47 @@
+[base]
+version = "0.1.2"
+dev = true
+os = "darwin"
+scratch = "../../../.scratch"
+
+[vexil-io]
+init = false
+port = 6600
+houdini_dir = ""
+dir_project_root = ""
+user = "vexil"
+password = "lixev"
+dir_data_root = ""
+salt = "UUID"
+
+[frontend]
+init = false
+auto_open = true
+use_houdini_browser = true
+port = 6611
+api_url = "http://vexil-io:6600"
+public_api_url = "http://localhost:6600"
+
+[website]
+init = false
+port = 6622
+resend_api_key = ""
+resend_from_email = ""
+resend_to_email = ""
+site_url = "https://vexil.tools"
+public_site_url = "http://localhost:6622"
+
+[docs-dev]
+init = false
+port = 6633
+
+[package-src]
+init = false
+
+[env-init]
+init = false
+port = 6644
+
+[houdini_package]
+install_path = ""
+init = false
