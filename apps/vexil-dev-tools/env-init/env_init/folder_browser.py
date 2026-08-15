@@ -56,10 +56,24 @@ class FolderBrowserState:
 
 
 def _sanitize_start_path(root: Path, start: Path | None) -> Path:
+    root = root.resolve()
     if start is None:
         return root
+
+    untrusted = Path(start)
+    if untrusted.is_absolute():
+        try:
+            relative_candidate = untrusted.relative_to(root)
+        except ValueError:
+            return root
+    else:
+        relative_candidate = untrusted
+
+    if ".." in relative_candidate.parts:
+        return root
+
     try:
-        candidate = start.resolve()
+        candidate = (root / relative_candidate).resolve()
     except OSError:
         return root
     try:
