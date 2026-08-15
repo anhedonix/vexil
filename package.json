@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "setup": "(cd apps/vexil-package-src && uv sync) && (cd apps/vexil-dev-tools/env-init && uv sync) && (cd apps/vexil-server && go mod download)"
+    "setup": "(cd apps/vexil-package-src && uv sync) && (cd apps/vexil-dev-tools/env-init && uv sync) && (cd apps/vexil-io && go mod download)"
   },
   "devDependencies": {
     "@types/bun": "latest",

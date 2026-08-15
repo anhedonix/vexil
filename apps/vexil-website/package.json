@@ -15,9 +15,9 @@
     "url": "https://github.com/anhedonix/vexil/issues"
   },
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --port 6622",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "astro preview --port 6622",
     "check": "astro check"
   },
   "dependencies": {

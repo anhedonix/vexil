@@ -4,8 +4,8 @@
   "type": "module",
   "version": "0.1.2",
   "scripts": {
-    "dev": "astro dev --port 4323",
-    "start": "astro dev --port 4323",
+    "dev": "astro dev --port 6633",
+    "start": "astro dev --port 6633",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"

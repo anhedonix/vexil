@@ -8,11 +8,13 @@
       "version": "1.26"
     }
   },
-  "forwardPorts": [8080, 4321, 4322],
+  "forwardPorts": [6600, 6611, 6622, 6633, 6644],
   "portsAttributes": {
-    "8080": { "label": "Backend API (Go GraphQL)", "onAutoForward": "notify" },
-    "4321": { "label": "Frontend App", "onAutoForward": "notify" },
-    "4322": { "label": "Website", "onAutoForward": "notify" }
+    "6600": { "label": "Backend API (vexil-io)", "onAutoForward": "notify" },
+    "6611": { "label": "Frontend App", "onAutoForward": "notify" },
+    "6622": { "label": "Website", "onAutoForward": "notify" },
+    "6633": { "label": "Dev Docs", "onAutoForward": "notify" },
+    "6644": { "label": "Env Init (Streamlit)", "onAutoForward": "notify" }
   },
   "mounts": [
     "source=vexil-node-modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
