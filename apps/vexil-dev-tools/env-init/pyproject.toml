@@ -1,6 +1,6 @@
 [project]
 name = "env-init"
-version = "0.1.2"
+version = "0.1.3"
 description = "Streamlit environment initializer for the VEXiL monorepo"
 readme = "README.md"
 requires-python = ">=3.14"
