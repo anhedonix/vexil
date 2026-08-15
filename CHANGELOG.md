@@ -8,6 +8,7 @@ All notable changes to VEXiL are documented in this file.
 
 - **Renamed backend app** — `apps/vexil-server` → `apps/vexil-io` (Go module, Compose service, and docs updated).
 - **Developer-safe local ports** — API `6600`, frontend `6611`, website `6622`, Dev Docs `6633`, env-init Streamlit `6644`.
+- **Streamlit env-init** — replaced the Textual TUI with a Streamlit app driven by `vexil.toml` (`[vexil-io]`).
 
 ## v0.1.2 - 2026-08-10
 

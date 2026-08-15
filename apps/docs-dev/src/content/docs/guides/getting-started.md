@@ -12,7 +12,7 @@ This guide gets you from a fresh clone to running the monorepo locally.
 | [Bun](https://bun.sh) | Package manager / workspace runner (`packageManager` pins [Bun](https://bun.sh) 1.3.x) |
 | [Turborepo](https://turborepo.com) | Task runner used by `bun run dev` → `turbo run dev` (installed via root `devDependencies`) |
 | [Go 1.26.x](https://go.dev/dl/) | Backend API (`apps/vexil-io`) |
-| [uv](https://docs.astral.sh/uv/) + [Python 3.13](https://www.python.org/downloads/) | Houdini plugin + `apps/vexil-dev-tools/env-init` |
+| [uv](https://docs.astral.sh/uv/) + [Python 3.13](https://www.python.org/downloads/) / [3.14](https://www.python.org/downloads/) | Houdini plugin (3.13); Streamlit env-init (3.14+) |
 | [SideFX Houdini 22](https://www.sidefx.com/download/) | Required for the Houdini plugin and DCC-centric workflows |
 | [Docker](https://www.docker.com/products/docker-desktop/) (optional) | Compose workflow |
 
@@ -40,12 +40,12 @@ bun install
 bun run setup
 ```
 
-`bun run setup` syncs Python envs (`uv sync` for the Houdini package and env-init TUI) and downloads Go modules for the backend.
+`bun run setup` syncs Python envs (`uv sync` for the Houdini package and Streamlit env-init) and downloads Go modules for the backend.
 
-Optional env / Docker helper TUI:
+Optional Streamlit env initializer:
 
 ```bash
-uv run --directory apps/vexil-dev-tools/env-init main.py
+uv run --directory apps/vexil-dev-tools/env-init streamlit run main.py --server.port 6644
 ```
 
 ## Run the monorepo

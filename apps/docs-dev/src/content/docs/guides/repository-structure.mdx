@@ -17,7 +17,7 @@ VEXiL is a **Bun workspaces + Turborepo** monorepo. Workspaces are declared at t
     - vexil-website/ Website for VEXiL (Astro + Tailwind)
     - docs-dev/ Dev Docs | VEXiL (Starlight; port 6633)
     - vexil-dev-tools/
-      - env-init/ Env / Docker TUI (Textual)
+      - env-init/ Env initializer (Streamlit + TOML)
     - vexil-package-src/ Houdini plugin (Python 3.13 / uv)
   - .devcontainer/ Optional Devcontainer
   - docker-compose.yml
@@ -34,7 +34,7 @@ VEXiL is a **Bun workspaces + Turborepo** monorepo. Workspaces are declared at t
 | `apps/vexil-website` | Astro 7, Tailwind 4 | Website for VEXiL |
 | `apps/docs-dev` | Astro Starlight | Contributor handbook at [dev-docs.vexil.tools](https://dev-docs.vexil.tools) |
 | `apps/vexil-package-src` | Python 3.13, uv | SideFX Houdini 22 integration package |
-| `apps/vexil-dev-tools/env-init` | Python 3.13, Textual | Interactive env scaffolding and Docker helpers |
+| `apps/vexil-dev-tools/env-init` | Python ≥3.14, Streamlit | TOML-driven env scaffolding, workspace init, Houdini package install |
 
 ## Root scripts
 
@@ -58,5 +58,5 @@ You may still see empty or leftover directories under older names (for example h
 | In-app product UI | `apps/vexil-frontend` |
 | Website for VEXiL | `apps/vexil-website` |
 | Houdini DCC integration | `apps/vexil-package-src` |
-| Env scaffolding TUI | `apps/vexil-dev-tools/env-init` |
+| Env scaffolding UI | `apps/vexil-dev-tools/env-init` |
 | This handbook | `apps/docs-dev` |
