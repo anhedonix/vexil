@@ -55,14 +55,24 @@ class FolderBrowserState:
         return self.current
 
 
+def _sanitize_start_path(root: Path, start: Path | None) -> Path:
+    if start is None:
+        return root
+    try:
+        candidate = start.resolve()
+    except OSError:
+        return root
+    try:
+        candidate.relative_to(root)
+    except ValueError:
+        return root
+    if not candidate.is_dir():
+        return root
+    return candidate
+
+
 def init_browser(root: Path, start: Path | None = None) -> FolderBrowserState:
     root = root.resolve()
     root.mkdir(parents=True, exist_ok=True)
-    start_path = (start or root).resolve()
-    try:
-        start_path.relative_to(root)
-    except ValueError:
-        start_path = root
-    if not start_path.is_dir():
-        start_path = root
+    start_path = _sanitize_start_path(root, start)
     return FolderBrowserState(root=root, current=start_path)
