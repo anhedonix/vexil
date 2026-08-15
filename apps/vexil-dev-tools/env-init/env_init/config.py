@@ -34,7 +34,7 @@ class VexilIoConfig:
     houdini_dir: str = ""
     dir_project_root: str = ""
     user: str = "vexil"
-    password: str = "lixev"
+    password: str = ""
     dir_data_root: str = ""
     salt: str = "UUID"
 
