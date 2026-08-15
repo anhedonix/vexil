@@ -21,7 +21,7 @@ DEFAULT_TOML = ENV_INIT_ROOT / "vexil.toml"
 
 @dataclass
 class BaseConfig:
-    version: str = "0.1.2"
+    version: str = "0.1.3"
     dev: bool = True
     os: str = field(default_factory=lambda: platform.system().lower())
     scratch: str = "../../../.scratch"
