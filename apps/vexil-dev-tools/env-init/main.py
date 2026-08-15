@@ -24,11 +24,18 @@ from env_init.init_cmds import (
 from env_init.paths import PathValidationError, create_dev_dirs, resolve_scratch, validate_dev_roots
 from env_init.reset import reset_dev_env
 from env_init.salt import generate_salt, is_placeholder_salt
+from env_init.version_bump import (
+    VersionBumpError,
+    apply_version_changes,
+    discover_version_changes,
+    preview_lines,
+)
 
 LOGO_PATH = ENV_INIT_ROOT / "assets" / "vexil-logo.png"
 
 HELP = {
-    "version": "VEXiL workspace version stamped into generated config. Read-only in the UI.",
+    "version": "VEXiL workspace version stamped into generated config. Read-only; use Bump patch version to update the monorepo.",
+    "bump_patch": "Increment patch across all product version files (0.1.2 → 0.1.3). Confirm once; disabled after a successful bump this session.",
     "dev": "When enabled, project/data roots must live under repository /.scratch.",
     "os": "Detected host OS used for Houdini preference-path discovery. Read-only in the UI.",
     "scratch": "Relative path from env-init to the monorepo .scratch folder. Read-only in the UI.",
@@ -182,6 +189,37 @@ def main() -> None:
             label_visibility="collapsed",
             key="base_version",
         )
+
+    bumped = bool(st.session_state.get("version_bumped"))
+    with _field_row("Bump patch version", HELP["bump_patch"]):
+        if bumped:
+            st.info("Patch already bumped this session. Restart the app to bump again.")
+        else:
+            try:
+                pending = discover_version_changes()
+                st.caption(f"Would bump `{pending[0].old}` → `{pending[0].new}` in:")
+                for line in preview_lines(pending):
+                    st.write(f"- `{line}`")
+                confirm_bump = st.checkbox(
+                    "I confirm updating all listed version locations",
+                    key="confirm_patch_bump",
+                    disabled=bumped,
+                )
+                if st.button(
+                    "Bump patch version",
+                    key="bump_patch_btn",
+                    disabled=bumped or not confirm_bump,
+                    type="primary",
+                ):
+                    apply_version_changes(pending, refresh_locks=True)
+                    cfg.base.version = pending[0].new
+                    st.session_state.vexil_cfg = cfg
+                    st.session_state.version_bumped = True
+                    st.success(f"Bumped product version to {pending[0].new}")
+                    st.rerun()
+            except VersionBumpError as exc:
+                st.error(str(exc))
+
     with _field_row("dev environment", HELP["dev"]):
         cfg.base.dev = st.checkbox(
             "dev environment",
