@@ -1,7 +1,0 @@
-{
-  "python.venvPath": "${workspaceFolder}",
-  "[python]": {
-    "editor.defaultFormatter": "charliermarsh.ruff",
-    "editor.tabSize": 4
-  }
-}
