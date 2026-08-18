@@ -1,0 +1,71 @@
+version: 2
+updates:
+  - package-ecosystem: bun
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      bun:
+        patterns:
+          - "*"
+    labels:
+      - dependencies
+
+  - package-ecosystem: uv
+    directories:
+      - /apps/vexil-dev-tools/env-init
+      - /apps/vexil-package-src
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      uv:
+        patterns:
+          - "*"
+    labels:
+      - dependencies
+
+  - package-ecosystem: gomod
+    directory: /apps/vexil-io
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      go:
+        patterns:
+          - "*"
+    labels:
+      - dependencies
+
+  - package-ecosystem: docker
+    directories:
+      - /.devcontainer
+      - /apps/vexil-io
+      - /apps/vexil-frontend
+      - /apps/vexil-website
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      docker:
+        patterns:
+          - "*"
+    labels:
+      - dependencies
+
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
+
+  - package-ecosystem: devcontainers
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
