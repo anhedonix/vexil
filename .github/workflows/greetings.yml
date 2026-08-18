@@ -1,0 +1,22 @@
+name: Greetings
+
+on: [pull_request_target, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: |
+          Hey, thanks for opening your first issue on VEXiL. Really glad you took the time to write it up. I'll take a look as soon as I can. Welcome aboard!
+
+          Anand
+        pr-message: |
+          Hey, thanks for sending in your first PR. I appreciate you putting this together. I'll review it when I can. Glad to have you here.
+
+          Anand
